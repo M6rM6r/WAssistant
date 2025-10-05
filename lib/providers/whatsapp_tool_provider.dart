@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vcard/vcard.dart';
 
 class WhatsAppToolProvider with ChangeNotifier {
   String _generatedLink = '';
@@ -12,7 +11,7 @@ class WhatsAppToolProvider with ChangeNotifier {
   String get outputMessage => _outputMessage;
 
   String? _validateAndCleanNumber(String number) {
-    String cleanNumber = number.trim();
+    String cleanNumber = number.replaceAll(RegExp(r'[\s-]'), ''); // Also remove spaces and hyphens
 
     if (cleanNumber.startsWith('+')) {
       cleanNumber = cleanNumber.substring(1);
@@ -70,19 +69,45 @@ class WhatsAppToolProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void generateVCardQrCode(String name, String number) {
+  void generateVCardQrCode({
+    required String firstName,
+    String? lastName,
+    required String number,
+    String? email,
+    String? company,
+  }) {
     final cleanNumber = _validateAndCleanNumber(number);
-    if (cleanNumber != null) {
-      VCard vCard = VCard();
-      vCard.firstName = name;
-      vCard.cellPhone = cleanNumber;
-      _barcodeData = vCard.getFormattedString();
-      _outputMessage = 'vCard QR code generated for $name.';
-      _generatedLink = '';
-    } else {
+    if (cleanNumber == null) {
       _barcodeData = null;
       _generatedLink = '';
+      notifyListeners();
+      return;
     }
+    if (firstName.isEmpty) {
+        _outputMessage = 'Error: First name is required for a vCard.';
+        _barcodeData = null;
+        _generatedLink = '';
+        notifyListeners();
+        return;
+    }
+
+    final name = '$firstName ${lastName ?? ''}'.trim();
+
+    // Manually construct the vCard data
+    final vCardString = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      'N:$lastName;$firstName;;;',
+      'FN:$name',
+      'TEL;TYPE=CELL:$cleanNumber',
+      if (email != null && email.isNotEmpty) 'EMAIL:$email',
+      if (company != null && company.isNotEmpty) 'ORG:$company',
+      'END:VCARD'
+    ].where((line) => line.isNotEmpty).join('\n');
+
+    _barcodeData = vCardString;
+    _outputMessage = 'vCard QR code generated for $name.';
+    _generatedLink = '';
     notifyListeners();
   }
 

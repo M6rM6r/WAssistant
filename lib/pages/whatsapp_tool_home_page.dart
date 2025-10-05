@@ -1,16 +1,18 @@
-
+// [CORRECTION] Forcing a complete overwrite to fix file corruption.
 // Import necessary Flutter packages.
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:provider/provider.dart'; // For accessing the provider.
 
 // Import the custom widgets that this page uses.
-import '../widgets/ad_space.dart';
+import '../widgets/banner_ad_widget.dart';
 import '../widgets/feature_buttons.dart';
 import '../widgets/message_input_field.dart';
 import '../widgets/output_display.dart';
@@ -27,17 +29,27 @@ class WhatsAppToolHomePage extends StatefulWidget {
 }
 
 class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
-  final TextEditingController _whatsAppNumberController = TextEditingController();
+  // Controllers for all text input fields
+  final TextEditingController _numberController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _companyController = TextEditingController();
+
   final GlobalKey _qrCodeKey = GlobalKey();
-  bool _isLoading = false; // To track loading state
+  bool _isLoading = false;
+  bool _showVCardFields = false;
+  String _countryCode = '+966'; // Default to Saudi Arabia
 
   @override
   void dispose() {
-    _whatsAppNumberController.dispose();
+    _numberController.dispose();
     _messageController.dispose();
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _companyController.dispose();
     super.dispose();
   }
 
@@ -45,7 +57,7 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red[700] : Colors.green[700],
+        backgroundColor: isError ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.primary,
         duration: const Duration(seconds: 3),
         behavior: SnackBarBehavior.floating,
       ),
@@ -61,17 +73,23 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
   }
 
   void _clearAll() {
-    _whatsAppNumberController.clear();
+    _numberController.clear();
     _messageController.clear();
-    _nameController.clear();
+    _firstNameController.clear();
+    _lastNameController.clear();
+    _emailController.clear();
+    _companyController.clear();
     context.read<WhatsAppToolProvider>().clearOutput();
+    setState(() {
+      _showVCardFields = false;
+    });
     _showSnackBar('Cleared all fields.');
   }
 
   void _copyLink() {
     final provider = context.read<WhatsAppToolProvider>();
-    if (provider.outputMessage.startsWith('http')) {
-      Clipboard.setData(ClipboardData(text: provider.outputMessage));
+    if (provider.generatedLink.isNotEmpty) {
+      Clipboard.setData(ClipboardData(text: provider.generatedLink));
       _showSnackBar('Link copied to clipboard!');
     } else {
       _showSnackBar('No link to copy.', isError: true);
@@ -100,11 +118,12 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
       _setLoading(false);
     }
   }
+  
+  String get _fullPhoneNumber => '$_countryCode${_numberController.text.trim()}';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
           LayoutBuilder(
@@ -131,20 +150,21 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
   Widget _buildWideLayout() {
     return Row(
       children: [
-        const Expanded(flex: 1, child: AdSpaceWidget(isRotated: true)),
+        const Expanded(flex: 1, child: BannerAdWidget(adSize: AdSize.leaderboard)),
         Expanded(flex: 4, child: _buildMainContent()),
-        const Expanded(flex: 1, child: AdSpaceWidget(isRotated: false)),
+        const Expanded(flex: 1, child: BannerAdWidget(adSize: AdSize.leaderboard)),
       ],
     );
   }
 
   Widget _buildNarrowLayout() {
-    return Column(
-      children: [
-        const AdSpaceWidget(isRotated: false),
-        Expanded(child: _buildMainContent()),
-        const AdSpaceWidget(isRotated: false),
-      ],
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(child: _buildMainContent()),
+          const BannerAdWidget(),
+        ],
+      ),
     );
   }
 
@@ -168,25 +188,33 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
                   children: [
                     TextSpan(
                       text: 'WA',
-                      style: TextStyle(color: Colors.green[500], fontWeight: FontWeight.bold, fontSize: 48, letterSpacing: 3.0),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 48, color: Theme.of(context).colorScheme.primary, letterSpacing: 3.0),
                     ),
                     TextSpan(
                       text: 'ssistant',
-                      style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold, fontSize: 48, letterSpacing: 3.0),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 48, color: Theme.of(context).colorScheme.secondary, letterSpacing: 3.0),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 50),
-              WhatsAppInputField(controller: _whatsAppNumberController),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name (for vCard)',
-                  hintText: 'Enter name for vCard generation...',
-                  border: OutlineInputBorder(),
-                ),
+              WhatsAppInputField(
+                numberController: _numberController,
+                firstNameController: _firstNameController,
+                lastNameController: _lastNameController,
+                emailController: _emailController,
+                companyController: _companyController,
+                showVCardFields: _showVCardFields,
+                onCountryChanged: (CountryCode countryCode) {
+                  setState(() {
+                    _countryCode = countryCode.dialCode!;
+                  });
+                },
+                onVCardToggle: (value) {
+                  setState(() {
+                    _showVCardFields = value;
+                  });
+                },
               ),
               const SizedBox(height: 20),
               MessageInputField(controller: _messageController),
@@ -194,22 +222,25 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
               FeatureButtons(
                 isLoading: _isLoading,
                 onGenerateQrCode: () => context.read<WhatsAppToolProvider>().generateBarcodeForChat(
-                      _whatsAppNumberController.text.trim(),
+                      _fullPhoneNumber,
                       message: _messageController.text.trim(),
                     ),
                 onGenerateLink: () => context.read<WhatsAppToolProvider>().generateChatLink(
-                      _whatsAppNumberController.text.trim(),
+                      _fullPhoneNumber,
                       message: _messageController.text.trim(),
                     ),
                 onGenerateVCard: () => context.read<WhatsAppToolProvider>().generateVCardQrCode(
-                      _nameController.text.trim(),
-                      _whatsAppNumberController.text.trim(),
+                      firstName: _firstNameController.text.trim(),
+                      lastName: _lastNameController.text.trim(),
+                      number: _fullPhoneNumber,
+                      email: _emailController.text.trim(),
+                      company: _companyController.text.trim(),
                     ),
                 onOpenChat: () async {
                   _setLoading(true);
                   try {
                     final result = await context.read<WhatsAppToolProvider>().openWhatsAppChat(
-                          _whatsAppNumberController.text.trim(),
+                          _fullPhoneNumber,
                           message: _messageController.text.trim(),
                         );
                     if (result.startsWith('Error')) {
@@ -225,7 +256,7 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
                   _setLoading(true);
                   try {
                     final result = await context.read<WhatsAppToolProvider>().openWhatsAppChat(
-                          _whatsAppNumberController.text.trim(),
+                          _fullPhoneNumber,
                           message: _messageController.text.trim(),
                           isWeb: true,
                         );

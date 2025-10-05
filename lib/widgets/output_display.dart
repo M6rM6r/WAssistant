@@ -13,17 +13,17 @@ class OutputDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Check if the display is in its initial, empty state.
+    final theme = Theme.of(context);
     final bool isInitialState = barcodeData == null &&
         outputMessage == 'Your generated output will appear here.';
 
     return Container(
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(15.0),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary,
+          color: theme.colorScheme.primary,
           width: 2.0,
         ),
         boxShadow: [
@@ -40,11 +40,10 @@ class OutputDisplay extends StatelessWidget {
         children: [
           Text(
             'Output Field',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),
+            style: theme.textTheme.titleLarge?.copyWith(fontSize: 20),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 15),
-          // If it's the initial state, show a welcome message.
           if (isInitialState)
             Column(
               children: [
@@ -52,25 +51,24 @@ class OutputDisplay extends StatelessWidget {
                 Icon(
                   Icons.touch_app_outlined,
                   size: 60,
-                  color: Colors.grey[700],
+                  color: theme.colorScheme.secondary,
                 ),
                 const SizedBox(height: 20),
                 Text(
                   'Enter a number and select an option to see the magic happen!',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[500],
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.secondary,
                         fontStyle: FontStyle.italic,
                       ),
                 ),
                 const SizedBox(height: 20),
               ],
             )
-          // Otherwise, show the generated output.
           else ...[
             Text(
               outputMessage,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             if (barcodeData != null && barcodeData!.isNotEmpty) ...[
@@ -80,8 +78,8 @@ class OutputDisplay extends StatelessWidget {
                   data: barcodeData!,
                   version: QrVersions.auto,
                   size: 150.0,
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
+                  backgroundColor: theme.colorScheme.surface,
+                  foregroundColor: theme.colorScheme.onSurface,
                   errorStateBuilder: (cxt, err) {
                     return const Center(
                       child: Text(

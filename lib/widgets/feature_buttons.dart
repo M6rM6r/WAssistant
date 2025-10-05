@@ -43,132 +43,99 @@ class FeatureButtons extends StatelessWidget {
       required VoidCallback onPressed,
       required IconData icon,
       required String label,
-      double? width,
-      double? height,
     }) {
-      return SizedBox(
-        width: width ?? 200,
-        height: height ?? 60,
-        child: ElevatedButton.icon(
-          onPressed: () => handlePress(onPressed),
-          icon: Icon(icon),
-          label: Text(label),
-          style: ElevatedButton.styleFrom(
-            // Dim the button when loading
-            backgroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
-          ),
+      return ElevatedButton.icon(
+        onPressed: () => handlePress(onPressed),
+        icon: Icon(icon),
+        label: FittedBox(
+          child: Text(label),
+        ),
+        style: ElevatedButton.styleFrom(
+          // Dim the button when loading
+          backgroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
         ),
       );
     }
 
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          spacing: 20,
+          runSpacing: 20,
+          alignment: WrapAlignment.center,
           children: [
-            Expanded(
-              child: buildButton(
-                onPressed: onGenerateQrCode,
-                icon: Icons.qr_code,
-                label: 'Generate QR Code',
-              ),
+            buildButton(
+              onPressed: onOpenChat,
+              icon: FontAwesomeIcons.whatsapp,
+              label: 'Open Chat',
             ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: buildButton(
-                onPressed: onGenerateLink,
-                icon: Icons.link,
-                label: 'Generate Link',
-              ),
+            buildButton(
+              onPressed: onOpenChatWeb,
+              icon: FontAwesomeIcons.globe,
+              label: 'Open in Web',
             ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: buildButton(
-                onPressed: onGenerateVCard,
-                icon: Icons.contact_mail,
-                label: 'Generate vCard',
-              ),
+            buildButton(
+              onPressed: onGenerateLink,
+              icon: Icons.link,
+              label: 'Generate Link',
             ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: buildButton(
-                onPressed: onOpenChat,
-                icon: FontAwesomeIcons.whatsapp,
-                label: 'Open Chat',
-              ),
+            buildButton(
+              onPressed: onGenerateQrCode,
+              icon: Icons.qr_code,
+              label: 'Generate QR Code',
             ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: buildButton(
-                onPressed: onOpenChatWeb,
-                icon: FontAwesomeIcons.whatsapp,
-                label: 'Open in Web',
-              ),
+            buildButton(
+              onPressed: onGenerateVCard,
+              icon: Icons.contact_mail,
+              label: 'Generate vCard',
             ),
           ],
         ),
         const SizedBox(height: 20), // Spacing between the rows
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          spacing: 20,
+          runSpacing: 20,
+          alignment: WrapAlignment.center,
           children: [
             // "Copy Link" as an OutlinedButton for a secondary look
-            Expanded(
-              child: SizedBox(
-                width: 200,
-                height: 60,
-                child: OutlinedButton.icon(
-                  onPressed: () => handlePress(onCopyLink),
-                  icon: const Icon(Icons.copy),
-                  label: const Text('Copy Link'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
-                    side: BorderSide(color: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+            Flexible(
+              child: OutlinedButton.icon(
+                onPressed: () => handlePress(onCopyLink),
+                icon: const Icon(Icons.copy),
+                label: const Text('Copy Link'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
+                  side: BorderSide(color: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 20),
             // "Download QR" button
-            Expanded(
-              child: SizedBox(
-                width: 200,
-                height: 60,
-                child: OutlinedButton.icon(
-                  onPressed: () => handlePress(onDownloadQrCode),
-                  icon: const Icon(Icons.download),
-                  label: const Text('Download QR'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
-                    side: BorderSide(color: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+            Flexible(
+              child: OutlinedButton.icon(
+                onPressed: () => handlePress(onDownloadQrCode),
+                icon: const Icon(Icons.download),
+                label: const Text('Download QR'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
+                  side: BorderSide(color: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 20),
             // "Clear All" with a red background for a destructive action
             Expanded(
-              child: SizedBox(
-                width: 200,
-                height: 60,
-                child: ElevatedButton.icon(
-                  onPressed: () => handlePress(onClearAll),
-                  icon: const Icon(Icons.clear_all),
-                  label: const Text('Clear All'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isLoading ? Colors.grey : Colors.red[700],
-                    foregroundColor: Colors.white,
-                  ),
+              child: ElevatedButton.icon(
+                onPressed: () => handlePress(onClearAll),
+                icon: const Icon(Icons.clear_all),
+                label: const Text('Clear All'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isLoading ? Colors.grey : Colors.red[700],
+                  foregroundColor: Colors.white,
                 ),
               ),
             ),

@@ -1,83 +1,80 @@
 import 'package:flutter/material.dart';
 
-// Helper function to create a MaterialColor from a single Color
-MaterialColor createMaterialColor(Color color) {
-  List strengths = <double>[.05];
-  Map<int, Color> swatch = {};
-  final int r = color.red, g = color.green, b = color.blue;
+const Color primaryColor = Color(0xFF4CAF50); // Green
+const Color accentColor = Color(0xFF607D8B); // Blue Grey
 
-  for (int i = 1; i < 10; i++) {
-    strengths.add(0.1 * i);
-  }
-  strengths.forEach((strength) {
-    final double ds = 0.5 - strength;
-    swatch[(strength * 1000).round()] = Color.fromRGBO(
-      r + ((ds < 0 ? r : (255 - r)) * ds).round(),
-      g + ((ds < 0 ? g : (255 - g)) * ds).round(),
-      b + ((ds < 0 ? b : (255 - b)) * ds).round(),
-      1,
-    );
-  });
-  return MaterialColor(color.value, swatch);
-}
+// Dark Theme Colors
+const Color surfaceColor = Color(0xFF212121); // Material dark surface
+const Color backgroundColor = Color(0xFF000000); // Black
+const Color errorColor = Color(0xFFCF6679); // Material dark error
 
-// Define your custom green color privately
-final MaterialColor _customGreen = createMaterialColor(Colors.green[500]!);
+const Color onPrimaryColor = Colors.white;
+const Color onAccentColor = Colors.white;
+const Color onSurfaceColor = Colors.white;
+const Color onBackgroundColor = Colors.white;
+const Color onErrorColor = Colors.black;
 
-// Export the final theme data
 final ThemeData appTheme = ThemeData(
-  // Use our custom green as the primary color swatch
-  primarySwatch: _customGreen,
-  // Set overall brightness for a dark theme
+  useMaterial3: true,
   brightness: Brightness.dark,
-  // Define the color scheme for a modern look
-  colorScheme: ColorScheme.dark(
-    primary: _customGreen, // Your main accent color
-    onPrimary: Colors.black, // Text/icons on primary color background
-    secondary: _customGreen, // Secondary accent color
-    onSecondary: Colors.black,
-    surface: Colors.black, // Overall app background
-    onSurface: Colors.white, // Text color on surfaces
+  colorScheme: const ColorScheme(
+    primary: primaryColor,
+    secondary: accentColor,
+    surface: surfaceColor,
+    background: backgroundColor,
+    error: errorColor,
+    onPrimary: onPrimaryColor,
+    onSecondary: onAccentColor,
+    onSurface: onSurfaceColor,
+    onBackground: onBackgroundColor,
+    onError: onErrorColor,
+    brightness: Brightness.dark,
   ),
-  // Text Theme
-  textTheme: const TextTheme(
-    titleLarge: TextStyle(color: Colors.white),
-    bodyLarge: TextStyle(color: Colors.white),
-    bodyMedium: TextStyle(color: Colors.white70),
+  scaffoldBackgroundColor: backgroundColor,
+  appBarTheme: const AppBarTheme(
+    color: surfaceColor,
+    titleTextStyle: TextStyle(color: onSurfaceColor, fontSize: 20, fontWeight: FontWeight.bold),
+    iconTheme: IconThemeData(color: onSurfaceColor),
   ),
-  // Elevated Button Theme for global button styling
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      foregroundColor: Colors.black, // Set button text/icon color to black
-      backgroundColor: _customGreen, // Set button background color to your primary green
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      backgroundColor: primaryColor,
+      foregroundColor: onPrimaryColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      textStyle: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
     ),
   ),
-  // Input Decoration Theme for global input field styling
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      foregroundColor: primaryColor,
+      side: const BorderSide(color: primaryColor),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+    ),
+  ),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: Colors.grey[800], // Dark background for input fields
+    fillColor: surfaceColor,
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide.none, // No border by default
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: Colors.grey[700]!, width: 1.0), // Grey border when enabled
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide.none,
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: _customGreen, width: 2.0), // Green border when focused
+      borderRadius: BorderRadius.circular(10),
+      borderSide: const BorderSide(color: primaryColor, width: 2),
     ),
-    labelStyle: TextStyle(color: Colors.grey[400]), // Label text color
-    hintStyle: TextStyle(color: Colors.grey[500]), // Hint text color
-    prefixIconColor: Colors.grey[400], // Icon color in text field
+    labelStyle: TextStyle(color: onSurfaceColor.withOpacity(0.6)),
+  ),
+  textTheme: const TextTheme(
+    titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: onBackgroundColor),
+    bodyMedium: TextStyle(fontSize: 16, color: onBackgroundColor),
+  ),
+  checkboxTheme: CheckboxThemeData(
+    checkColor: MaterialStateProperty.all(onPrimaryColor),
+    fillColor: MaterialStateProperty.all(primaryColor),
   ),
 );
