@@ -1,105 +1,131 @@
-// Import necessary Flutter foundation classes for ChangeNotifier.
 import 'package:flutter/foundation.dart';
-// Import url_launcher for opening external URLs.
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vcard/vcard.dart';
 
-// WhatsAppToolProvider extends ChangeNotifier, which allows it to notify its listeners
-// (widgets) when its data changes. This is the core of the Provider package.
 class WhatsAppToolProvider with ChangeNotifier {
-  // --- Internal State Variables ---
-  // These variables hold the data that the UI needs to display and react to.
   String _generatedLink = '';
   String? _barcodeData;
   String _outputMessage = 'Your generated output will appear here.';
 
-  // --- Getters to Access State Variables ---
-  // Widgets will use these getters to read the current state without directly modifying it.
   String get generatedLink => _generatedLink;
   String? get barcodeData => _barcodeData;
   String get outputMessage => _outputMessage;
 
-  // --- Business Logic Methods ---
-  // These methods contain the core logic for your app's features.
-  // They modify the internal state and then call notifyListeners() to trigger UI updates.
+  String? _validateAndCleanNumber(String number) {
+    String cleanNumber = number.trim();
 
-  // Converts the WhatsApp number to a chat link.
-  void generateChatLink(String number) {
-    if (number.isNotEmpty) {
-      _generatedLink = 'https://wa.me/$number';
+    if (cleanNumber.startsWith('+')) {
+      cleanNumber = cleanNumber.substring(1);
+    }
+
+    if (RegExp(r'[^\d]').hasMatch(cleanNumber)) {
+      _outputMessage = 'Error: Invalid characters found. Please use digits (0-9) only.';
+      return null;
+    }
+
+    if (cleanNumber.isEmpty) {
+      _outputMessage = 'Error: The number cannot be empty.';
+      return null;
+    }
+
+    if (cleanNumber.length < 7 || cleanNumber.length > 15) {
+      _outputMessage = 'Error: The number has an invalid length. Please double-check it.';
+      return null;
+    }
+
+    return cleanNumber;
+  }
+
+  void generateChatLink(String number, {String? message}) {
+    final cleanNumber = _validateAndCleanNumber(number);
+    if (cleanNumber != null) {
+      final queryParameters = {
+        if (message != null && message.isNotEmpty) 'text': message,
+      };
+      final uri = Uri.https('wa.me', cleanNumber, queryParameters);
+      _generatedLink = uri.toString();
       _outputMessage = 'Generated Link:\n$_generatedLink';
-      _barcodeData = null; // Clear barcode when generating a link.
+      _barcodeData = null;
     } else {
       _generatedLink = '';
-      _outputMessage = 'Please enter a WhatsApp number to generate a link.';
       _barcodeData = null;
     }
-    notifyListeners(); // Notify all listening widgets that the state has changed.
+    notifyListeners();
   }
 
-  // Generates a QR code that takes the user to the chat page.
-  void generateBarcodeForChat(String number) {
-    if (number.isNotEmpty) {
-      _barcodeData = 'https://wa.me/$number';
-      _outputMessage = 'QR Code generated for:\nhttps://wa.me/$number';
-      _generatedLink = ''; // Clear link when generating a barcode.
+  void generateBarcodeForChat(String number, {String? message}) {
+    final cleanNumber = _validateAndCleanNumber(number);
+    if (cleanNumber != null) {
+      final queryParameters = {
+        if (message != null && message.isNotEmpty) 'text': message,
+      };
+      final uri = Uri.https('wa.me', cleanNumber, queryParameters);
+      _barcodeData = uri.toString();
+      _outputMessage = 'QR Code generated for:\n$uri';
+      _generatedLink = '';
     } else {
       _barcodeData = null;
-      _outputMessage = 'Please enter a WhatsApp number to generate a QR Code.';
       _generatedLink = '';
     }
-    notifyListeners(); // Notify all listening widgets.
+    notifyListeners();
   }
 
-  // Opens the WhatsApp chat directly.
-  Future<String> openWhatsAppChat(String number) async {
-    if (number.isNotEmpty) {
-      final url = Uri.parse('https://wa.me/$number');
+  void generateVCardQrCode(String name, String number) {
+    final cleanNumber = _validateAndCleanNumber(number);
+    if (cleanNumber != null) {
+      VCard vCard = VCard();
+      vCard.firstName = name;
+      vCard.cellPhone = cleanNumber;
+      _barcodeData = vCard.getFormattedString();
+      _outputMessage = 'vCard QR code generated for $name.';
+      _generatedLink = '';
+    } else {
+      _barcodeData = null;
+      _generatedLink = '';
+    }
+    notifyListeners();
+  }
+
+  Future<String> openWhatsAppChat(String number, {String? message, bool isWeb = false}) async {
+    final cleanNumber = _validateAndCleanNumber(number);
+    if (cleanNumber != null) {
+      final queryParameters = {
+        if (message != null && message.isNotEmpty) 'text': message,
+      };
+      final authority = isWeb ? 'web.whatsapp.com' : 'wa.me';
+      final path = isWeb ? '/send' : '/' + cleanNumber;
+      if(isWeb) queryParameters['phone'] = cleanNumber;
+
+      final url = isWeb
+          ? Uri.https(authority, path, queryParameters)
+          : Uri.https(authority, path, queryParameters);
+
       if (await canLaunchUrl(url)) {
         await launchUrl(url);
-        _outputMessage = 'Attempted to open WhatsApp chat with $number.';
+        _outputMessage = 'Attempted to open WhatsApp chat with $cleanNumber.';
         _generatedLink = '';
         _barcodeData = null;
-        notifyListeners(); // Notify all listening widgets.
-        return 'Success'; // Return a success indicator.
+        notifyListeners();
+        return 'Success: Opening chat...';
       } else {
-        _outputMessage = 'Could not open WhatsApp chat. Please check the number or WhatsApp installation.';
+        _outputMessage = 'Error: Could not open WhatsApp. Ensure it is installed and the number is correct.';
         _generatedLink = '';
         _barcodeData = null;
-        notifyListeners(); // Notify all listening widgets.
-        return 'Error: Could not launch URL'; // Return an error indicator.
+        notifyListeners();
+        return 'Error: Could not launch URL';
       }
     } else {
-      _outputMessage = 'Please enter a WhatsApp number to open a chat.';
       _generatedLink = '';
       _barcodeData = null;
-      notifyListeners(); // Notify all listening widgets.
-      return 'Error: Empty number'; // Return an error indicator.
+      notifyListeners();
+      return 'Error: Invalid number provided.';
     }
   }
 
-  // Function to simulate sending an anonymous message.
-  // NOTE: This is a placeholder. Real anonymous messaging requires a backend service.
-  Future<String> sendAnonymousMessage(String number) async {
-    if (number.isNotEmpty) {
-      _outputMessage = 'Simulating sending an anonymous message to $number.\n(This feature requires a backend service to be fully functional)';
-      _generatedLink = '';
-      _barcodeData = null;
-      notifyListeners(); // Notify all listening widgets.
-      return 'Success: Simulated'; // Return a success indicator.
-    } else {
-      _outputMessage = 'Please enter a WhatsApp number to simulate sending an anonymous message.';
-      _generatedLink = '';
-      _barcodeData = null;
-      notifyListeners(); // Notify all listening widgets.
-      return 'Error: Empty number'; // Return an error indicator.
-    }
-  }
-
-  // Method to clear all outputs and reset the state.
-  void clearOutputs() {
+  void clearOutput() {
     _generatedLink = '';
     _barcodeData = null;
     _outputMessage = 'Your generated output will appear here.';
-    notifyListeners(); // Notify all listening widgets.
+    notifyListeners();
   }
 }

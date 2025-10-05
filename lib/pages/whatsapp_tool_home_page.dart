@@ -1,153 +1,264 @@
+
 // Import necessary Flutter packages.
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:provider/provider.dart'; // For accessing the provider.
 
 // Import the custom widgets that this page uses.
 import '../widgets/ad_space.dart';
 import '../widgets/feature_buttons.dart';
+import '../widgets/message_input_field.dart';
 import '../widgets/output_display.dart';
 import '../widgets/whatsapp_input_field.dart';
 
 // Import the WhatsAppToolProvider, located one directory up (../).
 import '../providers/whatsapp_tool_provider.dart';
 
-// WhatsAppToolHomePage is now a StatefulWidget because it manages its own
-// TextEditingController and the _showSnackBar function.
 class WhatsAppToolHomePage extends StatefulWidget {
-  const WhatsAppToolHomePage({super.key}); // Constructor.
+  const WhatsAppToolHomePage({super.key});
 
   @override
-  // createState creates the mutable state for this widget.
   State<WhatsAppToolHomePage> createState() => _WhatsAppToolHomePageState();
 }
 
-// _WhatsAppToolHomePageState holds the state for WhatsAppToolHomePage.
 class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
-  // TextEditingController still lives here because it's closely tied to this widget's lifecycle
-  // and direct interaction with the TextField.
   final TextEditingController _whatsAppNumberController = TextEditingController();
+  final TextEditingController _messageController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final GlobalKey _qrCodeKey = GlobalKey();
+  bool _isLoading = false; // To track loading state
 
   @override
-  // dispose is called when this State object will be removed from the tree permanently.
-  // It's crucial to dispose of controllers to prevent memory leaks.
   void dispose() {
-    _whatsAppNumberController.dispose(); // Dispose the text editing controller.
-    super.dispose(); // Call the superclass's dispose method.
+    _whatsAppNumberController.dispose();
+    _messageController.dispose();
+    _nameController.dispose();
+    super.dispose();
   }
 
-  // This function remains here because it interacts with the UI context (ScaffoldMessenger)
-  // and is not directly part of the core business logic in the provider.
   void _showSnackBar(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message), // The text content of the SnackBar.
-        backgroundColor: isError ? Colors.red[700] : Colors.green[700], // Red for error, green for success.
-        duration: const Duration(seconds: 3), // How long the SnackBar is visible.
-        behavior: SnackBarBehavior.floating, // Makes the SnackBar float above content.
+        content: Text(message),
+        backgroundColor: isError ? Colors.red[700] : Colors.green[700],
+        duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
+  void _setLoading(bool loading) {
+    if (mounted) {
+      setState(() {
+        _isLoading = loading;
+      });
+    }
+  }
+
+  void _clearAll() {
+    _whatsAppNumberController.clear();
+    _messageController.clear();
+    _nameController.clear();
+    context.read<WhatsAppToolProvider>().clearOutput();
+    _showSnackBar('Cleared all fields.');
+  }
+
+  void _copyLink() {
+    final provider = context.read<WhatsAppToolProvider>();
+    if (provider.outputMessage.startsWith('http')) {
+      Clipboard.setData(ClipboardData(text: provider.outputMessage));
+      _showSnackBar('Link copied to clipboard!');
+    } else {
+      _showSnackBar('No link to copy.', isError: true);
+    }
+  }
+
+  Future<void> _downloadQrCode() async {
+    final provider = context.read<WhatsAppToolProvider>();
+    if (provider.barcodeData == null || provider.barcodeData!.isEmpty) {
+      _showSnackBar('No QR Code to download.', isError: true);
+      return;
+    }
+
+    _setLoading(true);
+    try {
+      RenderRepaintBoundary boundary = _qrCodeKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      await ImageGallerySaver.saveImage(pngBytes, name: 'wassistant_qr_code');
+      _showSnackBar('QR Code saved to gallery!');
+    } catch (e) {
+      _showSnackBar('Failed to save QR Code: $e', isError: true);
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Scaffold provides the basic visual structure for a Material Design app.
     return Scaffold(
-      // AppBar displays a title and other common actions at the top of the screen.
-      appBar: AppBar(
-        title: const Text(
-          'WAssisTant',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            letterSpacing: 2.0,
-          ),
-        ),
-        centerTitle: true, // Centers the title in the app bar.
-        backgroundColor: Colors.grey[900], // Dark background for the app bar.
-        elevation: 5, // Adds a shadow below the app bar.
-      ),
-      // Body of the Scaffold contains the main content of the page, arranged in a Row.
-      body: Row(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: Stack(
         children: [
-          // Left AD placeholder column, using the custom AdSpaceWidget.
-          const Expanded(
-            flex: 1, // Takes 1 part of the available horizontal space.
-            child: AdSpaceWidget(isRotated: true), // Pass true to rotate text for left ad.
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 800) {
+                return _buildWideLayout();
+              } else {
+                return _buildNarrowLayout();
+              }
+            },
           ),
-          // Main content area, which is scrollable and contains the input, buttons, and output.
-          Expanded(
-            flex: 4, // Takes 4 parts of the available horizontal space (wider than AD columns).
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(30.0), // Padding around the content.
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center, // Center content vertically within the column.
-                crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch children horizontally to fill space.
-                children: [
-                  // Title for the input field section.
-                  Text(
-                    'Enter WhatsApp Number',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 22), // Use theme's titleLarge style.
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20), // Vertical spacing.
-
-                  // WhatsApp Number Input Field, using the custom WhatsAppInputField widget.
-                  WhatsAppInputField(
-                    controller: _whatsAppNumberController, // Pass the controller.
-                  ),
-                  const SizedBox(height: 40), // Vertical spacing.
-
-                  // Feature Buttons, using the custom FeatureButtons widget.
-                  // We use `context.read<WhatsAppToolProvider>()` to access the provider's methods
-                  // without causing this widget to rebuild when the provider's data changes.
-                  // We only need to *call* the methods, not react to their state.
-                  FeatureButtons(
-                    onGenerateQrCode: () => context.read<WhatsAppToolProvider>().generateBarcodeForChat(_whatsAppNumberController.text.trim()),
-                    onGenerateLink: () => context.read<WhatsAppToolProvider>().generateChatLink(_whatsAppNumberController.text.trim()),
-                    onOpenChat: () async {
-                      // We need to await the result and use it for the SnackBar.
-                      final result = await context.read<WhatsAppToolProvider>().openWhatsAppChat(_whatsAppNumberController.text.trim());
-                      // Check if the result string indicates an error (as designed in the provider).
-                      if (result.startsWith('Error')) {
-                        _showSnackBar(result.substring(7), isError: true); // Remove "Error: " prefix for cleaner message.
-                      } else {
-                        _showSnackBar(result); // Show success message directly from provider.
-                      }
-                    },
-                    onSendAnonymousMessage: () async {
-                      final result = await context.read<WhatsAppToolProvider>().sendAnonymousMessage(_whatsAppNumberController.text.trim());
-                      if (result.startsWith('Error')) {
-                        _showSnackBar(result.substring(7), isError: true);
-                      } else {
-                        _showSnackBar(result);
-                      }
-                    },
-                    onShowSnackBar: _showSnackBar, // Pass the local snackbar function.
-                  ),
-                  const SizedBox(height: 50), // Vertical spacing.
-
-                  // Output Field Container, using the custom OutputDisplay widget.
-                  // We use `Consumer<WhatsAppToolProvider>` to listen for changes
-                  // in the provider and rebuild this widget when the data changes.
-                  Consumer<WhatsAppToolProvider>(
-                    builder: (context, provider, child) {
-                      return OutputDisplay(
-                        outputMessage: provider.outputMessage, // Get message from provider.
-                        barcodeData: provider.barcodeData, // Get barcode data from provider.
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 30), // Vertical spacing at the bottom.
-                ],
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(),
               ),
             ),
-          ),
-          // Right AD placeholder column, using the custom AdSpaceWidget.
-          const Expanded(
-            flex: 1, // Takes 1 part of the available horizontal space.
-            child: AdSpaceWidget(isRotated: false), // Pass false for right ad (no rotation needed for right).
-          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWideLayout() {
+    return Row(
+      children: [
+        const Expanded(flex: 1, child: AdSpaceWidget(isRotated: true)),
+        Expanded(flex: 4, child: _buildMainContent()),
+        const Expanded(flex: 1, child: AdSpaceWidget(isRotated: false)),
+      ],
+    );
+  }
+
+  Widget _buildNarrowLayout() {
+    return Column(
+      children: [
+        const AdSpaceWidget(isRotated: false),
+        Expanded(child: _buildMainContent()),
+        const AdSpaceWidget(isRotated: false),
+      ],
+    );
+  }
+
+  Widget _buildMainContent() {
+    return AbsorbPointer(
+      absorbing: _isLoading,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(30.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'WA',
+                      style: TextStyle(color: Colors.green[500], fontWeight: FontWeight.bold, fontSize: 48, letterSpacing: 3.0),
+                    ),
+                    TextSpan(
+                      text: 'ssistant',
+                      style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold, fontSize: 48, letterSpacing: 3.0),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 50),
+              WhatsAppInputField(controller: _whatsAppNumberController),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Name (for vCard)',
+                  hintText: 'Enter name for vCard generation...',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+              MessageInputField(controller: _messageController),
+              const SizedBox(height: 50),
+              FeatureButtons(
+                isLoading: _isLoading,
+                onGenerateQrCode: () => context.read<WhatsAppToolProvider>().generateBarcodeForChat(
+                      _whatsAppNumberController.text.trim(),
+                      message: _messageController.text.trim(),
+                    ),
+                onGenerateLink: () => context.read<WhatsAppToolProvider>().generateChatLink(
+                      _whatsAppNumberController.text.trim(),
+                      message: _messageController.text.trim(),
+                    ),
+                onGenerateVCard: () => context.read<WhatsAppToolProvider>().generateVCardQrCode(
+                      _nameController.text.trim(),
+                      _whatsAppNumberController.text.trim(),
+                    ),
+                onOpenChat: () async {
+                  _setLoading(true);
+                  try {
+                    final result = await context.read<WhatsAppToolProvider>().openWhatsAppChat(
+                          _whatsAppNumberController.text.trim(),
+                          message: _messageController.text.trim(),
+                        );
+                    if (result.startsWith('Error')) {
+                      _showSnackBar(result, isError: true);
+                    } else {
+                      _showSnackBar(result);
+                    }
+                  } finally {
+                    _setLoading(false);
+                  }
+                },
+                onOpenChatWeb: () async {
+                  _setLoading(true);
+                  try {
+                    final result = await context.read<WhatsAppToolProvider>().openWhatsAppChat(
+                          _whatsAppNumberController.text.trim(),
+                          message: _messageController.text.trim(),
+                          isWeb: true,
+                        );
+                    if (result.startsWith('Error')) {
+                      _showSnackBar(result, isError: true);
+                    } else {
+                      _showSnackBar(result);
+                    }
+                  } finally {
+                    _setLoading(false);
+                  }
+                },
+                onShowSnackBar: _showSnackBar,
+                onClearAll: _clearAll,
+                onCopyLink: _copyLink,
+                onDownloadQrCode: _downloadQrCode,
+              ),
+              const SizedBox(height: 50),
+              RepaintBoundary(
+                key: _qrCodeKey,
+                child: Consumer<WhatsAppToolProvider>(
+                  builder: (context, provider, child) {
+                    return OutputDisplay(
+                      outputMessage: provider.outputMessage,
+                      barcodeData: provider.barcodeData,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 30),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -1,106 +1,178 @@
-// Import necessary packages from Flutter material library.
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// Import font_awesome_flutter for brand-specific icons like WhatsApp.
+import 'package:flutter/services.dart'; // Import for HapticFeedback
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-// FeatureButtons is a StatelessWidget because it doesn't manage its own state.
-// It takes callback functions as parameters to notify the parent when a button is pressed.
 class FeatureButtons extends StatelessWidget {
-  // Callback function for when the "Generate QR Code" button is pressed.
+  final bool isLoading;
   final VoidCallback onGenerateQrCode;
-  // Callback function for when the "Generate Link" button is pressed.
   final VoidCallback onGenerateLink;
-  // Callback function for when the "Open WhatsApp Chat" button is pressed.
-  final AsyncCallback onOpenChat; // Changed to AsyncCallback for async function
-  // Callback function for when the "Send Anonymous Message" button is pressed.
-  final AsyncCallback onSendAnonymousMessage; // Changed to AsyncCallback for async function
-  // Callback function to show a SnackBar message (used for placeholder features).
-  final Function(String message, {bool isError}) onShowSnackBar; // Removed BuildContext
+  final AsyncCallback onOpenChat;
+  final AsyncCallback onOpenChatWeb;
+  final VoidCallback onGenerateVCard;
+  final Function(String message, {bool isError}) onShowSnackBar;
+  final VoidCallback onClearAll;
+  final VoidCallback onCopyLink;
+  final VoidCallback onDownloadQrCode;
 
-  // Constructor requires all callback functions to be provided.
   const FeatureButtons({
     super.key,
+    required this.isLoading,
     required this.onGenerateQrCode,
     required this.onGenerateLink,
     required this.onOpenChat,
-    required this.onSendAnonymousMessage,
+    required this.onOpenChatWeb,
+    required this.onGenerateVCard,
     required this.onShowSnackBar,
+    required this.onClearAll,
+    required this.onCopyLink,
+    required this.onDownloadQrCode,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Wrap widget arranges its children in a horizontal flow and wraps them to the next line
-    // if there's not enough space. This is great for responsive button layouts.
-    return Wrap(
-      spacing: 15.0, // Horizontal spacing between buttons.
-      runSpacing: 15.0, // Vertical spacing between rows of buttons when they wrap.
-      alignment: WrapAlignment.center, // Centers the buttons horizontally.
+    // Common onPressed handler
+    void handlePress(VoidCallback callback) {
+      if (isLoading) return;
+      HapticFeedback.mediumImpact();
+      callback();
+    }
+
+    // Helper for consistent button styling for primary actions
+    Widget buildButton({
+      required VoidCallback onPressed,
+      required IconData icon,
+      required String label,
+      double? width,
+      double? height,
+    }) {
+      return SizedBox(
+        width: width ?? 200,
+        height: height ?? 60,
+        child: ElevatedButton.icon(
+          onPressed: () => handlePress(onPressed),
+          icon: Icon(icon),
+          label: Text(label),
+          style: ElevatedButton.styleFrom(
+            // Dim the button when loading
+            backgroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      );
+    }
+
+    return Column(
       children: [
-        // Button to generate a QR Code.
-        SizedBox(
-          width: 200, // Fixed width for consistent button size.
-          height: 60, // Fixed height for consistent button size.
-          child: ElevatedButton.icon(
-            onPressed: onGenerateQrCode, // Call the provided callback when pressed.
-            icon: const Icon(Icons.qr_code_2), // Material Design QR code icon.
-            label: const Text('Generate QR Code'), // Button text.
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: buildButton(
+                onPressed: onGenerateQrCode,
+                icon: Icons.qr_code,
+                label: 'Generate QR Code',
+              ),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: buildButton(
+                onPressed: onGenerateLink,
+                icon: Icons.link,
+                label: 'Generate Link',
+              ),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: buildButton(
+                onPressed: onGenerateVCard,
+                icon: Icons.contact_mail,
+                label: 'Generate vCard',
+              ),
+            ),
+          ],
         ),
-        // Button to generate a WhatsApp Link.
-        SizedBox(
-          width: 200,
-          height: 60,
-          child: ElevatedButton.icon(
-            onPressed: onGenerateLink, // Call the provided callback when pressed.
-            icon: const Icon(Icons.link), // Material Design link icon.
-            label: const Text('Generate Link'),
-          ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: buildButton(
+                onPressed: onOpenChat,
+                icon: FontAwesomeIcons.whatsapp,
+                label: 'Open Chat',
+              ),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: buildButton(
+                onPressed: onOpenChatWeb,
+                icon: FontAwesomeIcons.whatsapp,
+                label: 'Open in Web',
+              ),
+            ),
+          ],
         ),
-        // Button to open WhatsApp Chat directly.
-        SizedBox(
-          width: 200,
-          height: 60,
-          child: ElevatedButton.icon(
-            onPressed: onOpenChat, // Call the provided callback when pressed.
-            icon: const Icon(FontAwesomeIcons.whatsapp), // Font Awesome WhatsApp icon.
-            label: const Text('Open WhatsApp Chat'),
-          ),
-        ),
-        // Button to simulate sending an Anonymous Message.
-        SizedBox(
-          width: 200,
-          height: 60,
-          child: ElevatedButton.icon(
-            onPressed: onSendAnonymousMessage, // Call the provided callback when pressed.
-            icon: const Icon(Icons.privacy_tip), // Material Design privacy icon.
-            label: const Text('Send Anonymous Msg'),
-          ),
-        ),
-        // Placeholder button for a new feature.
-        SizedBox(
-          width: 200,
-          height: 60,
-          child: ElevatedButton.icon(
-            onPressed: () {
-              // Use the provided onShowSnackBar callback to show a message.
-              onShowSnackBar('Another feature coming soon!', isError: true);
-            },
-            icon: const Icon(Icons.add_box), // Material Design add box icon.
-            label: const Text('New Feature 1'),
-          ),
-        ),
-        // Another placeholder button for a new feature.
-        SizedBox(
-          width: 200,
-          height: 60,
-          child: ElevatedButton.icon(
-            onPressed: () {
-              onShowSnackBar('Another feature coming soon!', isError: true);
-            },
-            icon: const Icon(Icons.settings), // Material Design settings icon.
-            label: const Text('New Feature 2'),
-          ),
+        const SizedBox(height: 20), // Spacing between the rows
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // "Copy Link" as an OutlinedButton for a secondary look
+            Expanded(
+              child: SizedBox(
+                width: 200,
+                height: 60,
+                child: OutlinedButton.icon(
+                  onPressed: () => handlePress(onCopyLink),
+                  icon: const Icon(Icons.copy),
+                  label: const Text('Copy Link'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
+                    side: BorderSide(color: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 20),
+            // "Download QR" button
+            Expanded(
+              child: SizedBox(
+                width: 200,
+                height: 60,
+                child: OutlinedButton.icon(
+                  onPressed: () => handlePress(onDownloadQrCode),
+                  icon: const Icon(Icons.download),
+                  label: const Text('Download QR'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
+                    side: BorderSide(color: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 20),
+            // "Clear All" with a red background for a destructive action
+            Expanded(
+              child: SizedBox(
+                width: 200,
+                height: 60,
+                child: ElevatedButton.icon(
+                  onPressed: () => handlePress(onClearAll),
+                  icon: const Icon(Icons.clear_all),
+                  label: const Text('Clear All'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isLoading ? Colors.grey : Colors.red[700],
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
