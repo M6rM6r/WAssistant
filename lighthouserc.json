@@ -2,11 +2,22 @@
   "ci": {
     "collect": {
       "numberOfRuns": 1,
-      "url": [
-        "https://wassistant-707.web.app/"
-      ],
+      "url": ["https://wassistant-707.web.app/"],
       "settings": {
         "chromeFlags": "--headless --disable-gpu --no-sandbox"
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:no-pwa",
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.9 }],
+        "categories:accessibility": ["warn", { "minScore": 0.9 }],
+        "categories:best-practices": ["warn", { "minScore": 0.9 }],
+        "categories:seo": ["warn", { "minScore": 0.9 }],
+        "first-contentful-paint": ["warn", { "maxNumericValue": 2000 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "total-blocking-time": ["warn", { "maxNumericValue": 300 }]
       }
     },
     "upload": {

@@ -1,0 +1,110 @@
+name: Lighthouse Preview
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  preview-lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build web with WASM
+        run: flutter build web --release --wasm
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Create preview channel
+        id: preview
+        run: |
+          CHANNEL_ID="pr-${{ github.event.pull_request.number }}-$(date +%Y%m%d-%H%M)"
+          firebase hosting:channel:deploy "$CHANNEL_ID" --expires 7d --json > deploy-output.json
+          PREVIEW_URL=$(cat deploy-output.json | jq -r '.result."wassistant-707".url')
+          echo "url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+          echo "channel=$CHANNEL_ID" >> $GITHUB_OUTPUT
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli
+
+      - name: Prepare output directory
+        run: mkdir -p build/lighthouse
+
+      - name: Run Lighthouse on preview
+        run: |
+          cat > lighthouserc.preview.json << EOF
+          {
+            "ci": {
+              "collect": {
+                "numberOfRuns": 1,
+                "url": ["${{ steps.preview.outputs.url }}"],
+                "settings": {
+                  "chromeFlags": "--headless --disable-gpu --no-sandbox"
+                }
+              },
+              "assert": {
+                "preset": "lighthouse:no-pwa",
+                "assertions": {
+                  "categories:performance": ["warn", {"minScore": 0.85}],
+                  "categories:accessibility": ["warn", {"minScore": 0.9}],
+                  "first-contentful-paint": ["warn", {"maxNumericValue": 2500}],
+                  "largest-contentful-paint": ["warn", {"maxNumericValue": 3000}]
+                }
+              },
+              "upload": {
+                "target": "filesystem",
+                "outputDir": "build/lighthouse"
+              }
+            }
+          }
+          EOF
+          lhci autorun --config=./lighthouserc.preview.json
+
+      - name: Comment PR with results
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const previewUrl = '${{ steps.preview.outputs.url }}';
+            const channel = '${{ steps.preview.outputs.channel }}';
+
+            const comment = `## 🔍 Lighthouse Preview Report
+
+            **Preview URL:** ${previewUrl}
+            **Channel:** \`${channel}\` (expires in 7 days)
+
+            Lighthouse CI has completed. Check the artifacts for detailed reports.
+
+            ---
+            _This preview was automatically generated for PR #${{ github.event.pull_request.number }}_`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Upload Lighthouse artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-preview-report
+          path: build/lighthouse

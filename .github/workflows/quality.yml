@@ -1,0 +1,63 @@
+name: Quality Checks
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  python:
+    name: Python Lint & Types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install project with dev extras
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[dev]
+      - name: Ruff Lint
+        run: ruff check tools backend python_scripts
+      - name: Ruff Format (check)
+        run: ruff format --check tools backend python_scripts
+      - name: MyPy Types
+        run: mypy tools backend python_scripts --ignore-missing-imports
+
+  flutter:
+    name: Flutter Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4'
+          cache: true
+      - name: Get packages
+        run: flutter pub get
+      - name: Analyze
+        run: dart analyze --fatal-infos
+      - name: Tests
+        run: flutter test --reporter=compact
+
+  web:
+    name: Web Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install
+        run: npm ci || npm i
+      - name: ESLint
+        run: npm run lint:js
+      - name: Stylelint
+        run: npm run lint:css || true
+      - name: Prettier Check
+        run: npm run format:check
