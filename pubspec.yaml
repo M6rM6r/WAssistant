@@ -92,7 +92,7 @@ dev_dependencies:
   mockito: ^5.4.4
 
   # --- Development Tools ---
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ">=0.13.1 <0.15.0"
   flutter_native_splash: ^2.3.10
 
 flutter:
