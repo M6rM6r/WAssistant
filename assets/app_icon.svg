@@ -1,0 +1,30 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: Deep Cyberpunk Black -->
+  <rect width="1024" height="1024" rx="200" fill="#050505"/>
+  
+  <!-- Outer Glow Effect -->
+  <circle cx="512" cy="512" r="400" fill="url(#paint0_radial)" fill-opacity="0.15"/>
+
+  <!-- Main WhatsApp-inspired Bubble with Tech Edges -->
+  <path d="M512 180C328.65 180 180 328.65 180 512C180 580.5 200.7 644.4 236.25 697.5L180 844L333.45 790.2C384.3 821.25 445.95 844 512 844C695.35 844 844 695.35 844 512C844 328.65 695.35 180 512 180ZM512 780C456.3 780 403.65 762.75 359.55 733.05L348.75 726.3L256.05 758.7L289.35 669.6L281.7 657.45C249.3 605.25 232.2 545.4 232.2 483.3C232.2 328.95 357.75 203.4 512.1 203.4C666.45 203.4 792 328.95 792 483.3C792 637.65 666.45 763.2 512.1 763.2L512 780Z" fill="#00E676"/>
+
+  <!-- Tech/QR/Link Hybrid Center Symbol -->
+  <!-- QR Corner square -->
+  <rect x="400" y="380" width="80" height="80" rx="10" stroke="#00A884" stroke-width="15"/>
+  <rect x="420" y="400" width="40" height="40" rx="4" fill="#00A884"/>
+  
+  <!-- Link/Chain inspired abstract lines -->
+  <path d="M540 380H620V460H540V380Z" stroke="#00E676" stroke-width="15" stroke-linejoin="round"/>
+  <path d="M400 540H480V620H400V540Z" stroke="#00E676" stroke-width="15" stroke-linejoin="round"/>
+  
+  <!-- Connection nodes -->
+  <circle cx="580" cy="580" r="40" fill="#00A884"/>
+  <path d="M480 420H540M580 460V540M440 540V480H512" stroke="#00E676" stroke-width="10" stroke-linecap="round"/>
+
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 512) rotate(90) scale(400)">
+      <stop offset="0" stop-color="#00E676"/>
+      <stop offset="1" stop-color="#050505" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

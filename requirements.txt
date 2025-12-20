@@ -1,0 +1,11 @@
+# Core Dependencies
+Pillow>=10.0.0
+qrcode[pil]>=7.4.2
+requests>=2.31.0
+
+# Dev / Tools (OCPD Friendly: Strict & Organized)
+invoke>=2.2.0        # Task runner
+black>=24.2.0        # Code formatter
+flake8>=7.0.0        # Linter
+mypy>=1.8.0          # Static type checker
+isort>=5.13.0        # Import sorter

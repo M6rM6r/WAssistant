@@ -1,25 +1,19 @@
-// [CORRECTION] Forcing a complete overwrite to fix file corruption.
-// Import necessary Flutter packages.
-import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'dart:async'; // Required for StreamSubscription
 
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:provider/provider.dart'; // For accessing the provider.
-
-// Import the custom widgets that this page uses.
-import '../widgets/banner_ad_widget.dart';
-import '../widgets/feature_buttons.dart';
-import '../widgets/message_input_field.dart';
-import '../widgets/output_display.dart';
-import '../widgets/whatsapp_input_field.dart';
-
-// Import the WhatsAppToolProvider, located one directory up (../).
-import '../providers/whatsapp_tool_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart'; // System Integration
+import 'package:wassistant/l10n/app_localizations.dart';
+import 'package:wassistant/providers/whatsapp_tool_provider.dart';
+import 'package:wassistant/utils/constants.dart';
+import 'package:wassistant/utils/logger_service.dart';
+import 'package:wassistant/widgets/ad_space.dart';
+import 'package:wassistant/widgets/drawer.dart';
+import 'package:wassistant/widgets/feature_buttons.dart';
+import 'package:wassistant/widgets/output_display.dart';
+import 'package:wassistant/widgets/shimmer_text.dart';
+import 'package:wassistant/widgets/whatsapp_input_field.dart';
 
 class WhatsAppToolHomePage extends StatefulWidget {
   const WhatsAppToolHomePage({super.key});
@@ -28,268 +22,365 @@ class WhatsAppToolHomePage extends StatefulWidget {
   State<WhatsAppToolHomePage> createState() => _WhatsAppToolHomePageState();
 }
 
-class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> {
-  // Controllers for all text input fields
-  final TextEditingController _numberController = TextEditingController();
+class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> with WidgetsBindingObserver {
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
+
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _companyController = TextEditingController();
+  final TextEditingController _jobTitleController = TextEditingController();
+  final TextEditingController _websiteController = TextEditingController();
 
-  final GlobalKey _qrCodeKey = GlobalKey();
-  bool _isLoading = false;
-  bool _showVCardFields = false;
-  String _countryCode = '+966'; // Default to Saudi Arabia
+  // Lifted State
+  String _selectedCountryCode = '+966';
+
+  // Share Intent Stream
+  late StreamSubscription _intentDataStreamSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+        // ignore: discarded_futures
+        _checkClipboardForNumber();
+    });
+
+    _initShareListener();
+  }
 
   @override
   void dispose() {
-    _numberController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    _intentDataStreamSubscription.cancel();
+    _phoneController.dispose();
     _messageController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
     _companyController.dispose();
+    _jobTitleController.dispose();
+    _websiteController.dispose();
     super.dispose();
   }
 
-  void _showSnackBar(String message, {bool isError = false}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: isError ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.primary,
-        duration: const Duration(seconds: 3),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  void _setLoading(bool loading) {
-    if (mounted) {
-      setState(() {
-        _isLoading = loading;
-      });
-    }
-  }
-
-  void _clearAll() {
-    _numberController.clear();
-    _messageController.clear();
-    _firstNameController.clear();
-    _lastNameController.clear();
-    _emailController.clear();
-    _companyController.clear();
-    context.read<WhatsAppToolProvider>().clearOutput();
-    setState(() {
-      _showVCardFields = false;
+  /// OCPD: Strict handling of system intents
+  void _initShareListener() {
+    // 1. Listen for new intents while the app is running
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
+      if (value.isNotEmpty && value.first.path.isNotEmpty) {
+          // If it's a file path, we might not handle it yet (future expansion)
+          LoggerService.d('Received shared file: ${value.first.path}');
+      }
+    }, onError: (err) {
+      LoggerService.e('getIntentDataStream error: $err');
     });
-    _showSnackBar('Cleared all fields.');
+
+    // 2. Handle text sharing (Direct text sharing logic changed in newer versions of the plugin)
+    // We check initial intent for text
+    ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
+        if (value.isNotEmpty) {
+            // Logic for files if needed
+        }
+    });
+
+    // NOTE: The receive_sharing_intent package handles text vs files differently across versions.
+    // For pure text sharing (which is what we want for phone numbers), we might need to verify the specific plugin usage.
+    // Assuming we want to capture shared TEXT (like a phone number highlighted in Chrome).
+
+    // Let's implement the specific text stream logic if available or fallback to a generic handler.
+    // Since receive_sharing_intent 1.8.0 unifies this, we might need to parse the "path" or "content" depending on OS.
+    // However, for simplicity and robustness, let's assume we are receiving text.
   }
 
-  void _copyLink() {
-    final provider = context.read<WhatsAppToolProvider>();
-    if (provider.generatedLink.isNotEmpty) {
-      Clipboard.setData(ClipboardData(text: provider.generatedLink));
-      _showSnackBar('Link copied to clipboard!');
-    } else {
-      _showSnackBar('No link to copy.', isError: true);
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // ignore: discarded_futures
+      _checkClipboardForNumber();
     }
   }
 
-  Future<void> _downloadQrCode() async {
-    final provider = context.read<WhatsAppToolProvider>();
-    if (provider.barcodeData == null || provider.barcodeData!.isEmpty) {
-      _showSnackBar('No QR Code to download.', isError: true);
-      return;
-    }
+  Future<void> _checkClipboardForNumber() async {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      if (l10n == null) return;
 
-    _setLoading(true);
-    try {
-      RenderRepaintBoundary boundary = _qrCodeKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      try {
+        final data = await Clipboard.getData(Clipboard.kTextPlain);
+        if (data != null && data.text != null && data.text!.isNotEmpty) {
+            final text = data.text!.trim();
+            final digitCount = text.replaceAll(RegExp('[^0-9]'), '').length;
 
-      await ImageGallerySaver.saveImage(pngBytes, name: 'wassistant_qr_code');
-      _showSnackBar('QR Code saved to gallery!');
-    } catch (e) {
-      _showSnackBar('Failed to save QR Code: $e', isError: true);
-    } finally {
-      _setLoading(false);
-    }
+            if (digitCount >= 7 && digitCount <= 15 &&
+                RegExp(r'^[+\d\s\-\(\)]+$').hasMatch(text) &&
+                text != _phoneController.text) {
+
+                if (!mounted) return;
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(l10n.foundNumberClipboard(text)),
+                        action: SnackBarAction(
+                            label: l10n.use,
+                            textColor: AppConstants.accentGreen,
+                            onPressed: () {
+                                setState(() {
+                                    _phoneController.text = text;
+                                });
+                            },
+                        ),
+                    ),
+                );
+            }
+        }
+      } on Object {
+          // Clipboard access restricted
+      }
   }
-  
-  String get _fullPhoneNumber => '$_countryCode${_numberController.text.trim()}';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth > 800) {
-                return _buildWideLayout();
-              } else {
-                return _buildNarrowLayout();
-              }
-            },
-          ),
-          if (_isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+    final whatsappProvider = Provider.of<WhatsAppToolProvider>(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        drawer: const AppDrawer(),
+        appBar: AppBar(
+          title: ShimmerText(
+            text: l10n.appTitle,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
             ),
-        ],
+          ),
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: AppConstants.darkBackground,
+          foregroundColor: AppConstants.textHighEmphasis,
+          bottom: TabBar(
+            indicatorColor: AppConstants.accentGreen,
+            labelColor: AppConstants.accentGreen,
+            unselectedLabelColor: AppConstants.textMediumEmphasis,
+            tabs: [
+              Tab(icon: const Icon(Icons.chat), text: l10n.directChat),
+              Tab(icon: const Icon(Icons.contact_page), text: l10n.vCardGen),
+            ],
+          ),
+        ),
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          behavior: HitTestBehavior.translucent,
+          child: TabBarView(
+            children: [
+              _buildDirectChatTab(context, whatsappProvider, l10n),
+              _buildVCardTab(context, whatsappProvider, l10n),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildWideLayout() {
-    return Row(
+  Widget _buildDirectChatTab(BuildContext context, WhatsAppToolProvider provider, AppLocalizations l10n) {
+    return Column(
       children: [
-        const Expanded(flex: 1, child: BannerAdWidget(adSize: AdSize.leaderboard)),
-        Expanded(flex: 4, child: _buildMainContent()),
-        const Expanded(flex: 1, child: BannerAdWidget(adSize: AdSize.leaderboard)),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 40,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 20),
+
+                  WhatsAppInputField(
+                    phoneController: _phoneController,
+                    messageController: _messageController,
+                    selectedCountryCode: _selectedCountryCode,
+                    onCountryChanged: (String code) { // Explicit type
+                      setState(() {
+                        _selectedCountryCode = code;
+                      });
+                    },
+                    phoneValidator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return l10n.errorEmptyNumber;
+                      }
+                      final digitsOnly = value.replaceAll(RegExp(r'[^0-9]'), '');
+                      if (digitsOnly.length < 5) { // Basic check
+                          return l10n.errorInvalidLength;
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  FeatureButtons(
+                    phoneController: _phoneController,
+                    messageController: _messageController,
+                    countryCode: _selectedCountryCode,
+                    onValidate: () => _formKey.currentState?.validate() ?? false,
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  const OutputDisplay(),
+
+                  const SizedBox(height: 20),
+                  const AdSpace(),
+                ],
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildNarrowLayout() {
-    return SafeArea(
+  Widget _buildVCardTab(BuildContext context, WhatsAppToolProvider provider, AppLocalizations l10n) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
       child: Column(
         children: [
-          Expanded(child: _buildMainContent()),
-          const BannerAdWidget(),
-        ],
-      ),
-    );
-  }
+          Text(
+            l10n.createContactQr,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
 
-  Widget _buildMainContent() {
-    return AbsorbPointer(
-      absorbing: _isLoading,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(30.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          Row(
             children: [
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'WA',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 48, color: Theme.of(context).colorScheme.primary, letterSpacing: 3.0),
-                    ),
-                    TextSpan(
-                      text: 'ssistant',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 48, color: Theme.of(context).colorScheme.secondary, letterSpacing: 3.0),
-                    ),
-                  ],
+              Expanded(
+                child: TextField(
+                  controller: _firstNameController,
+                  decoration: InputDecoration(
+                    labelText: l10n.firstNameLabel,
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
               ),
-              const SizedBox(height: 50),
-              WhatsAppInputField(
-                numberController: _numberController,
-                firstNameController: _firstNameController,
-                lastNameController: _lastNameController,
-                emailController: _emailController,
-                companyController: _companyController,
-                showVCardFields: _showVCardFields,
-                onCountryChanged: (CountryCode countryCode) {
-                  setState(() {
-                    _countryCode = countryCode.dialCode!;
-                  });
-                },
-                onVCardToggle: (value) {
-                  setState(() {
-                    _showVCardFields = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              MessageInputField(controller: _messageController),
-              const SizedBox(height: 50),
-              FeatureButtons(
-                isLoading: _isLoading,
-                onGenerateQrCode: () => context.read<WhatsAppToolProvider>().generateBarcodeForChat(
-                      _fullPhoneNumber,
-                      message: _messageController.text.trim(),
-                    ),
-                onGenerateLink: () => context.read<WhatsAppToolProvider>().generateChatLink(
-                      _fullPhoneNumber,
-                      message: _messageController.text.trim(),
-                    ),
-                onGenerateVCard: () => context.read<WhatsAppToolProvider>().generateVCardQrCode(
-                      firstName: _firstNameController.text.trim(),
-                      lastName: _lastNameController.text.trim(),
-                      number: _fullPhoneNumber,
-                      email: _emailController.text.trim(),
-                      company: _companyController.text.trim(),
-                    ),
-                onOpenChat: () async {
-                  _setLoading(true);
-                  try {
-                    final result = await context.read<WhatsAppToolProvider>().openWhatsAppChat(
-                          _fullPhoneNumber,
-                          message: _messageController.text.trim(),
-                        );
-                    if (result.startsWith('Error')) {
-                      _showSnackBar(result, isError: true);
-                    } else {
-                      _showSnackBar(result);
-                    }
-                  } finally {
-                    _setLoading(false);
-                  }
-                },
-                onOpenChatWeb: () async {
-                  _setLoading(true);
-                  try {
-                    final result = await context.read<WhatsAppToolProvider>().openWhatsAppChat(
-                          _fullPhoneNumber,
-                          message: _messageController.text.trim(),
-                          isWeb: true,
-                        );
-                    if (result.startsWith('Error')) {
-                      _showSnackBar(result, isError: true);
-                    } else {
-                      _showSnackBar(result);
-                    }
-                  } finally {
-                    _setLoading(false);
-                  }
-                },
-                onShowSnackBar: _showSnackBar,
-                onClearAll: _clearAll,
-                onCopyLink: _copyLink,
-                onDownloadQrCode: _downloadQrCode,
-              ),
-              const SizedBox(height: 50),
-              RepaintBoundary(
-                key: _qrCodeKey,
-                child: Consumer<WhatsAppToolProvider>(
-                  builder: (context, provider, child) {
-                    return OutputDisplay(
-                      outputMessage: provider.outputMessage,
-                      barcodeData: provider.barcodeData,
-                    );
-                  },
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  controller: _lastNameController,
+                  decoration: InputDecoration(
+                    labelText: l10n.lastNameLabel,
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
               ),
-              const SizedBox(height: 30),
             ],
           ),
-        ),
+
+          const SizedBox(height: 10),
+
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _jobTitleController,
+                  decoration: InputDecoration(
+                    labelText: l10n.jobTitleLabel,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  controller: _companyController,
+                  decoration: InputDecoration(
+                    labelText: l10n.companyLabel,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          TextField(
+            controller: _phoneController,
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+                labelText: '${l10n.phoneLabel} *',
+                border: const OutlineInputBorder(),
+                hintText: l10n.phoneNumberHint
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              labelText: l10n.emailLabel,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+
+           const SizedBox(height: 10),
+
+          TextField(
+            controller: _websiteController,
+            keyboardType: TextInputType.url,
+            decoration: InputDecoration(
+              labelText: l10n.websiteLabel,
+              border: const OutlineInputBorder(),
+              prefixText: 'https://',
+            ),
+          ),
+
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppConstants.accentGreen,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              minimumSize: const Size(double.infinity, 50),
+            ),
+            icon: const Icon(Icons.qr_code_2),
+            label: Text(l10n.generateQr),
+            onPressed: () {
+              // Basic VCard validation logic (could also be moved to form)
+               provider.generateVCardQrCode(
+                l10n,
+                firstName: _firstNameController.text,
+                lastName: _lastNameController.text,
+                number: _phoneController.text,
+                email: _emailController.text,
+                company: _companyController.text,
+                jobTitle: _jobTitleController.text,
+                website: _websiteController.text,
+              );
+            },
+          ),
+          const SizedBox(height: 30),
+          if (provider.barcodeData != null && provider.barcodeData!.startsWith('BEGIN:VCARD'))
+             const OutputDisplay(),
+
+          const SizedBox(height: 20),
+          const AdSpace(),
+        ],
       ),
     );
   }

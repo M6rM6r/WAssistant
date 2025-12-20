@@ -1,80 +1,46 @@
+
 import 'package:flutter/material.dart';
 
-const Color primaryColor = Color(0xFF4CAF50); // Green
-const Color accentColor = Color(0xFF607D8B); // Blue Grey
+class AppTheme {
+  static const Color _primarySeedColor = Color(0xFF075E54); // A classic WhatsApp-like green
 
-// Dark Theme Colors
-const Color surfaceColor = Color(0xFF212121); // Material dark surface
-const Color backgroundColor = Color(0xFF000000); // Black
-const Color errorColor = Color(0xFFCF6679); // Material dark error
-
-const Color onPrimaryColor = Colors.white;
-const Color onAccentColor = Colors.white;
-const Color onSurfaceColor = Colors.white;
-const Color onBackgroundColor = Colors.white;
-const Color onErrorColor = Colors.black;
-
-final ThemeData appTheme = ThemeData(
-  useMaterial3: true,
-  brightness: Brightness.dark,
-  colorScheme: const ColorScheme(
-    primary: primaryColor,
-    secondary: accentColor,
-    surface: surfaceColor,
-    background: backgroundColor,
-    error: errorColor,
-    onPrimary: onPrimaryColor,
-    onSecondary: onAccentColor,
-    onSurface: onSurfaceColor,
-    onBackground: onBackgroundColor,
-    onError: onErrorColor,
-    brightness: Brightness.dark,
-  ),
-  scaffoldBackgroundColor: backgroundColor,
-  appBarTheme: const AppBarTheme(
-    color: surfaceColor,
-    titleTextStyle: TextStyle(color: onSurfaceColor, fontSize: 20, fontWeight: FontWeight.bold),
-    iconTheme: IconThemeData(color: onSurfaceColor),
-  ),
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: primaryColor,
-      foregroundColor: onPrimaryColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+  static ThemeData get lightTheme {
+    return ThemeData(
+      brightness: Brightness.light,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: _primarySeedColor,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-    ),
-  ),
-  outlinedButtonTheme: OutlinedButtonThemeData(
-    style: OutlinedButton.styleFrom(
-      foregroundColor: primaryColor,
-      side: const BorderSide(color: primaryColor),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+      useMaterial3: true,
+      scaffoldBackgroundColor: const Color(0xFFECE5DD), // WhatsApp-like light background
+      cardColor: Colors.white,
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.grey[200],
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black87),
+        titleTextStyle: const TextStyle(
+          color: Colors.black87,
+          fontSize: 20,
+          fontWeight: FontWeight.w500,
+        ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-    ),
-  ),
-  inputDecorationTheme: InputDecorationTheme(
-    filled: true,
-    fillColor: surfaceColor,
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide.none,
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: const BorderSide(color: primaryColor, width: 2),
-    ),
-    labelStyle: TextStyle(color: onSurfaceColor.withOpacity(0.6)),
-  ),
-  textTheme: const TextTheme(
-    titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: onBackgroundColor),
-    bodyMedium: TextStyle(fontSize: 16, color: onBackgroundColor),
-  ),
-  checkboxTheme: CheckboxThemeData(
-    checkColor: MaterialStateProperty.all(onPrimaryColor),
-    fillColor: MaterialStateProperty.all(primaryColor),
-  ),
-);
+    );
+  }
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      brightness: Brightness.dark,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: _primarySeedColor,
+        brightness: Brightness.dark,
+        primary: const Color(0xFF25D366), // Use the vibrant green for primary actions in dark mode
+      ),
+      useMaterial3: true,
+      scaffoldBackgroundColor: const Color(0xFF121212),
+      cardColor: const Color(0xFF1E1E1E),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF1F2C34),
+        elevation: 0,
+      ),
+    );
+  }
+}

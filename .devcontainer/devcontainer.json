@@ -1,0 +1,17 @@
+{
+  "name": "Wassistant Devcontainer",
+  "build": {
+    "dockerfile": "../Dockerfile"
+  },
+  "forwardPorts": [8000, 3000],
+  "workspaceFolder": "/workspace",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "ms-python.python",
+    "dart-code.flutter",
+    "esbenp.prettier-vscode",
+    "ms-azuretools.vscode-docker"
+  ]
+}

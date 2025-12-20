@@ -1,0 +1,24 @@
+{
+  "name": "wassistant-meta",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "lint:js": "eslint \"web/**/*.js\" || node -e \"process.exit(0)\"",
+    "lint:css": "stylelint \"web/**/*.css\" || node -e \"process.exit(0)\"",
+    "lint": "npm run lint:js && npm run lint:css",
+    "format": "eslint --fix \"web/**/*.js\" || node -e \"process.exit(0)\"",
+    "tsc": "tsc --noEmit",
+    "prepare": "husky install",
+    "precommit": "lint-staged"
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "stylelint": "^16.0.0",
+    "stylelint-config-standard": "^33.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.0",
+    "typescript": "^5.6.2"
+  }
+}

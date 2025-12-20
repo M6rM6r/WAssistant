@@ -1,12 +1,12 @@
 {
-    "name": "wassistant",
-    "short_name": "wassistant",
+    "name": "WAssistant - WhatsApp Tools",
+    "short_name": "WAssistant",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#050505",
+    "theme_color": "#050505",
+    "description": "Generate WhatsApp links, QR codes, and vCards instantly.",
+    "orientation": "portrait",
     "prefer_related_applications": false,
     "icons": [
         {

@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run formatter and JS/CSS linters on pre-commit
+echo "Running pre-commit checks: format and lint"
+npm run format
+npm run lint

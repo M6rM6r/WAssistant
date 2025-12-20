@@ -1,0 +1,4 @@
+# Set code owners for main areas
+/lib/ @your-github-username
+/python_scripts/ @your-github-username
+/web/ @your-github-username

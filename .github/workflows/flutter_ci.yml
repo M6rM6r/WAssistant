@@ -1,0 +1,55 @@
+name: WAssistant CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  quality-control:
+    name: 🛡️ Quality Control
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Python Checks ---
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 📦 Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: 🔍 Lint Python Scripts (Flake8)
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings.
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      # --- Flutter Checks ---
+      - name: 🐦 Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: 🏭 Run Code Generation
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: 🎨 Verify Formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: 🕵️ Analyze Project (Strict)
+        run: flutter analyze --no-fatal-infos
+
+      - name: 🧪 Run Tests
+        run: flutter test

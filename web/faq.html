@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Wassistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            background-color: #075E54;
+            color: white;
+            margin: -20px -20px 30px -20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            background: white;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .faq-question {
+            padding: 20px;
+            font-weight: 600;
+            color: #128C7E;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question:hover {
+            background-color: #f9f9f9;
+        }
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+            background-color: #fff;
+            color: #555;
+        }
+        .faq-item.active .faq-answer {
+            padding: 20px;
+            max-height: 500px; /* Arbitrary large height */
+            border-top: 1px solid #eee;
+        }
+        .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+        .faq-item.active .toggle-icon {
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Frequently Asked Questions</h1>
+    <p>Get help with using Wassistant</p>
+</div>
+
+<div class="container">
+    <div class="faq-item">
+        <div class="faq-question">
+            Is my phone number saved?
+            <span class="toggle-icon">+</span>
+        </div>
+        <div class="faq-answer">
+            No. We prioritize your privacy. All phone numbers and messages are processed locally on your device to generate the WhatsApp link. Nothing is sent to our servers.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">
+            Does this work without saving the contact?
+            <span class="toggle-icon">+</span>
+        </div>
+        <div class="faq-answer">
+            Yes! That is the main feature. You can enter any phone number and start a chat immediately without adding them to your address book.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">
+            How do I generate a QR code?
+            <span class="toggle-icon">+</span>
+        </div>
+        <div class="faq-answer">
+            Simply enter your number and an optional message in the app, then switch to the "QR Code" tab or click the QR icon. You can then save or share the image.
+        </div>
+    </div>
+    
+     <div class="faq-item">
+        <div class="faq-question">
+            Is this app official?
+            <span class="toggle-icon">+</span>
+        </div>
+        <div class="faq-answer">
+            No, Wassistant is a third-party tool developed to enhance your WhatsApp experience. It is not affiliated with or endorsed by WhatsApp Inc.
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = document.querySelectorAll('.faq-question');
+
+    questions.forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.parentElement;
+            item.classList.toggle('active');
+        });
+    });
+</script>
+
+</body>
+</html>

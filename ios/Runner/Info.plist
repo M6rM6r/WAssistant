@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Wassistant</string>
+	<string>WAssistant</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,5 +45,32 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+    
+    <!-- Permissions (Required for Store Approval) -->
+    <key>NSCameraUsageDescription</key>
+    <string>Camera access is needed to scan text and QR codes directly.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Photo library access is needed to save generated QR codes.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We need permission to save QR codes to your gallery.</string>
+    
+    <!-- AdMob Config -->
+    <key>GADApplicationIdentifier</key>
+    <string>ca-app-pub-3940256099942544~1458002511</string>
+    
+    <!-- Deep Linking / Share Handling -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>ShareMedia</string>
+            </array>
+        </dict>
+        <dict/>
+    </array>
+
 </dict>
 </plist>

@@ -1,38 +1,108 @@
 name: wassistant
-description: "A Flutter project that provides tools for WhatsApp, such as generating QR codes, chat links, and vCards."
-publish_to: 'none'
-
-version: 1.0.0+1
+description: "WAssistant: A Flutter project that provides tools for WhatsApp, such as generating QR codes, chat links, and vCards."
+version: 1.4.1
 
 environment:
-  sdk: ^3.7.2
+  sdk: ^3.8.0
 
 dependencies:
+  # --- Core Framework ---
   flutter:
     sdk: flutter
-  qr_flutter: ^4.1.0
-  url_launcher: ^6.3.0
-  font_awesome_flutter: ^10.7.0
-  provider: ^6.1.2
-  image_gallery_saver: ^2.0.3
-  country_code_picker: ^3.0.0
-  google_mobile_ads: ^5.1.0
-
-  cupertino_icons: ^1.0.8
-
-dev_dependencies:
-  flutter_test:
+  flutter_localizations:
     sdk: flutter
 
-  flutter_lints: ^5.0.0
+  # --- Architecture & Functional Programming ---
+  get_it: ^7.6.7             # Service Locator
+  provider: ^6.1.1           # State Management
+  fpdart: ^1.1.0             # Functional Error Handling (Either<L, R>)
+  equatable: ^2.0.5          # Value Equality
+  freezed_annotation: ^2.4.1 # Immutable Data Classes
+
+  # --- Data & Persistence ---
+  shared_preferences: ^2.2.2
+  isar: ^3.1.0               # NoSQL DB
+  isar_flutter_libs: ^3.1.0
+  path_provider: ^2.1.2
+  json_annotation: ^4.8.1
+  flutter_dotenv: ^5.1.0
+
+  # --- Security & Hardware ---
+  connectivity_plus: ^5.0.2
+
+  # --- Intelligent Features (INTJ Pack) ---
+  google_mlkit_text_recognition: ^0.13.0 # Computer Vision
+  image_picker: ^1.0.7       # Camera Interface
+  receive_sharing_intent: ^1.8.0 # OS Integration (Share Menu)
+
+  # --- UI Components ---
+  cupertino_icons: ^1.0.6
+  font_awesome_flutter: ^10.7.0
+  country_code_picker: ^3.0.0
+  fl_chart: ^0.66.2
+  shimmer: ^3.0.0
+  device_preview: ^1.1.0
+  flutter_animate: ^4.5.0
+  upgrader: ^10.1.0
+  in_app_review: ^2.0.9
+  # wiredash removed temporarily due to version conflicts; consider adding an alternative in future
+  google_fonts: ^6.1.0
+  flutter_svg: ^2.0.9
+
+  # --- Utilities ---
+  intl: ^0.20.2
+  logger: ^2.0.0
+  timeago: ^3.6.1
+  uuid: ^4.3.3
+  rxdart: ^0.27.7
+  sentry_flutter: ^7.16.0
+
+  # --- Firebase & Growth ---
+  firebase_core: ^2.10.0
+  firebase_analytics: ^10.0.0
+  # Keep Firebase core and analytics only for now to ensure dependency resolution
+  # Additional Firebase packages can be added after confirming compatible versions
+  # flutter_secure_storage: ^9.0.0
+
+  # --- Functional Modules ---
+  google_mobile_ads: ^5.0.0
+  url_launcher: ^6.2.5
+  share_plus: ^9.0.0
+  qr_flutter: ^4.1.0
+  image_gallery_saver: ^2.0.3
+
+dev_dependencies:
+  very_good_analysis: ^5.1.0
+  flutter_lints: ^3.0.1
+  custom_lint: ^0.6.4
+  build_runner: ^2.4.8
+  json_serializable: ^6.7.1
+  freezed: ^2.4.7
+  isar_generator: ^3.1.0
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.10
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.4.4
+  # bloc_test removed temporarily to resolve dependency conflicts with freezed/isar
 
 flutter:
-
   uses-material-design: true
+  generate: true
+  assets:
+    - assets/app_icon.png
+    - .env
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon/icon.png"
+  image_path: "assets/app_icon.png"
   min_sdk_android: 21
+  remove_alpha_ios: true
+
+flutter_native_splash:
+  color: "#050505"
+  image: "assets/app_icon.png"
+  android_12:
+    image: "assets/app_icon.png"
+    color: "#050505"

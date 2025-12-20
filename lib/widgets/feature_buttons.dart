@@ -1,145 +1,133 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Import for HapticFeedback
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:wassistant/l10n/app_localizations.dart';
+import 'package:wassistant/providers/whatsapp_tool_provider.dart';
 
 class FeatureButtons extends StatelessWidget {
-  final bool isLoading;
-  final VoidCallback onGenerateQrCode;
-  final VoidCallback onGenerateLink;
-  final AsyncCallback onOpenChat;
-  final AsyncCallback onOpenChatWeb;
-  final VoidCallback onGenerateVCard;
-  final Function(String message, {bool isError}) onShowSnackBar;
-  final VoidCallback onClearAll;
-  final VoidCallback onCopyLink;
-  final VoidCallback onDownloadQrCode;
-
   const FeatureButtons({
+    required this.phoneController,
+    required this.messageController,
+    required this.countryCode,
+    this.onValidate,
     super.key,
-    required this.isLoading,
-    required this.onGenerateQrCode,
-    required this.onGenerateLink,
-    required this.onOpenChat,
-    required this.onOpenChatWeb,
-    required this.onGenerateVCard,
-    required this.onShowSnackBar,
-    required this.onClearAll,
-    required this.onCopyLink,
-    required this.onDownloadQrCode,
   });
+
+  final TextEditingController phoneController;
+  final TextEditingController messageController;
+  final String countryCode;
+  final bool Function()? onValidate;
+
+  String _getFormattedNumber() {
+    final raw = phoneController.text.trim();
+    if (raw.startsWith('+')) {
+      // User typed their own code, trust it
+      return raw;
+    }
+    // Otherwise, prepend the selected picker code
+    return '$countryCode$raw';
+  }
+
+  bool _validate() {
+    if (onValidate != null) {
+      return onValidate!();
+    }
+    return true; // If no validator provided, assume valid (backward compatibility)
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Common onPressed handler
-    void handlePress(VoidCallback callback) {
-      if (isLoading) return;
-      HapticFeedback.mediumImpact();
-      callback();
-    }
-
-    // Helper for consistent button styling for primary actions
-    Widget buildButton({
-      required VoidCallback onPressed,
-      required IconData icon,
-      required String label,
-    }) {
-      return ElevatedButton.icon(
-        onPressed: () => handlePress(onPressed),
-        icon: Icon(icon),
-        label: FittedBox(
-          child: Text(label),
-        ),
-        style: ElevatedButton.styleFrom(
-          // Dim the button when loading
-          backgroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
-        ),
-      );
-    }
+    final provider = Provider.of<WhatsAppToolProvider>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       children: [
-        Wrap(
-          spacing: 20,
-          runSpacing: 20,
-          alignment: WrapAlignment.center,
+        Row(
           children: [
-            buildButton(
-              onPressed: onOpenChat,
-              icon: FontAwesomeIcons.whatsapp,
-              label: 'Open Chat',
+            Expanded(
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF25D366),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                icon: const Icon(FontAwesomeIcons.whatsapp),
+                label: Text(l10n.openChat),
+                onPressed: () async {
+                  FocusScope.of(context).unfocus(); // Dismiss keyboard first
+                  if (!_validate()) return;
+                  await HapticFeedback.lightImpact();
+
+                  final fullNumber = _getFormattedNumber();
+
+                  if (!context.mounted) return;
+
+                  final result = await provider.openWhatsAppChat(
+                    fullNumber,
+                    l10n,
+                    message: messageController.text,
+                  );
+
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(result)));
+                  }
+                },
+              ),
             ),
-            buildButton(
-              onPressed: onOpenChatWeb,
-              icon: FontAwesomeIcons.globe,
-              label: 'Open in Web',
-            ),
-            buildButton(
-              onPressed: onGenerateLink,
-              icon: Icons.link,
-              label: 'Generate Link',
-            ),
-            buildButton(
-              onPressed: onGenerateQrCode,
-              icon: Icons.qr_code,
-              label: 'Generate QR Code',
-            ),
-            buildButton(
-              onPressed: onGenerateVCard,
-              icon: Icons.contact_mail,
-              label: 'Generate vCard',
+            const SizedBox(width: 10),
+            Expanded(
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueGrey,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                icon: const Icon(Icons.link),
+                label: Text(l10n.getLink),
+                onPressed: () async {
+                  FocusScope.of(context).unfocus(); // Dismiss keyboard first
+                  if (!_validate()) return;
+                  await HapticFeedback.lightImpact();
+
+                  final fullNumber = _getFormattedNumber();
+
+                  provider.generateChatLink(
+                    fullNumber,
+                    l10n,
+                    message: messageController.text,
+                  );
+                },
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 20), // Spacing between the rows
-        Wrap(
-          spacing: 20,
-          runSpacing: 20,
-          alignment: WrapAlignment.center,
-          children: [
-            // "Copy Link" as an OutlinedButton for a secondary look
-            Flexible(
-              child: OutlinedButton.icon(
-                onPressed: () => handlePress(onCopyLink),
-                icon: const Icon(Icons.copy),
-                label: const Text('Copy Link'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
-                  side: BorderSide(color: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
+        const SizedBox(height: 10),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              side: const BorderSide(color: Color(0xFF075E54)),
             ),
-            // "Download QR" button
-            Flexible(
-              child: OutlinedButton.icon(
-                onPressed: () => handlePress(onDownloadQrCode),
-                icon: const Icon(Icons.download),
-                label: const Text('Download QR'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
-                  side: BorderSide(color: isLoading ? Colors.grey : Theme.of(context).colorScheme.primary),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-            // "Clear All" with a red background for a destructive action
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () => handlePress(onClearAll),
-                icon: const Icon(Icons.clear_all),
-                label: const Text('Clear All'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isLoading ? Colors.grey : Colors.red[700],
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ),
-          ],
+            icon: const Icon(Icons.qr_code, color: Color(0xFF075E54)),
+            label: Text(l10n.generateQr,
+                style: const TextStyle(color: Color(0xFF075E54))),
+            onPressed: () async {
+              FocusScope.of(context).unfocus(); // Dismiss keyboard first
+              if (!_validate()) return;
+              await HapticFeedback.lightImpact();
+
+              final fullNumber = _getFormattedNumber();
+
+              provider.generateBarcodeForChat(
+                fullNumber,
+                l10n,
+                message: messageController.text,
+              );
+            },
+          ),
         ),
       ],
     );

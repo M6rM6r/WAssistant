@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Ignore environment files and node modules
+.env
+node_modules/
+package-lock.json
