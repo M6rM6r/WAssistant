@@ -1,7 +1,4 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# Run formatter and JS/CSS linters on pre-commit
+# Run formatter and JS/CSS linters on pre-commit (Husky v9+)
 echo "Running pre-commit checks: format and lint"
 npm run format
 npm run lint

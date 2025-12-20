@@ -1,0 +1,17 @@
+{
+  "ci": {
+    "collect": {
+      "numberOfRuns": 1,
+      "url": [
+        "https://wassistant-707.web.app/"
+      ],
+      "settings": {
+        "chromeFlags": "--headless --disable-gpu --no-sandbox"
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "build/lighthouse"
+    }
+  }
+}
