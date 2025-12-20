@@ -8,6 +8,15 @@
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash"
   },
+  "postCreateCommand": "bash -lc 'python -m pip install --upgrade pip && pip install .[dev] && (npm ci || npm i) && flutter pub get && pre-commit install'",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
   "extensions": [
     "ms-python.python",
     "dart-code.flutter",
