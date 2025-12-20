@@ -1,0 +1,132 @@
+name: Quality Gate & Retention Metrics
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: '0 9 * * *' # Daily 9 AM UTC
+
+jobs:
+  dart-quality:
+    name: Dart Code Quality & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - run: dart run build_runner build --delete-conflicting-outputs
+
+      - run: dart analyze --fatal-infos
+
+      - run: dart format --output=none --set-exit-if-changed .
+
+      - run: flutter test --coverage
+
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage/lcov.info
+          fail_ci_if_error: false
+
+      - name: Check Coverage Threshold
+        run: |
+          COVERAGE=$(awk '/lines/ {print substr($3, 1, length($3)-1)}' coverage/lcov.info | tail -1)
+          if (( $(echo "$COVERAGE < 70" | bc -l) )); then
+            echo "Coverage $COVERAGE% below 70% threshold"
+            exit 1
+          fi
+
+  python-quality:
+    name: Python Backend Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - run: pip install -e .[dev]
+
+      - run: ruff check backend tools python_scripts --select=F,E,W
+
+      - run: mypy backend --no-error-summary
+
+      - run: pytest backend/tests -v --cov=backend
+
+      - run: black --check backend tools
+
+  web-quality:
+    name: Web/JavaScript Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci || npm i
+
+      - run: npm run lint
+
+      - run: npm run typecheck
+
+      - run: npm run test:cov
+
+      - name: Check Web Vitals
+        run: npm run lighthouse || true
+
+  performance:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Run Startup Time Benchmark
+        run: |
+          flutter run --release --profile &
+          sleep 15
+          kill %1 || true
+
+  analytics:
+    name: Retention Metrics Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - run: pip install firebase-admin pandas
+
+      - name: Check Retention Metrics
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
+        run: python tools/check_retention_metrics.py
+
+      - name: Slack Notification
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "Retention metrics alert: Check analytics dashboard"
+            }

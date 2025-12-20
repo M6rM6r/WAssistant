@@ -1,41 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <base href="$FLUTTER_BASE_HREF">
+  <head>
+    <base href="/" />
 
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A Flutter project that provides tools for WhatsApp, such as generating QR codes, chat links, and vCards.">
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta
+      name="description"
+      content="WAssistant: Professional WhatsApp Utility Tools. Generate QR codes, chat links, and vCards instantly."
+    />
 
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="wassistant">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+    <!-- iOS meta tags & icons -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="WAssistant" />
+    <link rel="apple-touch-icon" href="icons/Icon-192.png" />
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png" />
 
-  <title>wassistant</title>
-  <link rel="manifest" href="manifest.json">
+    <title>WAssistant - WhatsApp Tools</title>
+    <link rel="manifest" href="manifest.json" />
 
-  <!-- THEME COLOR FOR BROWSER CHROME (ADDRESS BAR) -->
-  <meta name="theme-color" content="#050505">
+    <!-- THEME COLOR FOR BROWSER CHROME -->
+    <meta name="theme-color" content="#050505" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
-  <!-- External Stylesheet for cleaner code -->
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div id="loading-indicator" class="loading-container">
-    <div class="loader"></div>
-    <div class="loading-text">INITIALIZING WAssistant...</div>
-  </div>
+    <!-- Cache-busting for Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=1.4.1" />
 
-  <script src="flutter_bootstrap.js" async></script>
-  
-  <!-- External Script for logic -->
-  <script src="main.js"></script>
-</body>
+    <!-- Google AdSense -->
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7083858358486869"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body
+    style="
+      background-color: #050505;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    "
+  >
+    <!-- OCPD: Single Unified Loading Indicator -->
+    <div id="loading-indicator" class="loading-container">
+      <div class="loader"></div>
+      <div class="loading-text">Initializing WAssistant...</div>
+    </div>
+
+    <!-- Initialize Flutter -->
+    <script src="flutter_bootstrap.js" async></script>
+
+    <!-- External Logic Layer with versioning -->
+    <script src="main.js?v=1.4.1"></script>
+  </body>
 </html>

@@ -1,17 +1,18 @@
-
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const Color _primarySeedColor = Color(0xFF075E54); // A classic WhatsApp-like green
+  static const Color _primarySeedColor = Color(
+    0xFF075E54,
+  ); // A classic WhatsApp-like green
 
   static ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: _primarySeedColor,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: _primarySeedColor),
       useMaterial3: true,
-      scaffoldBackgroundColor: const Color(0xFFECE5DD), // WhatsApp-like light background
+      scaffoldBackgroundColor: const Color(
+        0xFFECE5DD,
+      ), // WhatsApp-like light background
       cardColor: Colors.white,
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.grey[200],
@@ -32,7 +33,9 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: _primarySeedColor,
         brightness: Brightness.dark,
-        primary: const Color(0xFF25D366), // Use the vibrant green for primary actions in dark mode
+        primary: const Color(
+          0xFF25D366,
+        ), // Use the vibrant green for primary actions in dark mode
       ),
       useMaterial3: true,
       scaffoldBackgroundColor: const Color(0xFF121212),

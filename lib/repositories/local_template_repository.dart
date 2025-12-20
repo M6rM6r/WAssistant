@@ -1,22 +1,26 @@
 import 'dart:convert';
+
 import 'package:wassistant/providers/template_provider.dart';
 import 'package:wassistant/repositories/template_repository.dart';
 import 'package:wassistant/services/local_storage_service.dart';
 
 class LocalTemplateRepository implements TemplateRepository {
+  LocalTemplateRepository(this._storage);
+
   final LocalStorageService _storage;
   static const String _key = 'message_templates';
-
-  LocalTemplateRepository(this._storage);
 
   @override
   Future<List<MessageTemplate>> getTemplates() async {
     final stored = _storage.getStringList(_key);
     if (stored == null) return _getDefaultTemplates();
 
-    return stored.map((e) =>
-      MessageTemplate.fromJson(jsonDecode(e) as Map<String, dynamic>)
-    ).toList();
+    return stored
+        .map(
+          (e) =>
+              MessageTemplate.fromJson(jsonDecode(e) as Map<String, dynamic>),
+        )
+        .toList();
   }
 
   @override

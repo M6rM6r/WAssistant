@@ -18,12 +18,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get analytics => 'Analítica';
 
   @override
-  String get backupData => 'Copia de Seguridad';
-
-  @override
-  String get restoreData => 'Restaurar Datos';
-
-  @override
   String get settings => 'Ajustes';
 
   @override
@@ -73,6 +67,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get copied => 'Copiado al portapapeles';
+
+  @override
+  String get copyLink => 'Copiar Enlace';
+
+  @override
+  String get shareLink => 'Compartir Enlace';
+
+  @override
+  String get saveToGallery => 'Guardar en Galería';
 
   @override
   String get securityTitle => 'Seguridad';
@@ -179,6 +182,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get imageSaveFailed => 'Error al guardar imagen.';
+
+  @override
+  String get imageSaveUnavailable =>
+      'Guardar en la galería no está disponible en esta versión.';
 
   @override
   String foundNumberClipboard(Object number) {

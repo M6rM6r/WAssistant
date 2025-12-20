@@ -5,8 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 
 // ignore_for_file: type=lint
 
@@ -94,8 +97,11 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('de'),
     Locale('en'),
     Locale('es'),
+    Locale('fr'),
   ];
 
   /// No description provided for @appTitle.
@@ -115,18 +121,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Analytics'**
   String get analytics;
-
-  /// No description provided for @backupData.
-  ///
-  /// In en, this message translates to:
-  /// **'Backup Data'**
-  String get backupData;
-
-  /// No description provided for @restoreData.
-  ///
-  /// In en, this message translates to:
-  /// **'Restore Data'**
-  String get restoreData;
 
   /// No description provided for @settings.
   ///
@@ -229,6 +223,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copied to clipboard'**
   String get copied;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Link'**
+  String get copyLink;
+
+  /// No description provided for @shareLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Link'**
+  String get shareLink;
+
+  /// No description provided for @saveToGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Gallery'**
+  String get saveToGallery;
 
   /// No description provided for @securityTitle.
   ///
@@ -434,6 +446,12 @@ abstract class AppLocalizations {
   /// **'Failed to save image.'**
   String get imageSaveFailed;
 
+  /// No description provided for @imageSaveUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving to gallery is not available in this build.'**
+  String get imageSaveUnavailable;
+
   /// No description provided for @foundNumberClipboard.
   ///
   /// In en, this message translates to:
@@ -530,7 +548,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'es'].contains(locale.languageCode);
+      <String>['ar', 'de', 'en', 'es', 'fr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -539,10 +557,16 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
   }
 
   throw FlutterError(

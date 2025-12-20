@@ -1,11 +1,16 @@
-import 'dart:convert';
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
-import 'package:wassistant/services/local_storage_service.dart';
+import 'package:wassistant/repositories/template_repository.dart';
 import 'package:wassistant/utils/logger_service.dart';
 
 // OCPD: Structured Template Model
 class MessageTemplate {
-  MessageTemplate({required this.id, required this.title, required this.content});
+  MessageTemplate({
+    required this.id,
+    required this.title,
+    required this.content,
+  });
 
   factory MessageTemplate.fromJson(Map<String, dynamic> json) {
     return MessageTemplate(
@@ -19,44 +24,27 @@ class MessageTemplate {
   final String content;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'content': content,
-      };
+    'id': id,
+    'title': title,
+    'content': content,
+  };
 }
 
+/// OCPD: Refactored Provider using Repository Pattern.
+/// INTJ Strategy: Zero side-effects, predictable state transitions.
 class TemplateProvider with ChangeNotifier {
-  // ignore: avoid_unused_constructor_parameters -- reserved for future DI
-  TemplateProvider(this._storageService) {
-    _loadTemplates();
+  TemplateProvider(this._repository) {
+    unawaited(_loadTemplates());
   }
 
-  final LocalStorageService _storageService;
-  static const String _storageKey = 'message_templates';
+  final TemplateRepository _repository;
 
   List<MessageTemplate> _templates = [];
   List<MessageTemplate> get templates => List.unmodifiable(_templates);
 
   Future<void> _loadTemplates() async {
     try {
-      await _storageService.init();
-      final List<String>? stored = _storageService.getStringList(_storageKey);
-      if (stored != null) {
-        _templates = stored
-            .map((e) => MessageTemplate.fromJson(
-                jsonDecode(e) as Map<String, dynamic>))
-            .toList();
-      } else {
-        // Default Templates
-        _templates = [
-          MessageTemplate(
-              id: '1',
-              title: 'Quick Greeting',
-              content: 'Hello! I would like to inquire about...'),
-          MessageTemplate(
-              id: '2', title: 'Location', content: 'Here is my location: '),
-        ];
-      }
+      _templates = await _repository.getTemplates();
       notifyListeners();
     } on Object catch (e) {
       LoggerService.e('Failed to load templates', e);
@@ -69,30 +57,24 @@ class TemplateProvider with ChangeNotifier {
       title: title,
       content: content,
     );
-    _templates.add(newTemplate);
+    _templates = [..._templates, newTemplate]; // Immutable update
     notifyListeners();
-    // ignore: discarded_futures -- fire and forget save
-    _saveTemplates();
+    await _repository.saveTemplates(_templates);
   }
 
   Future<void> removeTemplate(String id) async {
-    _templates.removeWhere((t) => t.id == id);
+    _templates = _templates.where((t) => t.id != id).toList();
     notifyListeners();
-    // ignore: discarded_futures -- fire and forget save
-    _saveTemplates();
+    await _repository.saveTemplates(_templates);
   }
 
   Future<void> deleteTemplate(String id) async {
-      await removeTemplate(id);
+    await removeTemplate(id);
   }
 
-  Future<void> _saveTemplates() async {
-    try {
-      final List<String> encoded =
-          _templates.map((e) => jsonEncode(e.toJson())).toList();
-      await _storageService.setStringList(_storageKey, encoded);
-    } on Object catch (e) {
-      LoggerService.e('Failed to save templates', e);
-    }
+  @override
+  void dispose() {
+    // Clean up resources if needed in the future
+    super.dispose();
   }
 }

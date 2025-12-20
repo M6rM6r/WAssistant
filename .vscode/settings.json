@@ -1,7 +1,176 @@
 {
+  // ═══════════════════════════════════════════════════════════════════════════
+  // VS CODE WORKSPACE SETTINGS (INTJ/OCPD: Optimized Development Environment)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // EDITOR
+  // ─────────────────────────────────────────────────────────────────────────
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSaveMode": "modificationsIfAvailable",
+  "editor.formatOnPaste": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.rulers": [100],
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // FILES
+  // ─────────────────────────────────────────────────────────────────────────
   "files.eol": "\n",
-  "python.formatting.provider": "black",
-  "dart.flutterSdkPath": "/flutter"
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.exclude": {
+    "**/.dart_tool": true,
+    "**/build": true,
+    "**/*.g.dart": true,
+    "**/*.freezed.dart": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true
+  },
+  "files.watcherExclude": {
+    "**/build/**": true,
+    "**/.dart_tool/**": true,
+    "**/node_modules/**": true
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // DART / FLUTTER
+  // ─────────────────────────────────────────────────────────────────────────
+  "[dart]": {
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnSave": true,
+    "editor.selectionHighlight": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  "dart.flutterSdkPath": "C:\\dev\\flutter\\flutter",
+  "dart.lineLength": 100,
+  "dart.previewFlutterUiGuides": true,
+  "dart.debugExternalPackageLibraries": false,
+  "dart.debugSdkLibraries": false,
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // PYTHON
+  // ─────────────────────────────────────────────────────────────────────────
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  "ruff.lint.run": "onSave",
+  "ruff.format.args": ["--line-length=100"],
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // JAVASCRIPT / TYPESCRIPT / WEB
+  // ─────────────────────────────────────────────────────────────────────────
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // JSON / YAML / MARKDOWN
+  // ─────────────────────────────────────────────────────────────────────────
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.wordWrap": "on"
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": [
+      ".github/workflows/*.yml",
+      ".github/workflows/*.yaml"
+    ]
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // JAVA (Android)
+  // ─────────────────────────────────────────────────────────────────────────
+  "java.jdt.ls.java.home": "${env:JAVA_HOME}",
+  "java.import.gradle.java.home": "${env:JAVA_HOME}",
+  "java.import.maven.java.home": "${env:JAVA_HOME}",
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-21",
+      "path": "${env:JAVA_21_HOME}",
+      "default": true
+    },
+    {
+      "name": "JavaSE-17",
+      "path": "${env:JAVA_17_HOME}"
+    }
+  ],
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // TERMINAL
+  // ─────────────────────────────────────────────────────────────────────────
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.fontFamily": "Cascadia Code, Consolas, monospace",
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // GIT
+  // ─────────────────────────────────────────────────────────────────────────
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // EXTENSIONS
+  // ─────────────────────────────────────────────────────────────────────────
+  "todo-tree.general.tags": ["TODO", "FIXME", "HACK", "XXX", "OCPD", "INTJ"],
+  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // SEARCH
+  // ─────────────────────────────────────────────────────────────────────────
+  "search.exclude": {
+    "**/build": true,
+    "**/node_modules": true,
+    "**/*.g.dart": true,
+    "**/*.freezed.dart": true,
+    "**/coverage": true
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // COPILOT / CHAT
+  // ─────────────────────────────────────────────────────────────────────────
+  "chat.agent.codeBlockProgress": false,
+  "chat.agent.maxRequests": 100
 }

@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:wassistant/utils/logger_service.dart';
 
 /// Centralized Error Handling logic.
@@ -8,10 +8,11 @@ class ErrorHandler {
   // Prevent instantiation
   ErrorHandler._();
 
-  static void handleError(Object error, StackTrace stackTrace) {
+  static Future<void> handleError(Object error, StackTrace stackTrace) async {
     LoggerService.e('Global Error Caught', error, stackTrace);
-    // In a real production app, you would integrate Firebase Crashlytics here:
-    // FirebaseCrashlytics.instance.recordError(error, stackTrace);
+    if (Sentry.isEnabled) {
+      await Sentry.captureException(error, stackTrace: stackTrace);
+    }
   }
 
   static void showUIError(BuildContext context, String message) {
@@ -24,7 +25,12 @@ class ErrorHandler {
           children: [
             const Icon(Icons.error_outline, color: Colors.white),
             const SizedBox(width: 10),
-            Expanded(child: Text(message, style: const TextStyle(fontWeight: FontWeight.bold))),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
           ],
         ),
         backgroundColor: const Color(0xFFCF6679), // Consistent Error Red
@@ -32,9 +38,9 @@ class ErrorHandler {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         margin: const EdgeInsets.all(16),
         action: SnackBarAction(
-            label: 'DISMISS',
-            textColor: Colors.white,
-            onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+          label: 'DISMISS',
+          textColor: Colors.white,
+          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
         ),
       ),
     );

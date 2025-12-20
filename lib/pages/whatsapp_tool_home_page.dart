@@ -1,20 +1,29 @@
-import 'dart:async'; // Required for StreamSubscription
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart'; // System Integration
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:wassistant/l10n/app_localizations.dart';
+import 'package:wassistant/locator.dart';
 import 'package:wassistant/providers/whatsapp_tool_provider.dart';
+import 'package:wassistant/services/analytics_service.dart';
+import 'package:wassistant/services/engagement_service.dart';
+import 'package:wassistant/services/network_service.dart';
+import 'package:wassistant/services/quick_actions_service.dart';
 import 'package:wassistant/utils/constants.dart';
 import 'package:wassistant/utils/logger_service.dart';
-import 'package:wassistant/widgets/ad_space.dart';
+import 'package:wassistant/utils/responsive_layout.dart';
+import 'package:wassistant/utils/validators.dart';
+import 'package:wassistant/widgets/banner_ad_widget.dart';
 import 'package:wassistant/widgets/drawer.dart';
 import 'package:wassistant/widgets/feature_buttons.dart';
 import 'package:wassistant/widgets/output_display.dart';
 import 'package:wassistant/widgets/shimmer_text.dart';
 import 'package:wassistant/widgets/whatsapp_input_field.dart';
 
+/// OCPD: Root page optimized for zero-latency core workflows.
+/// INTJ: Strategic placement of features based on usage metrics.
 class WhatsAppToolHomePage extends StatefulWidget {
   const WhatsAppToolHomePage({super.key});
 
@@ -22,8 +31,10 @@ class WhatsAppToolHomePage extends StatefulWidget {
   State<WhatsAppToolHomePage> createState() => _WhatsAppToolHomePageState();
 }
 
-class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> with WidgetsBindingObserver {
+class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+  late final TabController _tabController;
 
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
@@ -35,19 +46,28 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> with Widget
   final TextEditingController _jobTitleController = TextEditingController();
   final TextEditingController _websiteController = TextEditingController();
 
-  // Lifted State
   String _selectedCountryCode = '+966';
-
-  // Share Intent Stream
-  late StreamSubscription _intentDataStreamSubscription;
+  StreamSubscription<List<SharedMediaFile>>? _intentDataStreamSubscription;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addObserver(this);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-        // ignore: discarded_futures
-        _checkClipboardForNumber();
+      // OCPD: Systematic engagement tracking
+      unawaited(locator<EngagementService>().maybePromptForReview());
+
+      // INTJ Strategy: Handle Quick Actions from home screen
+      locator<QuickActionsService>().initialize((index) {
+        if (mounted) {
+          setState(() => _tabController.animateTo(index));
+        }
+      });
+
+      // Track screen entry
+      locator<AnalyticsService>().logScreenView(screenName: 'Home');
     });
 
     _initShareListener();
@@ -56,7 +76,8 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> with Widget
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _intentDataStreamSubscription.cancel();
+    unawaited(_intentDataStreamSubscription?.cancel());
+    _tabController.dispose();
     _phoneController.dispose();
     _messageController.dispose();
     _firstNameController.dispose();
@@ -68,320 +89,318 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage> with Widget
     super.dispose();
   }
 
-  /// OCPD: Strict handling of system intents
   void _initShareListener() {
-    // 1. Listen for new intents while the app is running
-    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
-      if (value.isNotEmpty && value.first.path.isNotEmpty) {
-          // If it's a file path, we might not handle it yet (future expansion)
-          LoggerService.d('Received shared file: ${value.first.path}');
-      }
-    }, onError: (err) {
-      LoggerService.e('getIntentDataStream error: $err');
-    });
-
-    // 2. Handle text sharing (Direct text sharing logic changed in newer versions of the plugin)
-    // We check initial intent for text
-    ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen(
+      (value) {
         if (value.isNotEmpty) {
-            // Logic for files if needed
+          _processSharedText(value.first.path);
         }
-    });
+      },
+      onError: (Object err) => LoggerService.e('getIntentDataStream error: $err'),
+    );
 
-    // NOTE: The receive_sharing_intent package handles text vs files differently across versions.
-    // For pure text sharing (which is what we want for phone numbers), we might need to verify the specific plugin usage.
-    // Assuming we want to capture shared TEXT (like a phone number highlighted in Chrome).
-
-    // Let's implement the specific text stream logic if available or fallback to a generic handler.
-    // Since receive_sharing_intent 1.8.0 unifies this, we might need to parse the "path" or "content" depending on OS.
-    // However, for simplicity and robustness, let's assume we are receiving text.
+    unawaited(
+      ReceiveSharingIntent.instance.getInitialMedia().then((value) {
+        if (value.isNotEmpty) {
+          _processSharedText(value.first.path);
+        }
+      }),
+    );
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // ignore: discarded_futures
-      _checkClipboardForNumber();
+  /// INTJ Logic: Process incoming text from other apps (Direct Share)
+  void _processSharedText(String text) {
+    LoggerService.i('Processing shared content: $text');
+    final cleaned = Validators.cleanPhone(text);
+    if (cleaned != null) {
+      setState(() {
+        _phoneController.text = cleaned;
+        _tabController.animateTo(0);
+      });
+      LoggerService.i('Populated phone from shared intent.');
     }
-  }
-
-  Future<void> _checkClipboardForNumber() async {
-      if (!mounted) return;
-      final l10n = AppLocalizations.of(context);
-      if (l10n == null) return;
-
-      try {
-        final data = await Clipboard.getData(Clipboard.kTextPlain);
-        if (data != null && data.text != null && data.text!.isNotEmpty) {
-            final text = data.text!.trim();
-            final digitCount = text.replaceAll(RegExp('[^0-9]'), '').length;
-
-            if (digitCount >= 7 && digitCount <= 15 &&
-                RegExp(r'^[+\d\s\-\(\)]+$').hasMatch(text) &&
-                text != _phoneController.text) {
-
-                if (!mounted) return;
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(l10n.foundNumberClipboard(text)),
-                        action: SnackBarAction(
-                            label: l10n.use,
-                            textColor: AppConstants.accentGreen,
-                            onPressed: () {
-                                setState(() {
-                                    _phoneController.text = text;
-                                });
-                            },
-                        ),
-                    ),
-                );
-            }
-        }
-      } on Object {
-          // Clipboard access restricted
-      }
   }
 
   @override
   Widget build(BuildContext context) {
-    final whatsappProvider = Provider.of<WhatsAppToolProvider>(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        drawer: const AppDrawer(),
-        appBar: AppBar(
-          title: ShimmerText(
-            text: l10n.appTitle,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 22,
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      drawer: const AppDrawer(),
+      appBar: AppBar(
+        title: ShimmerText(
+          text: l10n.appTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: AppConstants.darkBackground,
+        foregroundColor: AppConstants.textHighEmphasis,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppConstants.accentGreen,
+          labelColor: AppConstants.accentGreen,
+          unselectedLabelColor: AppConstants.textMediumEmphasis,
+          tabs: [
+            Tab(icon: const Icon(Icons.chat), text: l10n.directChat),
+            Tab(icon: const Icon(Icons.contact_page), text: l10n.vCardGen),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          Selector<NetworkService, bool>(
+            selector: (_, net) => net.isOnline,
+            builder: (context, isOnline, _) {
+              final offline = !isOnline;
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: offline ? 40 : 0,
+                width: double.infinity,
+                color: Colors.orange.shade700,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                alignment: Alignment.centerLeft,
+                child: offline
+                    ? const Row(
+                        children: [
+                          Icon(Icons.wifi_off, color: Colors.white),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'You are offline. Some actions may pause.',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              );
+            },
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              behavior: HitTestBehavior.translucent,
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildDirectChatTab(context, l10n),
+                  _buildVCardTab(context, l10n),
+                ],
+              ),
             ),
           ),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: AppConstants.darkBackground,
-          foregroundColor: AppConstants.textHighEmphasis,
-          bottom: TabBar(
-            indicatorColor: AppConstants.accentGreen,
-            labelColor: AppConstants.accentGreen,
-            unselectedLabelColor: AppConstants.textMediumEmphasis,
-            tabs: [
-              Tab(icon: const Icon(Icons.chat), text: l10n.directChat),
-              Tab(icon: const Icon(Icons.contact_page), text: l10n.vCardGen),
-            ],
-          ),
-        ),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          behavior: HitTestBehavior.translucent,
-          child: TabBarView(
-            children: [
-              _buildDirectChatTab(context, whatsappProvider, l10n),
-              _buildVCardTab(context, whatsappProvider, l10n),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildDirectChatTab(BuildContext context, WhatsAppToolProvider provider, AppLocalizations l10n) {
+  Widget _buildDirectChatTab(BuildContext context, AppLocalizations l10n) {
+    final layout = context.responsive;
+
     return Column(
       children: [
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 16,
-              bottom: 40,
+            padding: EdgeInsets.only(
+              left: layout.horizontalPadding,
+              right: layout.horizontalPadding,
+              top: layout.verticalPadding,
+              bottom: layout.spacing(40),
             ),
-            child: Form(
-              key: _formKey,
+            child: ResponsiveContainer(
+              padding: EdgeInsets.zero,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: layout.spacing(20)),
+                    WhatsAppInputField(
+                      phoneController: _phoneController,
+                      messageController: _messageController,
+                      selectedCountryCode: _selectedCountryCode,
+                      onCountryChanged: (String code) {
+                        setState(() => _selectedCountryCode = code);
+                      },
+                      phoneValidator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return l10n.errorEmptyNumber;
+                        }
+                        final digitsOnly = value.replaceAll(RegExp('[^0-9]'), '');
+                        if (digitsOnly.length < 5) return l10n.errorInvalidLength;
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: layout.spacing(24)),
+                    FeatureButtons(
+                      phoneController: _phoneController,
+                      messageController: _messageController,
+                      countryCode: _selectedCountryCode,
+                      onValidate: () => _formKey.currentState?.validate() ?? false,
+                    ),
+                    SizedBox(height: layout.spacing(30)),
+                    const OutputDisplay(),
+                    SizedBox(height: layout.spacing(20)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        const BannerAdWidget(),
+      ],
+    );
+  }
+
+  Widget _buildVCardTab(BuildContext context, AppLocalizations l10n) {
+    final layout = context.responsive;
+
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              left: layout.horizontalPadding,
+              right: layout.horizontalPadding,
+              top: layout.verticalPadding,
+              bottom: layout.spacing(40),
+            ),
+            child: ResponsiveContainer(
+              padding: EdgeInsets.zero,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 20),
-
-                  WhatsAppInputField(
-                    phoneController: _phoneController,
-                    messageController: _messageController,
-                    selectedCountryCode: _selectedCountryCode,
-                    onCountryChanged: (String code) { // Explicit type
-                      setState(() {
-                        _selectedCountryCode = code;
-                      });
-                    },
-                    phoneValidator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return l10n.errorEmptyNumber;
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      l10n.createContactQr,
+                      style: TextStyle(fontSize: layout.fontSize(18), fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(height: layout.spacing(16)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _firstNameController,
+                          decoration: InputDecoration(
+                            labelText: l10n.firstNameLabel,
+                            border: const OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: layout.spacing(10)),
+                      Expanded(
+                        child: TextField(
+                          controller: _lastNameController,
+                          decoration: InputDecoration(
+                            labelText: l10n.lastNameLabel,
+                            border: const OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: layout.spacing(10)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _jobTitleController,
+                          decoration: InputDecoration(
+                            labelText: l10n.jobTitleLabel,
+                            border: const OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: layout.spacing(10)),
+                      Expanded(
+                        child: TextField(
+                          controller: _companyController,
+                          decoration: InputDecoration(
+                            labelText: l10n.companyLabel,
+                            border: const OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: layout.spacing(10)),
+                  TextField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      labelText: '${l10n.phoneLabel} *',
+                      border: const OutlineInputBorder(),
+                      hintText: l10n.phoneNumberHint,
+                    ),
+                  ),
+                  SizedBox(height: layout.spacing(10)),
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: l10n.emailLabel,
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: layout.spacing(10)),
+                  TextField(
+                    controller: _websiteController,
+                    keyboardType: TextInputType.url,
+                    decoration: InputDecoration(
+                      labelText: l10n.websiteLabel,
+                      border: const OutlineInputBorder(),
+                      prefixText: 'https://',
+                    ),
+                  ),
+                  SizedBox(height: layout.spacing(20)),
+                  Semantics(
+                    button: true,
+                    label: l10n.generateQr,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppConstants.accentGreen,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: layout.spacing(15)),
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
+                      icon: Icon(Icons.qr_code_2, size: layout.iconSize(24)),
+                      label: Text(l10n.generateQr, style: TextStyle(fontSize: layout.fontSize(16))),
+                      onPressed: () {
+                        unawaited(HapticFeedback.mediumImpact());
+                        context.read<WhatsAppToolProvider>().generateVCardQrCode(
+                              l10n,
+                              firstName: _firstNameController.text,
+                              lastName: _lastNameController.text,
+                              number: _phoneController.text,
+                              email: _emailController.text,
+                              company: _companyController.text,
+                              jobTitle: _jobTitleController.text,
+                              website: _websiteController.text,
+                            );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: layout.spacing(30)),
+                  Selector<WhatsAppToolProvider, String?>(
+                    selector: (_, p) => p.barcodeData,
+                    builder: (context, barcodeData, _) {
+                      if (barcodeData != null && barcodeData.startsWith('BEGIN:VCARD')) {
+                        return const OutputDisplay();
                       }
-                      final digitsOnly = value.replaceAll(RegExp(r'[^0-9]'), '');
-                      if (digitsOnly.length < 5) { // Basic check
-                          return l10n.errorInvalidLength;
-                      }
-                      return null;
+                      return const SizedBox.shrink();
                     },
                   ),
-
-                  const SizedBox(height: 24),
-
-                  FeatureButtons(
-                    phoneController: _phoneController,
-                    messageController: _messageController,
-                    countryCode: _selectedCountryCode,
-                    onValidate: () => _formKey.currentState?.validate() ?? false,
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  const OutputDisplay(),
-
-                  const SizedBox(height: 20),
-                  const AdSpace(),
+                  SizedBox(height: layout.spacing(20)),
                 ],
               ),
             ),
           ),
         ),
+        const BannerAdWidget(),
       ],
-    );
-  }
-
-  Widget _buildVCardTab(BuildContext context, WhatsAppToolProvider provider, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
-      child: Column(
-        children: [
-          Text(
-            l10n.createContactQr,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _firstNameController,
-                  decoration: InputDecoration(
-                    labelText: l10n.firstNameLabel,
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  controller: _lastNameController,
-                  decoration: InputDecoration(
-                    labelText: l10n.lastNameLabel,
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _jobTitleController,
-                  decoration: InputDecoration(
-                    labelText: l10n.jobTitleLabel,
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  controller: _companyController,
-                  decoration: InputDecoration(
-                    labelText: l10n.companyLabel,
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-
-          TextField(
-            controller: _phoneController,
-            keyboardType: TextInputType.phone,
-            decoration: InputDecoration(
-                labelText: '${l10n.phoneLabel} *',
-                border: const OutlineInputBorder(),
-                hintText: l10n.phoneNumberHint
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          TextField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-              labelText: l10n.emailLabel,
-              border: const OutlineInputBorder(),
-            ),
-          ),
-
-           const SizedBox(height: 10),
-
-          TextField(
-            controller: _websiteController,
-            keyboardType: TextInputType.url,
-            decoration: InputDecoration(
-              labelText: l10n.websiteLabel,
-              border: const OutlineInputBorder(),
-              prefixText: 'https://',
-            ),
-          ),
-
-          const SizedBox(height: 20),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppConstants.accentGreen,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 15),
-              minimumSize: const Size(double.infinity, 50),
-            ),
-            icon: const Icon(Icons.qr_code_2),
-            label: Text(l10n.generateQr),
-            onPressed: () {
-              // Basic VCard validation logic (could also be moved to form)
-               provider.generateVCardQrCode(
-                l10n,
-                firstName: _firstNameController.text,
-                lastName: _lastNameController.text,
-                number: _phoneController.text,
-                email: _emailController.text,
-                company: _companyController.text,
-                jobTitle: _jobTitleController.text,
-                website: _websiteController.text,
-              );
-            },
-          ),
-          const SizedBox(height: 30),
-          if (provider.barcodeData != null && provider.barcodeData!.startsWith('BEGIN:VCARD'))
-             const OutputDisplay(),
-
-          const SizedBox(height: 20),
-          const AdSpace(),
-        ],
-      ),
     );
   }
 }

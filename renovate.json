@@ -1,0 +1,65 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":automergeMinor",
+    ":automergeDigest",
+    "group:allNonMajor"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 6am on monday"],
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+  "labels": ["dependencies", "automated"],
+  "packageRules": [
+    {
+      "description": "Flutter packages",
+      "matchManagers": ["pub"],
+      "groupName": "flutter dependencies",
+      "labels": ["flutter"]
+    },
+    {
+      "description": "Python packages",
+      "matchManagers": ["pip_requirements", "pip_setup", "pipenv", "poetry"],
+      "groupName": "python dependencies",
+      "labels": ["python"]
+    },
+    {
+      "description": "NPM packages",
+      "matchManagers": ["npm"],
+      "groupName": "npm dependencies",
+      "labels": ["npm"]
+    },
+    {
+      "description": "Docker images",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "groupName": "docker dependencies",
+      "labels": ["docker"]
+    },
+    {
+      "description": "GitHub Actions",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions",
+      "labels": ["ci"],
+      "automerge": true
+    },
+    {
+      "description": "Security updates",
+      "matchUpdateTypes": ["security"],
+      "labels": ["security"],
+      "automerge": true
+    },
+    {
+      "description": "Major updates need review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["major-update"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true
+  }
+}

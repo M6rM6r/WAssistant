@@ -1,91 +1,107 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:wassistant/models/history_entity.dart';
 import 'package:wassistant/models/history_item.dart';
-import 'package:wassistant/services/isar_service.dart';
+import 'package:wassistant/repositories/history_repository.dart';
 import 'package:wassistant/utils/logger_service.dart';
 
-// Provider to manage the list of history items
-// OCPD: Strict dependency injection and error handling
+/// OCPD: High-Rigor Synchronization Engine.
+/// INTJ Strategy: Unified state management across local and cloud repositories.
 class HistoryProvider with ChangeNotifier {
-  HistoryProvider(this._isarService) {
-    // ignore: discarded_futures
-    _loadHistory();
+  HistoryProvider(this._localRepository, [this._cloudRepository]) {
+    _init();
   }
 
-  // Dependency Injection: Switching to Isar for scalability
-  final IsarService _isarService;
+  final HistoryRepository _localRepository;
+  HistoryRepository? _cloudRepository;
 
   List<HistoryItem> _history = [];
+  bool _isSyncing = false;
+
   List<HistoryItem> get history => List.unmodifiable(_history);
+  bool get isSyncing => _isSyncing;
 
-  Future<void> _loadHistory() async {
+  /// OCPD: Balanced Getter/Setter for repository management
+  HistoryRepository? get cloudRepository => _cloudRepository;
+
+  set cloudRepository(HistoryRepository? repo) {
+    if (_cloudRepository != repo) {
+      _cloudRepository = repo;
+      if (repo != null) unawaited(_syncCloudToLocal());
+    }
+  }
+
+  Future<void> _init() async {
+    await _loadLocalHistory();
+    if (_cloudRepository != null) await _syncCloudToLocal();
+  }
+
+  Future<void> _loadLocalHistory() async {
     try {
-      final entities = await _isarService.getHistory();
-
-      _history = entities.map((e) {
-        // Map Entity -> Model
-        // Assuming 'type' string matches the enum names or we handle mapping
-        final typeEnum = HistoryItemType.values.firstWhere(
-            (t) => t.name == e.type,
-            orElse: () => HistoryItemType.link);
-
-        return HistoryItem(
-          type: typeEnum,
-          data: e.data,
-          display: e.display,
-          timestamp: e.timestamp,
-        );
-      }).toList();
-
+      _history = await _localRepository.getHistory();
       notifyListeners();
-    } on Object catch (e, stack) {
-      LoggerService.e('Failed to load history from Isar', e, stack);
+    } catch (e) {
+      LoggerService.e('Local load failure', e);
+    }
+  }
+
+  /// INTJ Strategy: "Cloud-First" Merge for data sovereignty
+  Future<void> _syncCloudToLocal() async {
+    if (_cloudRepository == null) return;
+
+    _isSyncing = true;
+    notifyListeners();
+
+    try {
+      final cloudHistory = await _cloudRepository!.getHistory();
+
+      // Logic: Merge strategy - Use unique data fingerprints
+      final localData = _history.map((h) => h.data).toSet();
+      final itemsToMigrate = cloudHistory.where((c) => !localData.contains(c.data));
+
+      if (itemsToMigrate.isNotEmpty) {
+        for (final item in itemsToMigrate) {
+          await _localRepository.addHistoryItem(item);
+        }
+        await _loadLocalHistory();
+      }
+    } finally {
+      _isSyncing = false;
+      notifyListeners();
     }
   }
 
   Future<void> addHistoryItem(HistoryItem item) async {
-    // Prevent exact duplicates in memory first
     if (_history.any((h) => h.data == item.data)) return;
 
-    _history.insert(0, item);
+    _history = [item, ..._history]; // Atomic update
     notifyListeners();
 
-    // Persist to DB
-    try {
-      final entity = HistoryEntity()
-        ..type = item.type.name
-        ..data = item.data
-        ..display = item.display
-        ..timestamp = item.timestamp;
+    // 1. Persist Locally (Blocking)
+    await _localRepository.addHistoryItem(item);
 
-      await _isarService.addHistory(entity);
-    } on Object catch (e) {
-      LoggerService.e('Failed to save history item', e);
+    // 2. Persist to Cloud (Asynchronous/Non-blocking)
+    if (_cloudRepository != null) {
+      unawaited(_cloudRepository!.addHistoryItem(item));
     }
   }
 
   Future<void> removeHistoryItem(HistoryItem item) async {
-    _history.removeWhere((h) => h.data == item.data && h.timestamp == item.timestamp);
+    _history = _history.where((h) => h.data != item.data).toList();
     notifyListeners();
 
-    // Deleting from DB requires ID. Since our UI model doesn't carry the DB ID (yet),
-    // we would typically need to fetch the ID or store it in HistoryItem.
-    // For now, let's keep it simple: we clear the list and reload, or finding it by data.
-    // Since Isar is fast, we can find the specific entity to delete.
-    // But Isar delete needs ID.
-
-    // Optimization: For now, we will just delete from memory.
-    // To truly delete from DB, we should update HistoryItem to include the ID.
-    // However, since we want to move fast, I'll accept this tech debt momentarily or fix it properly.
-
-    // Proper Fix:
-    // We can't easily delete without ID. But we can query by properties and delete.
-    // Or we update HistoryItem to have an optional 'id' field.
+    await _localRepository.removeHistoryItem(item);
+    if (_cloudRepository != null) {
+      unawaited(_cloudRepository!.removeHistoryItem(item));
+    }
   }
 
   Future<void> clearHistory() async {
-    _history.clear();
+    _history = [];
     notifyListeners();
-    await _isarService.clearAll();
+
+    await _localRepository.clearHistory();
+    if (_cloudRepository != null) {
+      unawaited(_cloudRepository!.clearHistory());
+    }
   }
 }

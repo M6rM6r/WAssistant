@@ -1,11 +1,19 @@
-# Core Dependencies
-Pillow>=10.0.0
+# ═══════════════════════════════════════════════════════════════════════════════
+# WASSISTANT - Root Python Dependencies (INTJ/OCPD: Minimal, Use pyproject.toml)
+# ═══════════════════════════════════════════════════════════════════════════════
+# For full dependency management, use: pip install -e .[dev]
+# This file is for basic compatibility with legacy tools.
+
+# Core
+pillow>=10.0.0
 qrcode[pil]>=7.4.2
 requests>=2.31.0
+pyyaml>=6.0.0
 
-# Dev / Tools (OCPD Friendly: Strict & Organized)
-invoke>=2.2.0        # Task runner
-black>=24.2.0        # Code formatter
-flake8>=7.0.0        # Linter
-mypy>=1.8.0          # Static type checker
-isort>=5.13.0        # Import sorter
+# CLI & Automation
+typer>=0.15.0
+rich>=13.9.0
+invoke>=2.2.0
+
+# Development (install with: pip install -e .[dev])
+# See pyproject.toml for complete dev dependencies

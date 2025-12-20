@@ -1,0 +1,48 @@
+// ═══════════════════════════════════════════════════════════════════════════════
+// TYPESCRIPT CONFIG (INTJ/OCPD: Strict Type Safety for Web)
+// ═══════════════════════════════════════════════════════════════════════════════
+{
+  "compilerOptions": {
+    // ─────────────────────────────────────────────────────────────────────────
+    // STRICT MODE (Maximum Type Safety)
+    // ─────────────────────────────────────────────────────────────────────────
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // MODULE & TARGET
+    // ─────────────────────────────────────────────────────────────────────────
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // OUTPUT
+    // ─────────────────────────────────────────────────────────────────────────
+    "noEmit": true,
+    "declaration": false,
+    "skipLibCheck": true,
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // PATHS
+    // ─────────────────────────────────────────────────────────────────────────
+    "baseUrl": ".",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "include": ["web/**/*.ts", "web/**/*.js"],
+  "exclude": ["node_modules", "build", ".dart_tool"]
+}

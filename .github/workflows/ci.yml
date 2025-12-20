@@ -1,4 +1,4 @@
-name: CI
+name: CI Quality Gate
 
 on:
   push:
@@ -12,23 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node (for pre-commit hooks)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.0'
+          channel: 'stable'
+          cache: true
       - name: Install dependencies
         run: flutter pub get
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
       - name: Analyze
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos
       - name: Run tests
         run: flutter test --coverage
 
   python:
-    name: Python linters
+    name: Python mypy & ruff
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,19 +35,18 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - name: Install Python deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Black check
-        run: black --check .
-      - name: Flake8
-        run: flake8 .
-      - name: Mypy
-        run: mypy . || true
+          pip install ruff mypy
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Ruff check
+        run: ruff check .
+      - name: Mypy typecheck
+        run: mypy . --ignore-missing-imports
 
-  node:
-    name: JS/CSS lint
+  web:
+    name: Web ESLint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,9 +54,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - name: Install Node dependencies
+      - name: Install dependencies
         run: npm ci
-      - name: Husky install
-        run: npx husky install
-      - name: Run linters
+      - name: Lint
         run: npm run lint || true

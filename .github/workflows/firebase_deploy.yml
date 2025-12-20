@@ -22,7 +22,7 @@ jobs:
         run: flutter pub get
 
       - name: Build web release
-        run: flutter build web --release
+        run: flutter build web --release --target=lib/main_web.dart
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

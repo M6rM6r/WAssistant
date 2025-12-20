@@ -33,15 +33,14 @@ def run_command(command, cwd=None, ignore_error=False):
     """Executes a shell command and logs output."""
     log(f"Executing: {command}", "INFO")
     try:
-        # Check if we are on Windows and using powershell or cmd
         shell = True if os.name == 'nt' else False
         result = subprocess.run(
-            command, 
-            cwd=cwd, 
-            shell=shell, 
+            command,
+            cwd=cwd,
+            shell=shell,
             check=not ignore_error,
             text=True,
-            capture_output=False // Stream directly to console
+            capture_output=False
         )
         return result.returncode == 0
     except subprocess.CalledProcessError as e:
@@ -67,6 +66,15 @@ def code_analysis():
     run_command("dart analyze .")
     log("Code Analysis Complete", "SUCCESS")
 
+def run_tests_with_coverage():
+    log("Running Tests with Coverage", "HEADER")
+    run_command("flutter test --coverage")
+    if os.name != 'nt': # lcov is mostly a unix tool
+        run_command("genhtml coverage/lcov.info -o coverage/html")
+        log("Coverage report generated in coverage/html/index.html", "SUCCESS")
+    else:
+        log("Coverage info generated in coverage/lcov.info", "INFO")
+
 def build_web():
     log("Building for Web", "HEADER")
     run_command("flutter build web --release --base-href '/'")
@@ -86,8 +94,26 @@ def git_commit(message):
 
 def main():
     parser = argparse.ArgumentParser(description="WAssistant Project Manager (INTJ Edition)")
-    parser.add_argument("action", choices=["clean", "icons", "check", "build-web", "build-android", "deploy", "all"], help="Action to perform")
+    parser.add_argument(
+        "action",
+        choices=[
+            "clean",
+            "icons",
+            "check",
+            "test",
+            "build-web",
+            "build-android",
+            "bulk-links",
+            "deploy",
+            "doc",
+            "all",
+        ],
+        help="Action to perform",
+    )
     parser.add_argument("--msg", help="Commit message for deploy", default="Auto-update via Manager")
+    parser.add_argument("--input", help="Bulk CSV input path (for bulk-links)")
+    parser.add_argument("--output", help="Bulk CSV output path (for bulk-links)")
+    parser.add_argument("--qr", action="store_true", help="Generate QR PNGs for bulk-links")
 
     args = parser.parse_args()
 
@@ -104,20 +130,33 @@ def main():
         generate_assets()
     elif args.action == "check":
         code_analysis()
+    elif args.action == "test":
+        run_tests_with_coverage()
     elif args.action == "build-web":
         build_web()
     elif args.action == "build-android":
         build_android()
+    elif args.action == "bulk-links":
+        inp = args.input or "bulk_input.csv"
+        out = args.output or "bulk_output.csv"
+        cmd = f"python python_scripts/bulk_generate_links.py --in {inp} --out {out}"
+        if args.qr:
+            cmd += " --qr"
+        run_command(cmd)
     elif args.action == "deploy":
         code_analysis()
+        run_tests_with_coverage()
         git_commit(args.msg)
+    elif args.action == "doc":
+        run_command("python tools/doc_gen.py")
     elif args.action == "all":
         clean_project()
         generate_assets()
         code_analysis()
+        run_tests_with_coverage()
         build_web()
         build_android()
-    
+
     log("Operation Completed Successfully.", "SUCCESS")
 
 if __name__ == "__main__":

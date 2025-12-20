@@ -1,15 +1,15 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // Env vars
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:sentry_flutter/sentry_flutter.dart'; // Crash Reporting
-import 'package:upgrader/upgrader.dart'; // Update prompts
-import 'package:wiredash/wiredash.dart'; // Feedback Loop
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:upgrader/upgrader.dart';
 import 'package:wassistant/l10n/app_localizations.dart';
 import 'package:wassistant/locator.dart';
 import 'package:wassistant/pages/whatsapp_tool_home_page.dart';
@@ -17,97 +17,88 @@ import 'package:wassistant/providers/history_provider.dart';
 import 'package:wassistant/providers/template_provider.dart';
 import 'package:wassistant/providers/theme_provider.dart';
 import 'package:wassistant/providers/whatsapp_tool_provider.dart';
-import 'package:wassistant/services/isar_service.dart';
-import 'package:wassistant/services/local_storage_service.dart';
+import 'package:wassistant/repositories/history_repository.dart';
+import 'package:wassistant/repositories/template_repository.dart';
+import 'package:wassistant/services/engagement_service.dart';
+import 'package:wassistant/services/network_service.dart';
 import 'package:wassistant/utils/app_theme.dart';
 import 'package:wassistant/utils/constants.dart';
 import 'package:wassistant/utils/error_handler.dart';
 import 'package:wassistant/utils/logger_service.dart';
 
 Future<void> main() async {
-  // Fire and forget runZonedGuarded as it runs the app loop
-  // ignore: unawaited_futures
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-    // Load Environment Variables
-    try {
-      await dotenv.load();
-    } on Object {
-      LoggerService.w('No .env file found. Using default settings.');
-    }
-
-    // OCPD: UI Stability
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: AppConstants.darkBackground,
-      systemNavigationBarIconBrightness: Brightness.light,
-      systemNavigationBarDividerColor: Colors.transparent,
-    ));
-
-    await setupLocator();
-
-    final localStorage = locator<LocalStorageService>();
-    final isarService = locator<IsarService>();
-
-    if (!kIsWeb) {
       try {
-        await MobileAds.instance.initialize();
-      } on Object catch (e) {
-        LoggerService.e('AdMob init failed', e);
+        await dotenv.load();
+      } on Object {
+        LoggerService.w('No .env file found. Using default settings.');
       }
-    }
 
-    final sentryDsn = dotenv.env['SENTRY_DSN'];
+      final sentryDsn = _getEnv('SENTRY_DSN');
+      if (sentryDsn.isNotEmpty) {
+        await SentryFlutter.init(
+          (options) =>
+              options
+                ..dsn = sentryDsn
+                ..tracesSampleRate = 0.2,
+        );
+      }
 
-    // Only initialize Sentry if a DSN is provided
-    if (sentryDsn != null && sentryDsn.isNotEmpty) {
-      await SentryFlutter.init(
-        (options) {
-          options
-            ..dsn = sentryDsn
-            ..tracesSampleRate = 1.0
-            ..debug = kDebugMode;
-        },
-        appRunner: () => runApp(_buildApp(localStorage, isarService)),
+      try {
+        if (!kIsWeb) {
+          await Firebase.initializeApp();
+          LoggerService.i('Firebase initialized.');
+        }
+      } on Object catch (e) {
+        LoggerService.w('Firebase init failed: $e');
+      }
+
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          systemNavigationBarColor: AppConstants.darkBackground,
+          systemNavigationBarIconBrightness: Brightness.light,
+          systemNavigationBarDividerColor: Colors.transparent,
+        ),
       );
-    } else {
-      LoggerService.i('Sentry DSN not found. Running without crash reporting.');
-      runApp(_buildApp(localStorage, isarService));
-    }
 
-  }, (error, stack) async {
-    LoggerService.e('Uncaught error', error, stack);
-    if (dotenv.env['SENTRY_DSN']?.isNotEmpty ?? false) {
-       await Sentry.captureException(error, stackTrace: stack);
-    }
-    ErrorHandler.handleError(error, stack);
-  });
+      await setupLocator();
+
+      final engagementService = locator<EngagementService>();
+
+      if (!kIsWeb) {
+        try {
+          await MobileAds.instance.initialize();
+        } on Object catch (e, st) {
+          LoggerService.e('AdMob init failed', e, st);
+        }
+      }
+
+      await engagementService.recordAppOpen();
+
+      runApp(const WassistantApp());
+    },
+    (error, stack) async {
+      LoggerService.e('Global Error Caught', error, stack);
+      if (Sentry.isEnabled) {
+        await Sentry.captureException(error, stackTrace: stack);
+      }
+      ErrorHandler.handleError(error, stack);
+    },
+  );
 }
 
-Widget _buildApp(LocalStorageService localStorage, IsarService isarService) {
-  return MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => ThemeProvider()),
-      ChangeNotifierProvider(create: (_) => HistoryProvider(isarService)),
-      ChangeNotifierProvider(create: (_) => TemplateProvider(localStorage)),
-      ChangeNotifierProxyProvider<HistoryProvider, WhatsAppToolProvider>(
-        create: (context) => WhatsAppToolProvider(
-          historyProvider: Provider.of<HistoryProvider>(
-            context,
-            listen: false,
-          ),
-        ),
-        update: (context, history, tool) {
-          if (tool == null) throw ArgumentError.notNull('tool');
-          tool.historyProvider = history;
-          return tool;
-        },
-      ),
-    ],
-    child: const WassistantApp(),
-  );
+/// Helper to safely access env vars even in test environments
+String _getEnv(String key) {
+  try {
+    return dotenv.env[key] ?? '';
+  } catch (_) {
+    return '';
+  }
 }
 
 class WassistantApp extends StatelessWidget {
@@ -115,42 +106,47 @@ class WassistantApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final wiredashId = dotenv.env['WIREDASH_PROJECT_ID'] ?? '';
-    final wiredashSecret = dotenv.env['WIREDASH_SECRET'] ?? '';
-
-    // Advanced Feedback Loop
-    return Wiredash(
-      projectId: wiredashId,
-      secret: wiredashSecret,
-      theme: WiredashThemeData(
-        brightness: Brightness.dark,
-        primaryColor: AppConstants.accentGreen,
-        secondaryColor: AppConstants.primaryTeal,
-      ),
-      child: MaterialApp(
-        title: AppConstants.appName,
-        debugShowCheckedModeBanner: false,
-
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en'),
-          Locale('es'),
-        ],
-
-        themeMode: themeProvider.themeMode,
-        theme: AppTheme.darkTheme,
-
-        // UpgradeAlert checks for app updates automatically
-        home: UpgradeAlert(
-          child: const WhatsAppToolHomePage(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider.value(value: locator<NetworkService>()),
+        ChangeNotifierProvider(create: (_) => HistoryProvider(locator<HistoryRepository>())),
+        ChangeNotifierProvider(create: (_) => TemplateProvider(locator<TemplateRepository>()),
         ),
-      ),
+        ChangeNotifierProxyProvider<HistoryProvider, WhatsAppToolProvider>(
+          create: (context) => WhatsAppToolProvider(),
+          update: (context, history, tool) {
+            return (tool ?? WhatsAppToolProvider())..historyProvider = history;
+          },
+        ),
+      ],
+      child: const _WassistantMaterialApp(),
+    );
+  }
+}
+
+class _WassistantMaterialApp extends StatelessWidget {
+  const _WassistantMaterialApp();
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return MaterialApp(
+      title: AppConstants.appName,
+      debugShowCheckedModeBanner: false,
+      navigatorObservers: [if (Sentry.isEnabled) SentryNavigatorObserver()],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // OCPD: Strictly English only. Redundant locales purged.
+      ],
+      themeMode: themeProvider.themeMode,
+      theme: AppTheme.darkTheme,
+      home: UpgradeAlert(child: const WhatsAppToolHomePage()),
     );
   }
 }

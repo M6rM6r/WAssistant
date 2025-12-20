@@ -34,7 +34,7 @@ extension ContextExtensions on BuildContext {
 extension StringExtensions on String {
   // Logic: Quick validation or formatting helpers
   bool get isValidPhoneNumber {
-    final clean = replaceAll(RegExp(r'[^0-9]'), '');
+    final clean = replaceAll(RegExp('[^0-9]'), '');
     return clean.length >= 7 && clean.length <= 15;
   }
 

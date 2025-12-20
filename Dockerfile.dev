@@ -1,0 +1,32 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# WASSISTANT - Development Docker Build (Hot Reload)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Build: docker build -f Dockerfile.dev -t wassistant-dev .
+
+FROM python:3.12-slim
+
+# Install development tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl vim build-essential libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python packages (dev mode)
+COPY requirements.txt .
+COPY backend/requirements.txt ./backend-requirements.txt
+RUN pip install --no-cache-dir \
+    -r requirements.txt \
+    -r backend-requirements.txt \
+    pytest pytest-cov httpx ruff mypy
+
+# Environment
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    ENV=development \
+    DEBUG=true
+
+EXPOSE 8000
+
+# Hot reload enabled
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

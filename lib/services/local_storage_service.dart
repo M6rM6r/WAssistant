@@ -5,8 +5,17 @@ import 'package:wassistant/utils/logger_service.dart';
 /// Allows for easy mocking and swapping of implementations (e.g., Hive).
 abstract class LocalStorageService {
   Future<void> init();
+
+  // OCPD: Balanced API for all basic types
+  String? getString(String key);
+  Future<bool> setString(String key, String value);
+
   List<String>? getStringList(String key);
   Future<bool> setStringList(String key, List<String> value);
+
+  int? getInt(String key);
+  Future<bool> setInt(String key, int value);
+
   Future<bool> remove(String key);
   Future<bool> clear();
 }
@@ -17,9 +26,21 @@ class SharedPreferencesService implements LocalStorageService {
 
   @override
   Future<void> init() async {
-    if (_prefs != null) return; // Already initialized
+    if (_prefs != null) return;
     LoggerService.i('Initializing Local Storage (SharedPreferences)...');
     _prefs = await SharedPreferences.getInstance();
+  }
+
+  @override
+  String? getString(String key) {
+    _ensureInitialized();
+    return _prefs?.getString(key);
+  }
+
+  @override
+  Future<bool> setString(String key, String value) async {
+    _ensureInitialized();
+    return _prefs!.setString(key, value);
   }
 
   @override
@@ -32,6 +53,18 @@ class SharedPreferencesService implements LocalStorageService {
   Future<bool> setStringList(String key, List<String> value) async {
     _ensureInitialized();
     return _prefs!.setStringList(key, value);
+  }
+
+  @override
+  int? getInt(String key) {
+    _ensureInitialized();
+    return _prefs?.getInt(key);
+  }
+
+  @override
+  Future<bool> setInt(String key, int value) async {
+    _ensureInitialized();
+    return _prefs!.setInt(key, value);
   }
 
   @override

@@ -1,0 +1,209 @@
+Metadata-Version: 2.4
+Name: wassistant-tools
+Version: 1.4.1
+Summary: WAssistant development tools, backend, and automation scripts
+Author: WAssistant Team
+License: MIT
+Keywords: whatsapp,flutter,qrcode,automation
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: pillow>=10.0.0
+Requires-Dist: qrcode[pil]>=7.4.2
+Requires-Dist: requests>=2.31.0
+Requires-Dist: fastapi>=0.115.0
+Requires-Dist: uvicorn[standard]>=0.32.0
+Requires-Dist: sqlalchemy>=2.0.0
+Requires-Dist: psycopg2-binary>=2.9.6
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: python-dotenv>=1.0.0
+Requires-Dist: invoke>=2.2.0
+Requires-Dist: rich>=13.9.0
+Requires-Dist: typer>=0.15.0
+Requires-Dist: pyyaml>=6.0.0
+Provides-Extra: dev
+Requires-Dist: black>=24.10.0; extra == "dev"
+Requires-Dist: ruff>=0.8.0; extra == "dev"
+Requires-Dist: mypy>=1.13.0; extra == "dev"
+Requires-Dist: isort>=5.13.0; extra == "dev"
+Requires-Dist: pytest>=8.3.0; extra == "dev"
+Requires-Dist: pytest-cov>=6.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.24.0; extra == "dev"
+Requires-Dist: httpx>=0.28.0; extra == "dev"
+Requires-Dist: pre-commit>=4.0.0; extra == "dev"
+
+# WAssistant - Advanced WhatsApp Utility
+
+![Coverage](https://img.shields.io/badge/coverage-0.0%25-red)
+[![Flutter](https://img.shields.io/badge/Flutter-3.7%2B-blue)](https://flutter.dev)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![CI](https://github.com/yourusername/wassistant/workflows/CI/badge.svg)](https://github.com/yourusername/wassistant/actions)
+
+WAssistant is a professionally engineered Flutter application designed to enhance productivity for WhatsApp users. It provides a suite of tools for link generation, QR codes, and contact management, built with a focus on privacy, security, and data sovereignty.
+
+## 🚀 Key Features
+
+### 🛠 Core Utilities
+*   **Direct Chat**: Open WhatsApp chats without saving the number to contacts.
+*   **Link Generator**: Create shareable `wa.me` links with pre-filled messages.
+*   **QR Code Generator**: Generate high-res QR codes for chats and vCards.
+*   **vCard Generator**: Create contact QR codes for instant scanning and saving.
+*   **Bulk Operations**: CSV-based bulk link generation with QR export capability.
+
+### 🧠 Intelligent Features
+*   **Smart Paste**: Automatically detects phone numbers in the clipboard on startup/resume and offers to fill them.
+*   **Quick Templates**: Save, manage, and reuse frequently sent messages (e.g., Location, Pricing).
+*   **History & Restoration**: Auto-saves your generated links/QRs. Restore previous sessions with one tap.
+*   **OCR Support**: Extract phone numbers from images using ML Kit.
+
+### 🛡 Security & Data
+*   **Biometric Lock**: Secure the app using FaceID or Fingerprint (via `local_auth`).
+*   **Data Sovereignty**: Full Backup & Restore system. Export your data to JSON and own it completely.
+*   **Privacy-First**: No data is sent to our servers. Everything processes locally.
+*   **Crashlytics**: Comprehensive error tracking and crash reporting.
+
+###  User Engagement
+*   **Push Notifications**: Targeted messaging for user retention.
+*   **In-App Messaging**: Contextual feature announcements.
+*   **Review Prompts**: Smart prompts for app store reviews.
+
+## 🏗 Architecture & Engineering
+
+The project follows **Clean Architecture** principles:
+
+### Directory Structure
+```
+lib/
+├── l10n/              # Localization (ARB files)
+├── models/            # Data Models (HistoryItem, TemplateItem)
+├── pages/             # UI Screens (Home, History)
+├── providers/         # State Management (ChangeNotifier)
+├── services/          # Business Logic & Firebase Integration
+│   ├── performance_service.dart        # Operation monitoring
+│   ├── remote_config_service.dart      # Feature flags
+│   ├── notification_service.dart       # Push notifications
+│   └── error_handling_service.dart     # Crash reporting
+├── utils/             # Constants, Logging, Error Handling
+└── widgets/           # Reusable UI Components
+```
+
+### Technical Stack
+*   **Framework**: Flutter 3.7+ with Dart 3.7+
+*   **State Management**: `Provider` with `get_it` dependency injection
+*   **Backend**: Firebase (Performance, Remote Config, Crashlytics, Messaging)
+*   **Localization**: `flutter_localizations` & `intl` (English/Spanish)
+*   **Persistence**: `shared_preferences` & JSON File I/O
+*   **Charts**: `fl_chart` for data visualization
+*   **Logging**: `logger` with Firebase integration
+*   **Testing**: `flutter_test`, `integration_test`, `mockito`
+*   **CI/CD**: GitHub Actions with quality gates
+*   **Monetization**: Google Mobile Ads SDK
+
+### INTJ/OCPD Development Principles
+- **Measurable Outcomes**: Feature performance and error tracking
+- **Data-Driven Decisions**: Remote Config for A/B testing
+- **Systematic Workflows**: Makefile + Python tools for automation
+- **Quality Standards**: 80% test coverage minimum, comprehensive linting
+- **Documentation**: ADRs for architectural decisions
+
+## 🛠 Setup & Installation
+
+### Prerequisites
+- Flutter SDK `^3.7.0`
+- Python `3.11+` (for automation tools)
+- Node.js `18+` (for pre-commit hooks)
+
+### Quick Start
+```bash
+# Clone and install dependencies
+git clone https://github.com/yourusername/wassistant.git
+cd wassistant
+make clean  # Installs Flutter, Python, Node.js dependencies
+
+# Run the app
+flutter run  # Mobile
+flutter run -d chrome  # Web
+
+# Development workflow
+make check     # Lint and analyze
+make test      # Run tests with coverage
+make docs      # Generate documentation
+```
+
+## 🧪 Testing & Quality
+
+### Test Coverage
+Run tests with coverage reporting:
+```bash
+make test       # Unit + integration tests
+make coverage   # Generate badge and report
+```
+
+### Quality Gates (CI/CD)
+- ✅ All tests pass
+- ✅ Coverage ≥80%
+- ✅ No lint errors (`flutter analyze`)
+- ✅ Python code formatted (`black`, `isort`)
+- ✅ Pre-commit hooks pass
+
+### Performance Benchmarking
+```bash
+make benchmark  # Run performance benchmarks
+```
+
+## 📚 Documentation
+
+### API Documentation
+```bash
+make docs  # Generate Dart, Python, and OpenAPI docs
+```
+
+Documentation available in:
+- `doc/api/` - Dart API docs
+- `docs/api/` - Python tool docs
+- `docs/architecture/` - Architecture Decision Records (ADRs)
+
+### Key ADRs
+- [ADR-001: Firebase Backend](docs/architecture/001-firebase-backend.md)
+
+## 🚀 Deployment
+
+### Android
+```bash
+make build-android  # Builds release AAB
+# Output: build/app/outputs/bundle/release/app-release.aab
+```
+
+### Web
+```bash
+make build-web  # Builds production web app
+firebase deploy --only hosting
+```
+
+### Firebase Setup
+1. Create Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+2. Download `google-services.json` (Android) and `GoogleService-Info.plist` (iOS)
+3. Place in `android/app/` and `ios/Runner/` respectively
+4. Configure environment variables in `.env`
+
+## 📈 Monitoring
+
+### Firebase Console
+Monitor real-time metrics:
+- **Performance**: Operation timing, network requests
+- **Crashlytics**: Error rates, stability metrics
+- **Remote Config**: Feature flag usage
+
+```bash
+flutter test
+```
+
+## Tooling (Developer-focused)
+
+- Use `Makefile` tasks for common commands: `make deps`, `make analyze`, `make test`.
+- Pre-commit hooks configured: Python formatting via `pre-commit` and JS/CSS via `husky`.
+- Dependabot configured to keep dependencies up-to-date.
+- Run `npm ci` and `npm run lint` to check web assets linting.
+
+## 📄 License
+
+This project is licensed under the MIT License.

@@ -1,26 +1,41 @@
 {
-  "name": "Wassistant Devcontainer",
+  "name": "Wassistant Elite Dev Environment",
   "build": {
     "dockerfile": "../Dockerfile"
   },
-  "forwardPorts": [8000, 3000],
+  "forwardPorts": [8000, 3000, 52148],
   "workspaceFolder": "/workspace",
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
-  },
-  "postCreateCommand": "bash -lc 'python -m pip install --upgrade pip && pip install .[dev] && (npm ci || npm i) && flutter pub get && pre-commit install'",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "18"
     },
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/common-utils:1": {
+      "configureZshAsDefaultShell": true
     }
   },
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "python.analysis.typeCheckingMode": "strict",
+    "dart.analysisOptions": "analysis_options.yaml"
+  },
+  "postCreateCommand": "bash -lc 'python -m pip install --upgrade pip && pip install .[dev] && (npm ci || npm i) && flutter pub get && pre-commit install'",
   "extensions": [
     "ms-python.python",
     "dart-code.flutter",
     "esbenp.prettier-vscode",
-    "ms-azuretools.vscode-docker"
+    "ms-azuretools.vscode-docker",
+    "charliermarsh.ruff",
+    "ms-python.mypy-vscode",
+    "dbaeumer.vscode-eslint",
+    "stylelint.vscode-stylelint"
   ]
 }

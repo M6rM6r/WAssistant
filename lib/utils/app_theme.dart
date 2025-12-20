@@ -16,7 +16,7 @@ class AppTheme {
         surface: AppConstants.darkSurface,
         onSurface: AppConstants.textHighEmphasis,
       ),
-      
+
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppConstants.darkSurface,
         contentTextStyle: const TextStyle(color: AppConstants.textHighEmphasis),
@@ -30,7 +30,7 @@ class AppTheme {
         ),
         elevation: 4,
       ),
-      
+
       appBarTheme: const AppBarTheme(
         backgroundColor: AppConstants.darkBackground,
         foregroundColor: AppConstants.textHighEmphasis,
@@ -43,7 +43,7 @@ class AppTheme {
           letterSpacing: 1.2,
         ),
       ),
-      
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppConstants.primaryTeal,
@@ -57,16 +57,19 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       cardColor: AppConstants.darkCard,
-      
+
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppConstants.darkSurface,
         labelStyle: const TextStyle(color: AppConstants.textMediumEmphasis),
         hintStyle: const TextStyle(color: Colors.white24),
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -77,16 +80,22 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppConstants.accentGreen, width: 2),
+          borderSide: const BorderSide(
+            color: AppConstants.accentGreen,
+            width: 2,
+          ),
         ),
         prefixIconColor: AppConstants.textMediumEmphasis,
       ),
-      
+
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: AppConstants.accentGreen,
         selectionColor: Color(0x6600E676),
         selectionHandleColor: AppConstants.accentGreen,
-      ), dialogTheme: const DialogThemeData(backgroundColor: AppConstants.darkCard),
+      ),
+      dialogTheme: const DialogThemeData(
+        backgroundColor: AppConstants.darkCard,
+      ),
     );
   }
 }

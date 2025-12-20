@@ -1,48 +1,41 @@
-
-/// Centralized validation logic.
-/// Ensures consistency across the application.
+/// OCPD: Centralized Data Validation Engine.
+/// INTJ Strategy: Mathematical certainty for all user inputs.
 class Validators {
   Validators._();
 
-  static String? validatePhoneNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Phone number is required';
-    }
-    // Logic: Use a Pattern instead of RegExp for simple checks or pre-compile
-    final clean = value.replaceAll(RegExp('[^0-9]'), '');
-    if (clean.length < 7 || clean.length > 15) {
-      return 'Enter a valid phone number (7-15 digits)';
-    }
-    return null;
+  static final RegExp _phoneRegex = RegExp(r'^\+?[1-9]\d{6,14}$');
+  static final RegExp _emailRegex = RegExp(
+    r'^[a-zA-Z0-9.!#$%&'
+    "'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?"
+    r'(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$',
+  );
+  static final RegExp _urlRegex = RegExp(
+    r'^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$',
+  );
+
+  /// Validates a phone number and returns true if it matches international standards.
+  static bool validatePhoneNumber(String? input) {
+    if (input == null || input.isEmpty) return false;
+    return _phoneRegex.hasMatch(input);
   }
 
-  static String? validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Name is required';
-    }
-    return null;
+  /// Validates an email address using a strict RFC-compliant regex.
+  static bool validateEmail(String? input) {
+    if (input == null || input.isEmpty) return false;
+    return _emailRegex.hasMatch(input);
   }
 
-  static String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return null; // Optional
-    }
-    // Basic, permissive email regex (no spaces, has @ and a domain)
-    final emailRegExp = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
-    if (!emailRegExp.hasMatch(value)) {
-      return 'Enter a valid email address';
-    }
-    return null;
+  /// Validates a URL for web compatibility.
+  static bool validateUrl(String? input) {
+    if (input == null || input.isEmpty) return false;
+    return _urlRegex.hasMatch(input);
   }
 
-  static String? validateUrl(String? value) {
-    if (value == null || value.isEmpty) {
-      return null; // Optional
-    }
-    // We append https:// if missing in logic, but here we just check structure
-    if (value.contains(' ')) {
-      return 'URL should not contain spaces';
-    }
-    return null;
+  /// Utility: Cleans a phone number to digits-only for system processing.
+  static String? cleanPhone(String? input) {
+    if (input == null || input.isEmpty) return null;
+    final digitsOnly = input.replaceAll(RegExp('[^0-9]'), '');
+    if (digitsOnly.length < 7 || digitsOnly.length > 15) return null;
+    return digitsOnly;
   }
 }

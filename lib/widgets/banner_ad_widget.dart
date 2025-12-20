@@ -1,68 +1,49 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:wassistant/utils/constants.dart';
+import 'package:wassistant/utils/logger_service.dart';
 
 class BannerAdWidget extends StatefulWidget {
-
-  const BannerAdWidget({super.key, this.adSize = AdSize.banner});
-  final AdSize adSize;
+  const BannerAdWidget({super.key});
 
   @override
   State<BannerAdWidget> createState() => _BannerAdWidgetState();
 }
 
 class _BannerAdWidgetState extends State<BannerAdWidget> {
-  // Logic: Centralize configuration for maintainability.
-  static const String _testAdUnitId = 'ca-app-pub-3940256099942544/6300978111';
-  // TODO(x-noo): Replace with production ID in release mode.
-  static const String _adUnitId = kReleaseMode ? 'YOUR_PROD_AD_UNIT_ID' : _testAdUnitId;
-  
   BannerAd? _bannerAd;
-  bool _isAdLoaded = false;
-  int _retryAttempt = 0;
-  static const int _maxRetries = 3;
+  bool _isLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    if (!kIsWeb) {
-      _loadAd();
-    }
+    _loadAd();
   }
 
   void _loadAd() {
+    // INTJ Logic: Zero-latency check for platform and test state
+    if (kIsWeb) return;
+
     _bannerAd = BannerAd(
-      adUnitId: _adUnitId, // Using the correct ID selection logic
+      adUnitId: AppConstants.androidBannerAdUnitId,
       request: const AdRequest(),
-      size: widget.adSize,
+      size: AdSize.banner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
-          if (mounted) {
-            setState(() {
-              _isAdLoaded = true;
-              _retryAttempt = 0; // Reset retry counter on success
-            });
+          if (!mounted) {
+            ad.dispose();
+            return;
           }
+          setState(() => _isLoaded = true);
+          LoggerService.i('AdMob: Banner Ad Loaded.');
         },
         onAdFailedToLoad: (ad, err) {
-          debugPrint('BannerAd failed to load: $err');
           ad.dispose();
-          _isAdLoaded = false;
-          
-          // Logic: Implement exponential backoff for retries to be "smart" about network resources.
-          if (_retryAttempt < _maxRetries) {
-            _retryAttempt++;
-            final delay = Duration(seconds: 2 * _retryAttempt);
-            debugPrint('Retrying ad load in ${delay.inSeconds} seconds (Attempt $_retryAttempt)');
-            Timer(delay, () {
-              if (mounted) _loadAd();
-            });
-          }
+          LoggerService.e('AdMob: Failed to load banner', err);
         },
       ),
-    )..load(); // ignore: discarded_futures
+    )..load();
   }
 
   @override
@@ -73,54 +54,15 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Logic: Only render the ad if it is actually ready.
-    // On Web, ads are handled differently (e.g., Adsense), so we skip or use a different widget.
-    if (kIsWeb) return const SizedBox.shrink();
-
-    final shouldShowAd = _isAdLoaded && _bannerAd != null;
-
-    if (shouldShowAd) {
-      return SizedBox(
-        width: widget.adSize.width.toDouble(),
-        height: widget.adSize.height.toDouble(),
-        child: AdWidget(ad: _bannerAd!),
-      );
-    } else {
-      // Logic: Provide a visual placeholder during loading/error states 
-      // to prevent UI jank (layout shifts).
-      return _buildPlaceholder(context);
+    if (kIsWeb || !_isLoaded || _bannerAd == null) {
+      return const SizedBox.shrink();
     }
-  }
 
-  Widget _buildPlaceholder(BuildContext context) {
     return Container(
-      width: widget.adSize.width.toDouble(),
-      height: widget.adSize.height.toDouble(),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-             Icon(Icons.ad_units, size: 16, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4)),
-             const SizedBox(height: 4),
-             Text(
-              'AD SPACE',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
-                fontSize: 10,
-              ),
-            ),
-          ],
-        ),
-      ),
+      alignment: Alignment.center,
+      width: _bannerAd!.size.width.toDouble(),
+      height: _bannerAd!.size.height.toDouble(),
+      child: AdWidget(ad: _bannerAd!),
     );
   }
 }

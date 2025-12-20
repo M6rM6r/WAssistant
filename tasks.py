@@ -1,5 +1,6 @@
 from invoke import task
 
+
 @task
 def setup(c):
     """Initial project setup: Python dev deps, npm, flutter, pre-commit."""

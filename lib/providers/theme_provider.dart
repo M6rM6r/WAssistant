@@ -1,10 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 class ThemeProvider with ChangeNotifier {
   // Always Dark Mode
   ThemeMode get themeMode => ThemeMode.dark;
-  
+
   // Getter mostly for legacy compatibility if other widgets check it
   bool get isDarkMode => true;
 

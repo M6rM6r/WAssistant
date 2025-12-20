@@ -1,32 +1,42 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'history_item.freezed.dart';
-part 'history_item.g.dart';
-
-// Enum to define the type of history item
-// Using explicit integer values to maintain backward compatibility
-// with previous manual serialization
-@JsonEnum()
+/// OCPD: Logic-Pure History Item Model.
+/// INTJ Strategy: Zero dependency domain object for cross-platform stability.
 enum HistoryItemType {
-  @JsonValue(0)
   link,
-  @JsonValue(1)
   qr,
-  @JsonValue(2)
   vcard,
 }
 
-// Immutable Model for a single history item using Freezed
-// OCPD: Immutability guarantees state predictability.
-@freezed
-class HistoryItem with _$HistoryItem {
-  const factory HistoryItem({
-    required HistoryItemType type,
-    required String data,
-    required DateTime timestamp,
-    @Default('Unknown') String display,
-  }) = _HistoryItem;
+class HistoryItem {
+  HistoryItem({
+    this.id,
+    required this.type,
+    required this.data,
+    required this.timestamp,
+    this.display = 'Unknown',
+  });
 
-  factory HistoryItem.fromJson(Map<String, dynamic> json) =>
-      _$HistoryItemFromJson(json);
+  // OCPD: Platform-agnostic identity
+  final int? id;
+  final HistoryItemType type;
+  final String data;
+  final DateTime timestamp;
+  final String display;
+
+  factory HistoryItem.fromJson(Map<String, dynamic> json) {
+    return HistoryItem(
+      id: json['id'] as int?,
+      type: HistoryItemType.values[json['type'] as int? ?? 0],
+      data: json['data'] as String? ?? '',
+      timestamp: DateTime.parse(json['timestamp'] as String? ?? DateTime.now().toIso8601String()),
+      display: json['display'] as String? ?? 'Unknown',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    if (id != null) 'id': id,
+    'type': type.index,
+    'data': data,
+    'timestamp': timestamp.toIso8601String(),
+    'display': display,
+  };
 }

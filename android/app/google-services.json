@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "977829078223",
+    "project_id": "wassistant-707",
+    "storage_bucket": "wassistant-707.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977829078223:android:9afc6b0fbd8c719bb8c3ba",
+        "android_client_info": {
+          "package_name": "com.itlab.wassistant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbr36khBBkGOFKkxtylMGJUZNOsEo-Njo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

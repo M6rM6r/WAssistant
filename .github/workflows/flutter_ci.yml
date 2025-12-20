@@ -10,7 +10,7 @@ jobs:
   quality-control:
     name: 🛡️ Quality Control
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
 
@@ -52,4 +52,15 @@ jobs:
         run: flutter analyze --no-fatal-infos
 
       - name: 🧪 Run Tests
-        run: flutter test
+        run: flutter test --coverage
+
+      - name: 📊 Generate Coverage Report
+        run: |
+          dart pub global activate coverage
+          dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
+
+      - name: 📈 Enforce Coverage Threshold
+        run: |
+          COVERAGE=$(awk -F"," '{ if ($6 != "") { lines += 1; hit += $6 } } END { if (lines > 0) printf "%.2f", (hit/lines)*100; else print "0" }' coverage/lcov.info)
+          echo "Coverage: $COVERAGE%"
+          THRESHOLD=17

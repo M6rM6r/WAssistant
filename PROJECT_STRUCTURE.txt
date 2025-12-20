@@ -1,0 +1,145 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#                         WASSISTANT PROJECT STRUCTURE
+#                     (INTJ/OCPD: Logical Organization Guide)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# This file documents the project structure for quick reference.
+# Last updated: 2024
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+wassistant/
+│
+├── 📱 FLUTTER APPLICATION
+│   ├── lib/                          # Main Dart source code
+│   │   ├── main.dart                 # App entry point
+│   │   ├── main_web.dart             # Web-specific entry point
+│   │   ├── locator.dart              # Dependency injection (GetIt)
+│   │   ├── firebase_options.dart     # Firebase configuration
+│   │   │
+│   │   ├── l10n/                     # Localization (i18n)
+│   │   ├── models/                   # Data models (freezed)
+│   │   ├── pages/                    # Screen widgets
+│   │   ├── providers/                # State management (Provider)
+│   │   ├── repositories/             # Data access layer
+│   │   ├── services/                 # Business logic services
+│   │   ├── theme/                    # App theming
+│   │   ├── utils/                    # Utility functions
+│   │   └── widgets/                  # Reusable UI components
+│   │
+│   ├── test/                         # Unit & widget tests
+│   │   ├── unit/                     # Unit tests
+│   │   └── integration/              # Integration tests
+│   │
+│   ├── integration_test/             # Full integration tests
+│   ├── assets/                       # Static assets (images, etc.)
+│   │
+│   ├── android/                      # Android platform code
+│   ├── ios/                          # iOS platform code
+│   └── web/                          # Web platform (HTML/CSS/JS)
+│
+├── 🐍 PYTHON COMPONENTS
+│   ├── backend/                      # FastAPI backend server
+│   │   ├── main.py                   # API entry point
+│   │   ├── models.py                 # Pydantic models
+│   │   ├── database.py               # Database configuration
+│   │   └── requirements.txt          # Backend dependencies
+│   │
+│   ├── tools/                        # Development automation
+│   │   ├── cli.py                    # Unified CLI (wass command)
+│   │   ├── manager.py                # Legacy manager (deprecated)
+│   │   ├── benchmark.py              # Performance benchmarks
+│   │   ├── generate_docs.py          # Documentation generator
+│   │   └── generate_coverage_badge.py
+│   │
+│   ├── python_scripts/               # Utility scripts
+│   │   ├── bulk_generate_links.py    # Batch link generation
+│   │   ├── generate_qr_preview.py    # QR preview generator
+│   │   └── whatsapp_utils.py         # WhatsApp utilities
+│   │
+│   └── scripts/                      # Project scripts
+│       └── validate_project.py       # Project validator
+│
+├── 🌐 WEB ASSETS
+│   └── web/
+│       ├── index.html                # Main HTML template
+│       ├── main.js                   # JavaScript logic
+│       ├── style.css                 # Custom styles
+│       ├── manifest.json             # PWA manifest
+│       └── icons/                    # Web icons
+│
+├── 📚 DOCUMENTATION
+│   └── docs/
+│       ├── architecture/             # Architecture diagrams
+│       ├── ANALYTICS_REMOVAL_SUMMARY.md
+│       ├── ENHANCEMENTS_SUMMARY.md
+│       └── RESPONSIVE_LAYOUT_GUIDE.md
+│
+├── ⚙️ CONFIGURATION FILES
+│   │
+│   ├── Flutter/Dart
+│   │   ├── pubspec.yaml              # Flutter dependencies
+│   │   ├── analysis_options.yaml     # Dart linting rules
+│   │   ├── l10n.yaml                 # Localization config
+│   │   └── devtools_options.yaml     # DevTools settings
+│   │
+│   ├── Python
+│   │   ├── pyproject.toml            # Python project config (single source)
+│   │   └── requirements.txt          # Legacy requirements
+│   │
+│   ├── JavaScript/Node
+│   │   ├── package.json              # Node.js dependencies
+│   │   ├── tsconfig.json             # TypeScript config
+│   │   └── eslint.config.js          # ESLint configuration
+│   │
+│   ├── Editor/IDE
+│   │   ├── .vscode/settings.json     # VS Code settings
+│   │   ├── .vscode/extensions.json   # Recommended extensions
+│   │   └── .editorconfig             # Universal editor config
+│   │
+│   ├── Quality/CI
+│   │   ├── .pre-commit-config.yaml   # Pre-commit hooks
+│   │   └── .github/workflows/        # GitHub Actions
+│   │
+│   └── Deployment
+│       ├── Dockerfile                # Docker configuration
+│       ├── firebase.json             # Firebase hosting
+│       └── Makefile                  # Make commands
+│
+├── 🚀 TASK RUNNERS (Pick Your Favorite)
+│   ├── Makefile                      # GNU Make (traditional)
+│   └── justfile                      # Just (modern, recommended)
+│
+└── 📖 PROJECT DOCS
+    ├── README.md                     # Main readme
+    ├── CHANGELOG.md                  # Version history
+    ├── CONTRIBUTING.md               # Contribution guide
+    ├── RELEASE.md                    # Release process
+    └── PLAY_STORE_RELEASE_CHECKLIST.md
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#                              QUICK COMMANDS
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# SETUP (first time):
+#   make setup              # or: just setup
+#   pip install -e .[dev]   # Python dev dependencies
+#   npm install             # Node.js dependencies
+#   flutter pub get         # Flutter dependencies
+#
+# DEVELOPMENT:
+#   flutter run             # Run app
+#   make serve              # Start backend
+#   make check              # Run all linters
+#   make fix                # Auto-fix formatting
+#   make test               # Run tests
+#
+# BUILD:
+#   make build-web          # Build for web
+#   make build-android      # Build APK
+#
+# VALIDATION:
+#   python scripts/validate_project.py
+#   pre-commit run --all-files
+#
+# ═══════════════════════════════════════════════════════════════════════════════

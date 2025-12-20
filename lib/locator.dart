@@ -1,36 +1,82 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_performance/firebase_performance.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
+import 'package:wassistant/repositories/history_repository.dart';
+import 'package:wassistant/repositories/local_history_repository.dart';
+import 'package:wassistant/services/analytics_service.dart';
 import 'package:wassistant/services/biometric_service.dart';
-import 'package:wassistant/services/isar_service.dart';
+import 'package:wassistant/services/engagement_service.dart';
 import 'package:wassistant/services/local_storage_service.dart';
+import 'package:wassistant/services/notification_service.dart';
 import 'package:wassistant/services/ocr_service.dart';
+import 'package:wassistant/services/performance_service.dart';
+import 'package:wassistant/services/quick_actions_service.dart';
+import 'package:wassistant/services/remote_config_service.dart';
 import 'package:wassistant/utils/logger_service.dart';
 
 final GetIt locator = GetIt.instance;
 
 /// Setup for Dependency Injection using Service Locator pattern.
-/// Keeps main.dart clean and dependencies decoupled.
+/// OCPD: Ensures a single source of truth for all system dependencies.
+/// INTJ Strategy: Zero technical debt, absolute logic isolation.
 Future<void> setupLocator() async {
   LoggerService.i('Initializing Service Locator...');
 
-  // --- Services ---
-  // Lazy Singletons: Created only when requested
-  locator.registerLazySingleton<BiometricService>(BiometricService.new);
-  locator.registerLazySingleton<OcrService>(OcrService.new);
-
-  // Async Singletons: Need initialization
-
-  // 1. Local Storage (Legacy/Settings)
+  // --- Core Services ---
   final localStorage = SharedPreferencesService();
   await localStorage.init();
-  locator.registerSingleton<LocalStorageService>(localStorage);
 
-  // 2. Isar Database (History)
-  final isarService = IsarService();
-  // We don't await init() here to speed up app launch.
-  // It handles its own lazy init internally or we await it if critical.
-  // For safety, let's await it.
-  await isarService.init();
-  locator.registerSingleton<IsarService>(isarService);
+  locator
+    ..registerSingleton<LocalStorageService>(localStorage)
+    ..registerLazySingleton<OcrService>(OcrService.new)
+    ..registerLazySingleton<EngagementService>(() => EngagementService(localStorage));
+
+  // --- Repositories (Unified Persistence for Web & Stores) ---
+  // We use LocalHistoryRepository (SharedPreferences) for all platforms
+  // to ensure 100% stability and bypass Isar-Web precision issues.
+  locator.registerLazySingleton<HistoryRepository>(() => LocalHistoryRepository(localStorage));
+
+  // --- Firebase Ecosystem (Strategic Value) ---
+  try {
+    if (!kIsWeb) {
+      final logger = Logger(printer: PrettyPrinter(methodCount: 0));
+      locator.registerSingleton<Logger>(logger);
+
+      final analytics = FirebaseAnalytics.instance;
+      locator
+        ..registerSingleton<FirebaseAnalytics>(analytics)
+        ..registerLazySingleton<AnalyticsService>(
+          () => AnalyticsService(analytics: analytics, logger: logger),
+        );
+
+      final performance = FirebasePerformance.instance;
+      locator
+        ..registerSingleton<FirebasePerformance>(performance)
+        ..registerLazySingleton<PerformanceService>(
+          () => PerformanceService(performance: performance, logger: logger),
+        );
+
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      final rcService = RemoteConfigService(remoteConfig: remoteConfig, logger: logger);
+      await rcService.initialize();
+      locator.registerSingleton<RemoteConfigService>(rcService);
+
+      final messaging = FirebaseMessaging.instance;
+      final navService = NotificationService(messaging: messaging, logger: logger);
+      await navService.initialize();
+      locator.registerSingleton<NotificationService>(navService);
+
+      // Stub QuickActions for mobile
+      locator.registerLazySingleton<QuickActionsService>(QuickActionsService.new);
+      locator.registerLazySingleton<BiometricService>(BiometricService.new);
+    }
+  } catch (e) {
+    LoggerService.w('Firebase Strategic Services failed to init: $e');
+  }
 
   LoggerService.i('Service Locator Initialized.');
 }

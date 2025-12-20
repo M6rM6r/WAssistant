@@ -1,0 +1,67 @@
+# Ignore Python cache
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+
+# Ignore virtual environments
+.venv
+venv
+env
+
+# Ignore build outputs
+build/
+dist/
+*.egg-info
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.sublime-*
+
+# Ignore git
+.git
+.gitignore
+
+# Ignore Flutter build artifacts (we build in Docker)
+android/
+ios/
+linux/
+macos/
+windows/
+.dart_tool/
+.pub-cache/
+
+# Ignore docs
+docs/
+*.md
+!README.md
+
+# Ignore test files
+test/
+integration_test/
+coverage/
+
+# Ignore local config
+.env
+.env.*
+!.env.example
+*.local
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore node
+node_modules/
+
+# Ignore infrastructure
+infrastructure/
+deploy/
+
+# Ignore tools (not needed in production container)
+tools/
+scripts/
+python_scripts/

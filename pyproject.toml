@@ -1,0 +1,123 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# WASSISTANT - Unified Python Configuration (INTJ/OCPD: Single Source of Truth)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[project]
+name = "wassistant-tools"
+version = "1.4.1"
+description = "WAssistant development tools, backend, and automation scripts"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "WAssistant Team" }]
+keywords = ["whatsapp", "flutter", "qrcode", "automation"]
+
+dependencies = [
+    # Core
+    "pillow>=10.0.0",
+    "qrcode[pil]>=7.4.2",
+    "requests>=2.31.0",
+    # Backend
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "sqlalchemy>=2.0.0",
+    "psycopg2-binary>=2.9.6",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+    # Automation
+    "invoke>=2.2.0",
+    "rich>=13.9.0",
+    "typer>=0.15.0",
+    "pyyaml>=6.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.10.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "isort>=5.13.0",
+    "pytest>=8.3.0",
+    "pytest-cov>=6.0.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.28.0",
+    "pre-commit>=4.0.0",
+]
+
+[project.scripts]
+wass = "tools.cli:app"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BLACK - Code Formatter
+# ─────────────────────────────────────────────────────────────────────────────
+[tool.black]
+line-length = 100
+target-version = ["py311", "py312"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.git
+    | \.venv
+    | build
+    | dist
+    | __pycache__
+)/
+'''
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RUFF - Ultra-fast Linter (replaces flake8, isort, pyupgrade, etc.)
+# ─────────────────────────────────────────────────────────────────────────────
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = [".git", ".venv", "build", "dist", "__pycache__"]
+extend-exclude = ["backend"]
+
+select = []
+ignore = []
+src = ["backend", "python_scripts", "tools"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MYPY - Static Type Checker
+# ─────────────────────────────────────────────────────────────────────────────
+[tool.mypy]
+python_version = "3.11"
+strict = false
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+exclude = ["build", ".venv", "dist"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PYTEST - Testing Framework
+# ─────────────────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --strict-markers"
+asyncio_mode = "auto"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# COVERAGE - Test Coverage
+# ─────────────────────────────────────────────────────────────────────────────
+[tool.coverage.run]
+source = ["tools", "backend", "python_scripts"]
+omit = ["*/__pycache__/*", "*/tests/*", "*/.venv/*"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:", "raise NotImplementedError"]
+show_missing = true
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BUILD SYSTEM
+# ─────────────────────────────────────────────────────────────────────────────
+[build-system]
+requires = ["setuptools>=70.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tools*", "backend*", "python_scripts*"]

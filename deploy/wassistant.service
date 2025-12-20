@@ -1,0 +1,49 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# SYSTEMD SERVICE - WAssistant API
+# ═══════════════════════════════════════════════════════════════════════════════
+# Install: sudo cp deploy/wassistant.service /etc/systemd/system/
+# Enable:  sudo systemctl enable wassistant
+# Start:   sudo systemctl start wassistant
+
+[Unit]
+Description=WAssistant FastAPI Backend
+After=network.target postgresql.service redis.service
+Wants=postgresql.service redis.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/wassistant
+Environment=ENV=production
+Environment=DATABASE_URL=postgresql://wassistant:password@localhost:5432/wassistant
+Environment=REDIS_URL=redis://localhost:6379/0
+
+ExecStart=/opt/wassistant/.venv/bin/uvicorn backend.main:app \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --workers 4 \
+    --loop uvloop \
+    --http httptools \
+    --log-level warning
+
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=5
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/wassistant/logs /tmp
+
+# Resource limits
+LimitNOFILE=65535
+MemoryMax=512M
+CPUQuota=200%
+
+[Install]
+WantedBy=multi-user.target

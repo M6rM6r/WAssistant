@@ -1,18 +1,17 @@
-
 import 'package:flutter_test/flutter_test.dart';
 
-// We are testing logic, but since it is inside a mixin/class with ChangeNotifier, 
+// We are testing logic, but since it is inside a mixin/class with ChangeNotifier,
 // we will extract the pure logic function for testing or mock the class.
 // For this example, we will simulate the validation logic which is critical.
 
 String? validateAndCleanNumber(String number) {
-    if (number.isEmpty) return null;
-    var cleanNumber = number.replaceAll(RegExp('[^0-9+]'), '');
-    if (cleanNumber.isEmpty) return null;
-    if (cleanNumber.startsWith('+')) cleanNumber = cleanNumber.substring(1);
-    if (cleanNumber.contains('+')) return null;
-    if (cleanNumber.length < 7 || cleanNumber.length > 15) return null;
-    return cleanNumber;
+  if (number.isEmpty) return null;
+  var cleanNumber = number.replaceAll(RegExp('[^0-9+]'), '');
+  if (cleanNumber.isEmpty) return null;
+  if (cleanNumber.startsWith('+')) cleanNumber = cleanNumber.substring(1);
+  if (cleanNumber.contains('+')) return null;
+  if (cleanNumber.length < 7 || cleanNumber.length > 15) return null;
+  return cleanNumber;
 }
 
 void main() {

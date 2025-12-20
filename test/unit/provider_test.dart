@@ -2,8 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:wassistant/l10n/app_localizations.dart';
-import 'package:wassistant/providers/whatsapp_tool_provider.dart';
 import 'package:wassistant/providers/history_provider.dart';
+import 'package:wassistant/providers/whatsapp_tool_provider.dart';
 
 // Generate Mocks
 @GenerateMocks([HistoryProvider, AppLocalizations])
