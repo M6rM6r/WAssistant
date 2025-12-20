@@ -39,7 +39,7 @@ dependencies:
   connectivity_plus: ^7.0.0
 
   # --- Intelligent Features (Strategic Bring Value) ---
-  google_mlkit_text_recognition: ^0.13.0 # Re-enabled for OCR
+  google_mlkit_text_recognition: ">=0.13.0 <0.16.0" # Re-enabled for OCR
   image_picker: ^1.0.7
   receive_sharing_intent: ^1.8.0
 
