@@ -10,6 +10,7 @@ def setup(c):
     c.run("flutter pub get")
     c.run("pre-commit install", warn=True)
 
+
 @task
 def lint(c):
     """Run all linters (Dart, Python, Web)."""
@@ -19,6 +20,7 @@ def lint(c):
     c.run("npm run lint:css", warn=True)
     c.run("npm run format:check")
 
+
 @task
 def fix(c):
     """Auto-fix format issues across languages."""
@@ -27,30 +29,36 @@ def fix(c):
     c.run("ruff format tools backend python_scripts", warn=True)
     c.run("npm run format", warn=True)
 
+
 @task
 def test(c):
     """Run Flutter tests with coverage."""
     c.run("flutter test --coverage")
+
 
 @task
 def build_web(c):
     """Build Flutter web release."""
     c.run("flutter build web --release --base-href '/'")
 
+
 @task
 def build_android(c):
     """Build release APK."""
     c.run("flutter build apk --release")
+
 
 @task
 def serve(c):
     """Start FastAPI backend dev server."""
     c.run("uvicorn backend.main:app --reload --port 8000")
 
+
 @task
 def docs(c):
     """Generate project docs."""
     c.run("python tools/generate_docs.py --all")
+
 
 @task
 def all(c):

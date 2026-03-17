@@ -7,11 +7,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # OCPD: Strict configuration management
-SQLALCHEMY_DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql://user:password@localhost/wassistant"
-)
+if os.getenv("TESTING") == "1":
+    SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+else:
+    SQLALCHEMY_DATABASE_URL = os.getenv(
+        "DATABASE_URL", "postgresql://user:password@localhost/wassistant"
+    )
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False} if SQLALCHEMY_DATABASE_URL.startswith("sqlite") else {},
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

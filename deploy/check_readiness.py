@@ -14,16 +14,16 @@ from typing import Literal
 
 try:
     from rich.console import Console
-    from rich.table import Table
     from rich.panel import Panel
+    from rich.table import Table
 except ImportError:
     print("Installing rich...")
     subprocess.check_call(
         [sys.executable, "-m", "pip", "install", "rich", "-q"]
     )
     from rich.console import Console
-    from rich.table import Table
     from rich.panel import Panel
+    from rich.table import Table
 
 
 console = Console()
@@ -118,7 +118,11 @@ def run_checks() -> list[CheckResult]:
         results.append(CheckResult(".env file", "pass", "Configured"))
     elif check_file_exists(".env.example"):
         results.append(
-            CheckResult(".env file", "warn", "Using .env.example as template")
+            CheckResult(
+                ".env file",
+                "warn",
+                "Using .env.example as template",
+            )
         )
     else:
         results.append(CheckResult(".env file", "fail", "Missing"))
@@ -167,13 +171,12 @@ def main() -> None:
     if failed == 0:
         console.print("[bold green]✓ Ready for deployment![/bold green]")
     else:
-        console.print(
-            f"[bold red]✗ {failed} issues must be fixed before deployment[/bold red]"
-        )
+        msg = f"[bold red]✗ {failed} issues must be fixed before deployment[/bold red]"
+        console.print(msg)
 
-    console.print(
-        f"\n[dim]Passed: {passed} | Warnings: {warned} | Failed: {failed}[/dim]"
-    )
+    status = f"Passed: {passed} | Warnings: {warned} | Failed: {failed}"
+    msg = f"\n[dim]{status}[/dim]"
+    console.print(msg)
 
 
 if __name__ == "__main__":

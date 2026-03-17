@@ -48,8 +48,14 @@ class ProjectValidator:
         icons = {"pass": "✅", "fail": "❌", "warn": "⚠️", "info": "ℹ️"}
         icon = icons.get(status, "")
         if console:
-            colors = {"pass": "green", "fail": "red", "warn": "yellow", "info": "blue"}
-            console.print(f"{icon} [{colors.get(status, 'white')}]{message}[/]")
+            colors = {
+                "pass": "green",
+                "fail": "red",
+                "warn": "yellow",
+                "info": "blue",
+            }
+            color = colors.get(status, "white")
+            console.print(f"{icon} [{color}]{message}[/]")
         else:
             print(f"{icon} {message}")
 
@@ -79,13 +85,15 @@ class ProjectValidator:
             except Exception as e:
                 self.add_result("pubspec.yaml", False, f"Parse error: {e}")
         else:
-            self.add_result("pubspec.yaml", True, "File exists (yaml not available)")
+            msg = "File exists (yaml not available)"
+            self.add_result("pubspec.yaml", True, msg)
 
     def check_assets(self) -> None:
         """Validate all declared assets exist."""
         pubspec_path = self.root / "pubspec.yaml"
         if not pubspec_path.exists() or not yaml:
-            self.add_result("Assets", False, "Cannot check (pubspec or yaml missing)")
+            msg = "Cannot check (pubspec or yaml missing)"
+            self.add_result("Assets", False, msg)
             return
 
         try:
@@ -104,15 +112,24 @@ class ProjectValidator:
                     missing.append(asset)
 
             if missing:
-                self.add_result("Assets", False, f"Missing: {', '.join(missing)}")
+                msg = f"Missing: {', '.join(missing)}"
+                self.add_result("Assets", False, msg)
             else:
-                self.add_result("Assets", True, f"{len(assets)} assets verified")
+                msg = f"{len(assets)} assets verified"
+                self.add_result("Assets", True, msg)
         except Exception as e:
             self.add_result("Assets", False, f"Error: {e}")
 
     def check_lib_structure(self) -> None:
         """Validate lib directory structure."""
-        required_dirs = ["models", "pages", "providers", "services", "widgets", "utils"]
+        required_dirs = [
+            "models",
+            "pages",
+            "providers",
+            "services",
+            "widgets",
+            "utils",
+        ]
         lib_path = self.root / "lib"
 
         if not lib_path.exists():
@@ -121,9 +138,11 @@ class ProjectValidator:
 
         missing = [d for d in required_dirs if not (lib_path / d).is_dir()]
         if missing:
-            self.add_result("Lib Structure", False, f"Missing: {', '.join(missing)}")
+            msg = f"Missing: {', '.join(missing)}"
+            self.add_result("Lib Structure", False, msg)
         else:
-            self.add_result("Lib Structure", True, f"{len(required_dirs)} directories verified")
+            msg = f"{len(required_dirs)} directories verified"
+            self.add_result("Lib Structure", True, msg)
 
     def check_required_files(self) -> None:
         """Validate required project files exist."""
@@ -137,9 +156,11 @@ class ProjectValidator:
 
         missing = [f for f in required if not (self.root / f).exists()]
         if missing:
-            self.add_result("Required Files", False, f"Missing: {', '.join(missing)}")
+            msg = f"Missing: {', '.join(missing)}"
+            self.add_result("Required Files", False, msg)
         else:
-            self.add_result("Required Files", True, f"{len(required)} files verified")
+            msg = f"{len(required)} files verified"
+            self.add_result("Required Files", True, msg)
 
     def check_pyproject(self) -> None:
         """Validate pyproject.toml configuration."""
@@ -157,7 +178,8 @@ class ProjectValidator:
             version = data.get("project", {}).get("version", "unknown")
             self.add_result("pyproject.toml", True, f"{name} v{version}")
         except ImportError:
-            self.add_result("pyproject.toml", True, "File exists (tomllib not available)")
+            msg = "File exists (tomllib not available)"
+            self.add_result("pyproject.toml", True, msg)
         except Exception as e:
             self.add_result("pyproject.toml", False, f"Parse error: {e}")
 

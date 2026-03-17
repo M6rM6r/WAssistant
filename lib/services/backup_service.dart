@@ -35,7 +35,9 @@ class BackupService {
       final File file = File('${tempDir.path}/wassistant_backup.json');
       await file.writeAsString(jsonStr);
 
-      await Share.shareXFiles([XFile(file.path)], text: 'WAssistant Data Backup');
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(file.path)], text: 'WAssistant Data Backup'),
+      );
       LoggerService.i('Backup: Data exported successfully.');
     } catch (e, stackTrace) {
       LoggerService.e('Backup: Export failed', e, stackTrace);

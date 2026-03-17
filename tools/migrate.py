@@ -7,8 +7,6 @@ WASSISTANT - Database Migrations (Alembic-style)
 
 from __future__ import annotations
 
-import hashlib
-import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -19,7 +17,10 @@ try:
 except ImportError:
     import subprocess
     import sys
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "rich", "-q"])
+
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "rich", "-q"]
+    )
     from rich.console import Console
     from rich.table import Table
 
@@ -51,7 +52,7 @@ def create_migration(name: str) -> Path:
     slug = name.lower().replace(" ", "_").replace("-", "_")
     filename = f"{timestamp}_{slug}.py"
     filepath = MIGRATIONS_DIR / filename
-
+    # noqa: E501
     template = f'''#!/usr/bin/env python3
 """
 Migration: {name}
@@ -86,7 +87,9 @@ def down(db: Any) -> None:
 
 def list_migrations() -> None:
     """List all migrations."""
-    table = Table(title="Migrations", show_header=True, header_style="bold cyan")
+    table = Table(
+        title="Migrations", show_header=True, header_style="bold cyan"
+    )
     table.add_column("Version")
     table.add_column("Description")
     table.add_column("Status")
@@ -97,9 +100,9 @@ def list_migrations() -> None:
         if f.name.startswith("_"):
             continue
 
-        content = f.read_text()
         version = f.stem.split("_")[0]
-        desc = f.stem.split("_", 2)[-1].replace("_", " ") if "_" in f.stem else f.stem
+        desc_parts = f.stem.split("_", 2)
+        desc = desc_parts[-1].replace("_", " ") if "_" in f.stem else f.stem
 
         table.add_row(version, desc.title(), "[yellow]pending[/yellow]")
 

@@ -7,7 +7,6 @@ from .database import Base
 __all__ = ["Base", "HistoryItem", "Template", "User"]
 
 
-# OCPD: Normalized Database Schema for scalable persistence
 class User(Base):
     __tablename__ = "users"
 
@@ -35,7 +34,7 @@ class HistoryItem(Base):
     __tablename__ = "history"
 
     id = Column(Integer, primary_key=True, index=True)
-    type = Column(String, nullable=False)  # 'link', 'qr', 'vcard'
+    type = Column(String, nullable=False)  # 'link', 'qr', 'vcard'  # noqa: E501
     data = Column(String, nullable=False)
     display = Column(String, nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())

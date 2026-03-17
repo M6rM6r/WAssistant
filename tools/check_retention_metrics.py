@@ -64,25 +64,30 @@ def get_retention_metrics(db: firestore.Client) -> dict:
             cohorts[cohort_key] = {"total": 0, "active": 0}
         cohorts[cohort_key]["total"] += 1
 
-        days_since_active = (
-            (now - user["last_active"]).days if pd.notna(user["last_active"]) else 999
-        )
-        if days_since_active < 30:
-            cohorts[cohort_key]["active"] += 1
+    days_since_active = (
+        (now - user["last_active"]).days
+        if pd.notna(user["last_active"])
+        else 999
+    )
+    if days_since_active < 30:
+        cohorts[cohort_key]["active"] += 1
 
     # Calculate metrics
     retention_rates = {}
     for week, data in cohorts.items():
         if data["total"] > 0:
-            retention_rates[week] = (data["active"] / data["total"]) * 100
+            rate = (data["active"] / data["total"]) * 100
+            retention_rates[week] = rate
 
     # KPI thresholds
-    avg_retention = sum(retention_rates.values()) / len(retention_rates) if retention_rates else 0
+    avg_retention = (
+        sum(retention_rates.values()) / len(retention_rates)
+        if retention_rates
+        else 0
+    )
     dau_to_mau = (
-        (
-            len(df[df["last_active"] > (now - timedelta(days=1))])
-            / len(df[df["last_active"] > (now - timedelta(days=30))])
-        )
+        len(df[df["last_active"] > (now - timedelta(days=1))])
+        / len(df[df["last_active"] > (now - timedelta(days=30))])
         if len(df) > 0
         else 0
     )
@@ -91,7 +96,8 @@ def get_retention_metrics(db: firestore.Client) -> dict:
         sum(
             1
             for _, user in df.iterrows()
-            if pd.notna(user["last_active"]) and (now - user["last_active"]).days > 14
+            if pd.notna(user["last_active"])
+            and (now - user["last_active"]).days > 14
         )
         / len(df)
         * 100
@@ -110,14 +116,18 @@ def get_retention_metrics(db: firestore.Client) -> dict:
     }
 
 
-def _generate_alerts(retention: float, dau_mau: float, churn: float) -> list[str]:
+def _generate_alerts(
+    retention: float, dau_mau: float, churn: float
+) -> list[str]:
     """Generate alerts for KPI deviations"""
     alerts = []
 
     if retention < 40:
-        alerts.append(f"⚠️ ALERT: 7-day retention at {retention:.1f}% (target: 60%)")
+        msg = f"⚠️ ALERT: 7-day retention at {retention:.1f}% (target: 60%)"
+        alerts.append(msg)
     if dau_mau < 0.25:
-        alerts.append(f"⚠️ ALERT: DAU/MAU ratio at {dau_mau:.1%} (target: 35%)")
+        msg = f"⚠️ ALERT: DAU/MAU ratio at {dau_mau:.1%} (target: 35%)"
+        alerts.append(msg)
     if churn > 30:
         alerts.append(f"⚠️ ALERT: {churn:.0f}% users at high churn risk")
 

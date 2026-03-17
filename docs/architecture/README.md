@@ -5,6 +5,7 @@ This directory contains records of architectural decisions made in the WAssistan
 ## Format
 
 Each ADR follows this structure:
+
 - **Title**: Short noun phrase
 - **Status**: Proposed | Accepted | Deprecated | Superseded
 - **Context**: Problem and forces at play
@@ -21,6 +22,7 @@ Each ADR follows this structure:
 ## Creating New ADRs
 
 When making significant architectural decisions:
+
 1. Create a new file: `NNN-short-title.md`
 2. Follow the template in `000-template.md`
 3. Update this index
@@ -30,6 +32,7 @@ When making significant architectural decisions:
 ## INTJ/OCPD Principles
 
 These ADRs reflect systematic, data-driven decision-making:
+
 - **Measurable**: Each decision has quantifiable success criteria
 - **Logical**: Decisions based on technical merit, not trends
 - **Structured**: Consistent format for easy reference

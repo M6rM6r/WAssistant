@@ -21,7 +21,6 @@ repos:
         entry: flutter format .
         language: system
         files: \.dart$
-
       - id: flutter-analyze
         name: Flutter Analyze
         entry: flutter analyze

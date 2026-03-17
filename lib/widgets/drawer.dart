@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wassistant/l10n/app_localizations.dart';
 import 'package:wassistant/locator.dart';
 import 'package:wassistant/pages/history_page.dart';
@@ -66,13 +67,12 @@ class AppDrawer extends StatelessWidget {
             context,
             l10n.privacyPolicy,
             Icons.privacy_tip_outlined,
-            () {
+            () async {
               Navigator.pop(context);
-              showLicensePage(
-                context: context,
-                applicationName: AppConstants.appName,
-                applicationVersion: '1.4.1',
-              );
+            final url = Uri.parse('https://wassistant.site/privacy_policy.html');
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            }
             },
           ),
 

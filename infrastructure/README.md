@@ -22,12 +22,12 @@ terraform apply -var="project_id=YOUR_PROJECT_ID"
 
 ## Resources Created
 
-| Resource       | Purpose              |
-| -------------- | -------------------- |
-| Cloud Run      | API hosting          |
-| Cloud SQL      | PostgreSQL database  |
-| Secret Manager | Secure credentials   |
-| Cloud Storage  | Asset storage        |
+| Resource       | Purpose             |
+| -------------- | ------------------- |
+| Cloud Run      | API hosting         |
+| Cloud SQL      | PostgreSQL database |
+| Secret Manager | Secure credentials  |
+| Cloud Storage  | Asset storage       |
 
 ## Environments
 

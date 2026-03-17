@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wassistant/l10n/app_localizations.dart';
@@ -35,16 +34,14 @@ class WhatsAppToolProvider with ChangeNotifier {
   Either<Failure, String> _validateAndClean(String number, AppLocalizations l10n) {
     final trimmed = number.trim();
     if (trimmed.isEmpty) return Left(ValidationFailure(l10n.errorEmptyNumber));
-    try {
-      final parsed = PhoneNumber.parse(trimmed);
-      final digitsOnly = parsed.international.replaceAll(RegExp('[^0-9]'), '');
-      if (digitsOnly.length < 7 || digitsOnly.length > 15) {
-        return Left(ValidationFailure(l10n.errorInvalidLength));
-      }
-      return Right(digitsOnly);
-    } catch (_) {
-      return Left(ValidationFailure(l10n.errorInvalidNumber));
+
+    final digitsOnly = trimmed.replaceAll(RegExp('[^0-9]'), '');
+    if (digitsOnly.isEmpty) return Left(ValidationFailure(l10n.errorNoDigits));
+    if (digitsOnly.length < 5 || digitsOnly.length > 15) {
+      return Left(ValidationFailure(l10n.errorInvalidLength));
     }
+
+    return Right(digitsOnly);
   }
 
   void generateChatLink(String number, AppLocalizations l10n, {String? message}) {
@@ -176,7 +173,9 @@ class WhatsAppToolProvider with ChangeNotifier {
 
   Future<void> shareContent() async {
     final data = _generatedLink.isNotEmpty ? _generatedLink : (_barcodeData ?? '');
-    if (data.isNotEmpty) await Share.share(data);
+    if (data.isNotEmpty) {
+      await SharePlus.instance.share(ShareParams(text: data));
+    }
   }
 
   void clearOutput() {

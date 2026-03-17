@@ -11,33 +11,38 @@ WAssistant is a professionally engineered Flutter application designed to enhanc
 ## 🚀 Key Features
 
 ### 🛠 Core Utilities
-*   **Direct Chat**: Open WhatsApp chats without saving the number to contacts.
-*   **Link Generator**: Create shareable `wa.me` links with pre-filled messages.
-*   **QR Code Generator**: Generate high-res QR codes for chats and vCards.
-*   **vCard Generator**: Create contact QR codes for instant scanning and saving.
-*   **Bulk Operations**: CSV-based bulk link generation with QR export capability.
+
+- **Direct Chat**: Open WhatsApp chats without saving the number to contacts.
+- **Link Generator**: Create shareable `wa.me` links with pre-filled messages.
+- **QR Code Generator**: Generate high-res QR codes for chats and vCards.
+- **vCard Generator**: Create contact QR codes for instant scanning and saving.
+- **Bulk Operations**: CSV-based bulk link generation with QR export capability.
 
 ### 🧠 Intelligent Features
-*   **Smart Paste**: Automatically detects phone numbers in the clipboard on startup/resume and offers to fill them.
-*   **Quick Templates**: Save, manage, and reuse frequently sent messages (e.g., Location, Pricing).
-*   **History & Restoration**: Auto-saves your generated links/QRs. Restore previous sessions with one tap.
-*   **OCR Support**: Extract phone numbers from images using ML Kit.
+
+- **Smart Paste**: Automatically detects phone numbers in the clipboard on startup/resume and offers to fill them.
+- **Quick Templates**: Save, manage, and reuse frequently sent messages (e.g., Location, Pricing).
+- **History & Restoration**: Auto-saves your generated links/QRs. Restore previous sessions with one tap.
+- **OCR Support**: Extract phone numbers from images using ML Kit.
 
 ### 🛡 Security & Data
-*   **Biometric Lock**: Secure the app using FaceID or Fingerprint (via `local_auth`).
-*   **Privacy-First**: No data is sent to our servers. Everything processes locally.
-*   **Crashlytics**: Comprehensive error tracking and crash reporting.
 
-###  User Engagement
-*   **Push Notifications**: Targeted messaging for user retention.
-*   **In-App Messaging**: Contextual feature announcements.
-*   **Review Prompts**: Smart prompts for app store reviews.
+- **Biometric Lock**: Secure the app using FaceID or Fingerprint (via `local_auth`).
+- **Privacy-First**: No data is sent to our servers. Everything processes locally.
+- **Crashlytics**: Comprehensive error tracking and crash reporting.
+
+### User Engagement
+
+- **Push Notifications**: Targeted messaging for user retention.
+- **In-App Messaging**: Contextual feature announcements.
+- **Review Prompts**: Smart prompts for app store reviews.
 
 ## 🏗 Architecture & Engineering
 
 The project follows **Clean Architecture** principles:
 
 ### Directory Structure
+
 ```
 lib/
 ├── l10n/              # Localization (ARB files)
@@ -54,19 +59,21 @@ lib/
 ```
 
 ### Technical Stack
-*   **Framework**: Flutter 3.35+ with Dart 3.9+
-*   **State Management**: `Provider` with `get_it` dependency injection
-*   **Backend**: Firebase (Performance, Remote Config, Crashlytics, Messaging)
-*   **Localization**: `flutter_localizations` & `intl` (English, Spanish, Arabic, French, German)
-*   **Persistence**: `shared_preferences` & JSON File I/O
-*   **Charts**: `fl_chart` for data visualization
-*   **Logging**: `logger` with Firebase integration
-*   **Testing**: `flutter_test`, `mockito`, `build_runner` (91 unit tests, 17.5% coverage)
-*   **CI/CD**: GitHub Actions with coverage enforcement (17% threshold)
-*   **Monetization**: Google Mobile Ads SDK
-*   **Accessibility**: Full Semantics support for screen readers
+
+- **Framework**: Flutter 3.35+ with Dart 3.9+
+- **State Management**: `Provider` with `get_it` dependency injection
+- **Backend**: Firebase (Performance, Remote Config, Crashlytics, Messaging)
+- **Localization**: `flutter_localizations` & `intl` (English, Spanish, Arabic, French, German)
+- **Persistence**: `shared_preferences` & JSON File I/O
+- **Charts**: `fl_chart` for data visualization
+- **Logging**: `logger` with Firebase integration
+- **Testing**: `flutter_test`, `mockito`, `build_runner` (91 unit tests, 17.5% coverage)
+- **CI/CD**: GitHub Actions with coverage enforcement (17% threshold)
+- **Monetization**: Google Mobile Ads SDK
+- **Accessibility**: Full Semantics support for screen readers
 
 ### INTJ/OCPD Development Principles
+
 - **Functional Purity**: Either<Failure, Success> pattern for all operations
 - **Measurable Outcomes**: Feature performance and error tracking
 - **Data-Driven Decisions**: Remote Config for A/B testing
@@ -77,6 +84,7 @@ lib/
 ## 🛠 Setup & Installation
 
 ### Prerequisites
+
 - Flutter SDK `^3.35.0`
 - Python `3.11+` (for automation tools)
 - Firebase CLI (for web deployment)
@@ -84,6 +92,7 @@ lib/
 - Xcode (for iOS builds, macOS only)
 
 ### Quick Start
+
 ```bash
 # Clone repository
 git clone https://github.com/M6rM6r/WAssistant.git
@@ -100,13 +109,16 @@ flutter run
 ```
 
 ### Deployment
+
 See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for complete platform-specific instructions:
+
 - **Web**: `.\scripts\deploy_web.ps1`
 - **Android**: `.\scripts\build_android.ps1`
 - **iOS**: Manual Xcode build and submission
 - Node.js `18+` (for pre-commit hooks)
 
 ### Quick Start
+
 ```bash
 # Clone and install dependencies
 git clone https://github.com/yourusername/wassistant.git
@@ -126,13 +138,16 @@ make docs      # Generate documentation
 ## 🧪 Testing & Quality
 
 ### Test Coverage
+
 Run tests with coverage reporting:
+
 ```bash
 make test       # Unit + integration tests
 make coverage   # Generate badge and report
 ```
 
 ### Quality Gates (CI/CD)
+
 - ✅ All tests pass
 - ✅ Coverage ≥80%
 - ✅ No lint errors (`flutter analyze`)
@@ -140,6 +155,7 @@ make coverage   # Generate badge and report
 - ✅ Pre-commit hooks pass
 
 ### Performance Benchmarking
+
 ```bash
 make benchmark  # Run performance benchmarks
 ```
@@ -147,33 +163,39 @@ make benchmark  # Run performance benchmarks
 ## 📚 Documentation
 
 ### API Documentation
+
 ```bash
 make docs  # Generate Dart, Python, and OpenAPI docs
 ```
 
 Documentation available in:
+
 - `doc/api/` - Dart API docs
 - `docs/api/` - Python tool docs
 - `docs/architecture/` - Architecture Decision Records (ADRs)
 
 ### Key ADRs
+
 - [ADR-001: Firebase Backend](docs/architecture/001-firebase-backend.md)
 
 ## 🚀 Deployment
 
 ### Android
+
 ```bash
 make build-android  # Builds release AAB
 # Output: build/app/outputs/bundle/release/app-release.aab
 ```
 
 ### Web
+
 ```bash
 make build-web  # Builds production web app
 firebase deploy --only hosting
 ```
 
 ### Firebase Setup
+
 1. Create Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
 2. Download `google-services.json` (Android) and `GoogleService-Info.plist` (iOS)
 3. Place in `android/app/` and `ios/Runner/` respectively
@@ -182,7 +204,9 @@ firebase deploy --only hosting
 ## 📈 Monitoring
 
 ### Firebase Console
+
 Monitor real-time metrics:
+
 - **Performance**: Operation timing, network requests
 - **Crashlytics**: Error rates, stability metrics
 - **Remote Config**: Feature flag usage

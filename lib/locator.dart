@@ -1,4 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -11,6 +12,7 @@ import 'package:wassistant/services/analytics_service.dart';
 import 'package:wassistant/services/biometric_service.dart';
 import 'package:wassistant/services/engagement_service.dart';
 import 'package:wassistant/services/local_storage_service.dart';
+import 'package:wassistant/services/network_service.dart';
 import 'package:wassistant/services/notification_service.dart';
 import 'package:wassistant/services/ocr_service.dart';
 import 'package:wassistant/services/performance_service.dart';
@@ -33,7 +35,10 @@ Future<void> setupLocator() async {
   locator
     ..registerSingleton<LocalStorageService>(localStorage)
     ..registerLazySingleton<OcrService>(OcrService.new)
-    ..registerLazySingleton<EngagementService>(() => EngagementService(localStorage));
+    ..registerLazySingleton<EngagementService>(() => EngagementService(localStorage))
+    ..registerLazySingleton<NetworkService>(NetworkService.new)
+    ..registerLazySingleton<QuickActionsService>(QuickActionsService.new)
+    ..registerLazySingleton<BiometricService>(BiometricService.new);
 
   // --- Repositories (Unified Persistence for Web & Stores) ---
   // We use LocalHistoryRepository (SharedPreferences) for all platforms
@@ -45,6 +50,15 @@ Future<void> setupLocator() async {
     if (!kIsWeb) {
       final logger = Logger(printer: PrettyPrinter(methodCount: 0));
       locator.registerSingleton<Logger>(logger);
+
+      // Always provide a logger-backed AnalyticsService, even when Firebase isn't ready.
+      locator.registerLazySingleton<AnalyticsService>(() => AnalyticsService(logger: logger));
+
+      // Skip Firebase-dependent services if no app is initialized (e.g., in tests)
+      if (Firebase.apps.isEmpty) {
+        LoggerService.w('Firebase not initialized; skipping Firebase-bound services.');
+        return;
+      }
 
       final analytics = FirebaseAnalytics.instance;
       locator
@@ -69,10 +83,6 @@ Future<void> setupLocator() async {
       final navService = NotificationService(messaging: messaging, logger: logger);
       await navService.initialize();
       locator.registerSingleton<NotificationService>(navService);
-
-      // Stub QuickActions for mobile
-      locator.registerLazySingleton<QuickActionsService>(QuickActionsService.new);
-      locator.registerLazySingleton<BiometricService>(BiometricService.new);
     }
   } catch (e) {
     LoggerService.w('Firebase Strategic Services failed to init: $e');

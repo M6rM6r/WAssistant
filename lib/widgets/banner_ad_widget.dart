@@ -15,6 +15,16 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   BannerAd? _bannerAd;
   bool _isLoaded = false;
 
+  bool get _isTestEnvironment {
+    var inTest = false;
+    assert(() {
+      final bindingType = WidgetsBinding.instance.runtimeType.toString();
+      inTest = bindingType.contains('Test');
+      return true;
+    }());
+    return inTest;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -23,7 +33,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   void _loadAd() {
     // INTJ Logic: Zero-latency check for platform and test state
-    if (kIsWeb) return;
+    if (kIsWeb || _isTestEnvironment) return;
 
     _bannerAd = BannerAd(
       adUnitId: AppConstants.androidBannerAdUnitId,
@@ -54,7 +64,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb || !_isLoaded || _bannerAd == null) {
+    if (kIsWeb || _isTestEnvironment || !_isLoaded || _bannerAd == null) {
       return const SizedBox.shrink();
     }
 

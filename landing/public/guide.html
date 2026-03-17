@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How-To Guide - WAssistant WhatsApp Tools</title>
+    <meta
+      name="description"
+      content="Learn how to use WAssistant to chat on WhatsApp without saving contacts, generate QR codes, create chat links, use OCR, and more. Step-by-step guide."
+    />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+          sans-serif;
+        line-height: 1.8;
+        color: #e0e0e0;
+        background: #0a0b10;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 40px 20px 60px;
+      }
+      .back-link {
+        display: inline-block;
+        color: #4ade80;
+        text-decoration: none;
+        margin-bottom: 30px;
+        font-size: 0.9em;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        font-size: 2.2em;
+        color: #fff;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        color: #888;
+        margin-bottom: 20px;
+        font-size: 1.05em;
+      }
+      .toc {
+        background: #111827;
+        border: 1px solid #1e293b;
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin-bottom: 40px;
+      }
+      .toc h2 {
+        font-size: 1.1em;
+        color: #fff;
+        margin-bottom: 12px;
+      }
+      .toc ol {
+        margin-left: 20px;
+      }
+      .toc li {
+        margin-bottom: 6px;
+      }
+      .toc a {
+        color: #4ade80;
+        text-decoration: none;
+      }
+      .toc a:hover {
+        text-decoration: underline;
+      }
+      h2 {
+        font-size: 1.5em;
+        color: #4ade80;
+        margin-top: 50px;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #1e293b;
+      }
+      h3 {
+        font-size: 1.15em;
+        color: #fff;
+        margin-top: 28px;
+        margin-bottom: 10px;
+      }
+      p {
+        margin-bottom: 16px;
+        color: #c0c0c0;
+      }
+      ol,
+      ul {
+        margin-left: 24px;
+        margin-bottom: 16px;
+      }
+      li {
+        margin-bottom: 8px;
+        color: #c0c0c0;
+      }
+      strong {
+        color: #f0f0f0;
+      }
+      code {
+        background: #1e293b;
+        color: #4ade80;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+      .tip-box {
+        background: #0f2a1d;
+        border: 1px solid #166534;
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin: 20px 0;
+      }
+      .tip-box strong {
+        color: #4ade80;
+      }
+      .warning-box {
+        background: #2a1f0f;
+        border: 1px solid #92400e;
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin: 20px 0;
+      }
+      .warning-box strong {
+        color: #fbbf24;
+      }
+      a {
+        color: #4ade80;
+      }
+      footer {
+        text-align: center;
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 1px solid #1e293b;
+        color: #555;
+        font-size: 0.85em;
+      }
+      footer a {
+        color: #4ade80;
+        text-decoration: none;
+      }
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="/" class="back-link">&larr; Back to WAssistant</a>
+      <h1>WAssistant How-To Guide</h1>
+      <p class="subtitle">A complete guide to using every feature in WAssistant.</p>
+
+      <div class="toc">
+        <h2>Table of Contents</h2>
+        <ol>
+          <li><a href="#chat-without-saving">Chat Without Saving Contacts</a></li>
+          <li><a href="#country-codes">Understanding Country Codes</a></li>
+          <li><a href="#qr-codes">Generate WhatsApp QR Codes</a></li>
+          <li><a href="#chat-links">Create Shareable Chat Links</a></li>
+          <li><a href="#ocr">Extract Numbers with OCR</a></li>
+          <li><a href="#vcards">Generate vCards</a></li>
+          <li><a href="#web-vs-app">Web Version vs. Android App</a></li>
+          <li><a href="#business-uses">Business Use Cases</a></li>
+          <li><a href="#tips">Tips and Best Practices</a></li>
+        </ol>
+      </div>
+
+      <!-- Section 1 -->
+      <h2 id="chat-without-saving">1. Chat Without Saving Contacts</h2>
+      <p>
+        The core feature of WAssistant is the ability to start a WhatsApp conversation with any
+        phone number — without saving it to your contacts first. This is the most-used feature and
+        works on both the web and Android versions.
+      </p>
+
+      <h3>How to use it</h3>
+      <ol>
+        <li>Open WAssistant (the website or the Android app).</li>
+        <li>
+          Enter the phone number you want to chat with, including the country code. For example:
+          <code>+1 234 567 8900</code> for a US number, or <code>+966 50 123 4567</code> for a Saudi
+          number.
+        </li>
+        <li>Tap the green chat button (the arrow icon).</li>
+        <li>WhatsApp will open automatically with a chat window for that number.</li>
+        <li>Type your message and send it — done!</li>
+      </ol>
+
+      <div class="tip-box">
+        <strong>Tip:</strong> You can include spaces, dashes, or parentheses in the number for
+        readability — WAssistant will clean them up automatically. For example,
+        <code>+1 (234) 567-8900</code> works just fine.
+      </div>
+
+      <h3>When is this useful?</h3>
+      <ul>
+        <li>
+          <strong>Delivery drivers:</strong> You need to message a driver but don't want to save
+          their number permanently.
+        </li>
+        <li>
+          <strong>Online marketplaces:</strong> A seller on a marketplace gave you their WhatsApp
+          number over email — message them without cluttering your contacts.
+        </li>
+        <li>
+          <strong>Travel:</strong> Someone at a hotel, restaurant, or local service gives you a
+          number to reach them — just type it and chat.
+        </li>
+        <li>
+          <strong>Events and networking:</strong> You met someone at a conference and want to send a
+          quick follow-up but aren't sure you'll stay in touch.
+        </li>
+      </ul>
+
+      <!-- Section 2 -->
+      <h2 id="country-codes">2. Understanding Country Codes</h2>
+      <p>
+        WhatsApp requires phone numbers in international format. This means every number must start
+        with a <code>+</code> sign followed by the country code. WAssistant makes this easier with a
+        country code picker in the Android app, and the web version defaults to a
+        <code>+</code> prefix.
+      </p>
+
+      <h3>Common country codes</h3>
+      <ul>
+        <li><strong>+1</strong> — United States, Canada</li>
+        <li><strong>+44</strong> — United Kingdom</li>
+        <li><strong>+966</strong> — Saudi Arabia</li>
+        <li><strong>+971</strong> — United Arab Emirates</li>
+        <li><strong>+91</strong> — India</li>
+        <li><strong>+20</strong> — Egypt</li>
+        <li><strong>+55</strong> — Brazil</li>
+        <li><strong>+49</strong> — Germany</li>
+        <li><strong>+33</strong> — France</li>
+        <li><strong>+81</strong> — Japan</li>
+        <li><strong>+86</strong> — China</li>
+        <li><strong>+234</strong> — Nigeria</li>
+      </ul>
+
+      <div class="warning-box">
+        <strong>Important:</strong> Remove the leading zero from the local number when adding a
+        country code. For example, a UK number <code>07700 900123</code> becomes
+        <code>+44 7700 900123</code> (notice the <code>0</code> is removed).
+      </div>
+
+      <!-- Section 3 -->
+      <h2 id="qr-codes">3. Generate WhatsApp QR Codes</h2>
+      <p>
+        WAssistant's QR code generator creates a scannable QR code that opens a WhatsApp chat when
+        scanned. This is available in the Android app.
+      </p>
+
+      <h3>How to generate a QR code</h3>
+      <ol>
+        <li>Open WAssistant on Android.</li>
+        <li>Enter your WhatsApp phone number (with country code).</li>
+        <li>Optionally, add a pre-filled message that will appear when someone scans the code.</li>
+        <li>Navigate to the QR code section.</li>
+        <li>
+          Your QR code is generated instantly. You can save it as an image or share it directly.
+        </li>
+      </ol>
+
+      <h3>Where to use QR codes</h3>
+      <ul>
+        <li>
+          <strong>Business cards:</strong> Add a QR code so clients can chat with you instantly.
+        </li>
+        <li>
+          <strong>Restaurant menus:</strong> Let customers scan to place orders or ask questions.
+        </li>
+        <li>
+          <strong>Storefronts:</strong> Print a large QR code on your window so passersby can reach
+          you.
+        </li>
+        <li>
+          <strong>Flyers and brochures:</strong> Include a code that says "Scan to chat with us on
+          WhatsApp."
+        </li>
+        <li><strong>Events:</strong> Add QR codes to badges, booths, or presentations.</li>
+      </ul>
+
+      <div class="tip-box">
+        <strong>Tip:</strong> Test your QR code before printing by scanning it with another phone.
+        Make sure it opens the correct WhatsApp chat with the right pre-filled message.
+      </div>
+
+      <!-- Section 4 -->
+      <h2 id="chat-links">4. Create Shareable Chat Links</h2>
+      <p>
+        Chat links are clickable URLs in the format <code>wa.me/&lt;number&gt;</code> that open a
+        WhatsApp conversation. WAssistant generates these links and lets you add pre-filled
+        messages.
+      </p>
+
+      <h3>How to create a chat link</h3>
+      <ol>
+        <li>Enter your WhatsApp number in WAssistant.</li>
+        <li>
+          Optionally type a message you want pre-filled (e.g., "Hi, I'd like more info about your
+          services").
+        </li>
+        <li>WAssistant generates the link. Copy it and share it anywhere.</li>
+      </ol>
+
+      <h3>Where to share chat links</h3>
+      <ul>
+        <li>
+          <strong>Instagram/TikTok bio:</strong> Add your chat link so followers can reach you on
+          WhatsApp.
+        </li>
+        <li>
+          <strong>Website contact page:</strong> Replace a generic contact form with a direct
+          WhatsApp link.
+        </li>
+        <li><strong>Email signatures:</strong> Add "Chat with me on WhatsApp" with your link.</li>
+        <li>
+          <strong>Online listings:</strong> Include in your Google Maps, Yelp, or marketplace
+          listings.
+        </li>
+        <li>
+          <strong>SMS marketing:</strong> Send a text with a WhatsApp link for customers to follow
+          up.
+        </li>
+      </ul>
+
+      <!-- Section 5 -->
+      <h2 id="ocr">5. Extract Numbers with OCR</h2>
+      <p>
+        OCR (Optical Character Recognition) lets you point your phone's camera at any text and
+        extract phone numbers automatically. This feature is available in the WAssistant Android
+        app.
+      </p>
+
+      <h3>How to use OCR</h3>
+      <ol>
+        <li>Open WAssistant on Android and go to the OCR/Scan feature.</li>
+        <li>
+          Point your camera at a business card, receipt, sign, or screenshot containing a phone
+          number.
+        </li>
+        <li>WAssistant detects and highlights any phone numbers in the image.</li>
+        <li>Tap a detected number to start a WhatsApp chat with it.</li>
+      </ol>
+
+      <h3>What can you scan?</h3>
+      <ul>
+        <li>
+          <strong>Business cards:</strong> Quickly grab a number from a card without typing it.
+        </li>
+        <li>
+          <strong>Receipts:</strong> Some receipts include customer service numbers — scan and chat.
+        </li>
+        <li>
+          <strong>Screenshots:</strong> Got a number in a screenshot from another app? No need to
+          type it — just scan.
+        </li>
+        <li>
+          <strong>Signs and posters:</strong> A restaurant, shop, or service has their number on a
+          sign? Scan from across the street.
+        </li>
+        <li>
+          <strong>Printed documents:</strong> Extract numbers from printed invoices, letters, or
+          forms.
+        </li>
+      </ul>
+
+      <div class="tip-box">
+        <strong>Privacy note:</strong> All OCR processing happens on your device using Google ML
+        Kit. No images or extracted text are sent anywhere. Your scans are private.
+      </div>
+
+      <!-- Section 6 -->
+      <h2 id="vcards">6. Generate vCards</h2>
+      <p>
+        A vCard (.vcf file) is a standard format for sharing contact information. WAssistant can
+        create vCards that you can share via WhatsApp, email, or any messaging app.
+      </p>
+
+      <h3>How to create a vCard</h3>
+      <ol>
+        <li>Open WAssistant's vCard feature in the Android app.</li>
+        <li>Enter the contact details: name, phone number, and optionally an email address.</li>
+        <li>Generate the vCard file.</li>
+        <li>Share it directly via WhatsApp, email, Bluetooth, or save it to your device.</li>
+      </ol>
+
+      <h3>Why use vCards?</h3>
+      <p>
+        When you send a vCard via WhatsApp, the recipient gets a tappable contact card they can save
+        with one touch. This is much cleaner than typing out a number in a message and asking
+        someone to save it manually. It's especially useful for businesses sharing employee
+        contacts, or for individuals sharing their own details professionally.
+      </p>
+
+      <!-- Section 7 -->
+      <h2 id="web-vs-app">7. Web Version vs. Android App</h2>
+      <p>WAssistant is available as both a web app and an Android app. Here's how they compare:</p>
+
+      <h3>Web version (wassistant.site)</h3>
+      <ul>
+        <li>Works on any device with a browser (iPhone, iPad, Android, Windows, Mac, Linux).</li>
+        <li>No installation required — just visit the website.</li>
+        <li>Core phone-to-chat feature available.</li>
+        <li>Best for quick, one-off use when you don't want to install anything.</li>
+      </ul>
+
+      <h3>Android app (Google Play)</h3>
+      <ul>
+        <li>All features: phone-to-chat, QR codes, chat links, OCR, vCards.</li>
+        <li>Faster and works offline (link generation doesn't need internet).</li>
+        <li>Country code picker for easier number entry.</li>
+        <li>Integration with Android's share menu — receive shared text from other apps.</li>
+        <li>Regular updates with new features.</li>
+      </ul>
+
+      <div class="tip-box">
+        <strong>Recommendation:</strong> If you use WhatsApp tools frequently, install the Android
+        app for the full feature set. For occasional use, the web version at wassistant.site is all
+        you need.
+      </div>
+
+      <!-- Section 8 -->
+      <h2 id="business-uses">8. Business Use Cases</h2>
+      <p>
+        WAssistant isn't just for personal use. Many small businesses and freelancers use it to
+        improve their WhatsApp communication. Here are some common scenarios:
+      </p>
+
+      <h3>Small retail shops</h3>
+      <p>
+        Print a WhatsApp QR code on your counter or window. Customers can scan it to ask about
+        product availability, place orders, or get support — all without needing to save your
+        number.
+      </p>
+
+      <h3>Freelancers and consultants</h3>
+      <p>
+        Add a chat link to your portfolio website, LinkedIn profile, or business card. Potential
+        clients can reach you with one tap. Use a pre-filled message like "Hi, I saw your portfolio
+        and would like to discuss a project."
+      </p>
+
+      <h3>Real estate agents</h3>
+      <p>
+        Generate QR codes for property listings. Include them on listing pages, signs, or brochures.
+        Interested buyers can scan and immediately WhatsApp you about a specific property.
+      </p>
+
+      <h3>Customer support</h3>
+      <p>
+        Create a chat link with a pre-filled message template like "Hi, I need help with my order #"
+        and share it on your website's support page. Customers start a conversation with context
+        already included.
+      </p>
+
+      <h3>Event organizers</h3>
+      <p>
+        Share vCards for key contacts (venue, caterer, coordinator) in a WhatsApp group. Attendees
+        can save all contacts with one tap each, instead of manually typing numbers from a PDF.
+      </p>
+
+      <!-- Section 9 -->
+      <h2 id="tips">9. Tips and Best Practices</h2>
+
+      <h3>Always include the country code</h3>
+      <p>
+        The most common error is forgetting the country code. WhatsApp requires international
+        format. If you're messaging someone in Saudi Arabia, the number must start with
+        <code>+966</code>, not <code>05</code>.
+      </p>
+
+      <h3>Test your QR codes and links before sharing</h3>
+      <p>
+        Before printing a QR code or publishing a chat link, test it yourself. Scan the QR code with
+        a different phone or click the link in an incognito browser to make sure it opens the right
+        chat with the correct pre-filled message.
+      </p>
+
+      <h3>Use pre-filled messages strategically</h3>
+      <p>
+        When creating chat links for business, include a pre-filled message that gives you context.
+        For example: "Hi, I'm interested in [Product Name]" or "Booking inquiry for [Date]." This
+        saves the customer time and helps you understand what they need without asking.
+      </p>
+
+      <h3>Keep your contacts list clean</h3>
+      <p>
+        One of the biggest benefits of WAssistant is that it keeps your contacts list from growing
+        endlessly. Use it for one-time conversations and only save contacts you'll actually need
+        again.
+      </p>
+
+      <h3>Combine features for maximum impact</h3>
+      <p>
+        Use QR codes on physical materials (business cards, flyers, shop windows) and chat links on
+        digital platforms (website, social media, email). This gives people multiple ways to reach
+        you via WhatsApp, wherever they discover your business.
+      </p>
+
+      <footer>
+        <p>
+          &copy; 2026 WAssistant. All rights reserved. |
+          <a href="/">Home</a> | <a href="/faq.html">FAQ</a> |
+          <a href="/privacy_policy.html">Privacy Policy</a> |
+          <a href="/terms.html">Terms</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

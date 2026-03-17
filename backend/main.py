@@ -76,8 +76,20 @@ def get_current_user(
 
 # --- Endpoints ---
 
-@app.post("/signup", response_model=Token)
-def signup(user: UserCreate, db: Session = Depends(get_db)):
+@app.post(
+    "/signup",
+    response_model=Token,
+    tags=["Authentication"],
+    summary="Register a new user",
+    description="Create a new user account and return an access token."
+)
+def signup(user: UserCreate, db: Session = Depends(get_db)) -> Token:
+    """
+    Register a new user.
+    - **email**: User's email address
+    - **password**: User's password
+    Returns: JWT access token and token type.
+    """
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Identity already exists")
@@ -90,8 +102,20 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
     access_token = auth.create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.post("/token", response_model=Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+@app.post(
+    "/token",
+    response_model=Token,
+    tags=["Authentication"],
+    summary="User login",
+    description="Authenticate user and return an access token."
+)
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)) -> Token:
+    """
+    Authenticate user and return JWT access token.
+    - **username**: User's email address
+    - **password**: User's password
+    Returns: JWT access token and token type.
+    """
     user = db.query(models.User).filter(models.User.email == form_data.username).first()
     if not user or not auth.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect credentials")
@@ -99,25 +123,53 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     access_token = auth.create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/sync/history", response_model=List[HistorySchema])
-def sync_history(current_user: models.User = Depends(get_current_user)):
-    """INTJ Strategy: Retrieve unified history for authenticated users."""
+@app.get(
+    "/sync/history",
+    response_model=List[HistorySchema],
+    tags=["History"],
+    summary="Get user history",
+    description="Retrieve the unified history for the authenticated user."
+)
+def sync_history(current_user: models.User = Depends(get_current_user)) -> List[HistorySchema]:
+    """
+    Retrieve the unified history for the authenticated user.
+    Returns: List of history items.
+    """
     return current_user.history
 
-@app.post("/sync/history")
+@app.post(
+    "/sync/history",
+    tags=["History"],
+    summary="Add item to user history",
+    description="Add a new item to the authenticated user's history."
+)
 def add_to_history(
     item: HistorySchema,
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db)
-):
+) -> dict:
+    """
+    Add a new item to the authenticated user's history.
+    - **item**: History item to add
+    Returns: Status message.
+    """
     new_item = models.HistoryItem(**item.dict(), user_id=current_user.id)
     db.add(new_item)
     db.commit()
     return {"status": "synchronized"}
 
-@app.get("/qr")
-def generate_qr(data: str):
-    """Execution: High-precision QR generation with H-level error correction."""
+@app.get(
+    "/qr",
+    tags=["QR"],
+    summary="Generate QR code",
+    description="Generate a high-precision QR code with H-level error correction."
+)
+def generate_qr(data: str) -> StreamingResponse:
+    """
+    Generate a high-precision QR code with H-level error correction.
+    - **data**: Data to encode in the QR code
+    Returns: PNG image as a streaming response.
+    """
     qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
     qr.add_data(data)
     img = qr.make_image(fill_color="black", back_color="white")

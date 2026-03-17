@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from backend import auth, models
 from backend.database import get_db
+from backend.analytics_service import track_event_logic
 
 router = APIRouter(prefix="/api/v1/analytics", tags=["Analytics"])
 
@@ -57,22 +58,14 @@ async def track_event(
     event: AnalyticsEvent,
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(get_db),
-):
+) -> dict:
     """Track user engagement events"""
-    event.timestamp = event.timestamp or datetime.utcnow()
-    event.user_id = current_user.id
-
-    # Create event record
-    db_event = models.AnalyticsEvent(
-        user_id=event.user_id,
+    return track_event_logic(
         event_type=event.event_type,
-        metadata=json.dumps(event.metadata or {}),
-        created_at=event.timestamp,
+        user_id=current_user.id,
+        metadata=event.metadata,
+        db=db
     )
-    db.add(db_event)
-    db.commit()
-
-    return {"status": "recorded", "event_id": db_event.id}
 
 
 @router.get("/user/metrics", response_model=dict)

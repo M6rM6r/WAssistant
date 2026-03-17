@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Frequently Asked Questions - WAssistant</title>
+    <meta
+      name="description"
+      content="Find answers to common questions about WAssistant — the free WhatsApp utility tool for chatting without saving contacts, generating QR codes, and more."
+    />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+          sans-serif;
+        line-height: 1.7;
+        color: #e0e0e0;
+        background: #0a0b10;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+      .back-link {
+        display: inline-block;
+        color: #4ade80;
+        text-decoration: none;
+        margin-bottom: 30px;
+        font-size: 0.9em;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        font-size: 2.2em;
+        margin-bottom: 10px;
+        color: #ffffff;
+      }
+      .subtitle {
+        color: #888;
+        margin-bottom: 40px;
+        font-size: 1.05em;
+      }
+      .faq-category {
+        margin-bottom: 40px;
+      }
+      .faq-category h2 {
+        font-size: 1.3em;
+        color: #4ade80;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #1e293b;
+      }
+      .faq-item {
+        background: #111827;
+        border: 1px solid #1e293b;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        overflow: hidden;
+      }
+      .faq-question {
+        padding: 18px 20px;
+        font-weight: 600;
+        color: #f0f0f0;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.2s;
+      }
+      .faq-question:hover {
+        background: #1a2332;
+      }
+      .faq-answer {
+        padding: 0 20px;
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          max-height 0.3s ease-out,
+          padding 0.3s ease;
+        color: #9ca3af;
+        line-height: 1.8;
+      }
+      .faq-item.active .faq-answer {
+        padding: 0 20px 20px;
+        max-height: 600px;
+        border-top: 1px solid #1e293b;
+      }
+      .toggle-icon {
+        font-size: 1.2em;
+        transition: transform 0.3s;
+        color: #4ade80;
+      }
+      .faq-item.active .toggle-icon {
+        transform: rotate(45deg);
+      }
+      a {
+        color: #4ade80;
+      }
+      footer {
+        text-align: center;
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 1px solid #1e293b;
+        color: #555;
+        font-size: 0.85em;
+      }
+      footer a {
+        color: #4ade80;
+        text-decoration: none;
+      }
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="/" class="back-link">&larr; Back to WAssistant</a>
+      <h1>Frequently Asked Questions</h1>
+      <p class="subtitle">Everything you need to know about using WAssistant.</p>
+
+      <div class="faq-category">
+        <h2>General</h2>
+
+        <div class="faq-item">
+          <div class="faq-question">What is WAssistant? <span class="toggle-icon">+</span></div>
+          <div class="faq-answer">
+            WAssistant is a free utility app that provides tools for WhatsApp. Its main feature lets
+            you start a WhatsApp conversation with any phone number without saving it as a contact
+            first. It also includes QR code generation, shareable chat link creation, vCard
+            generation, and OCR-powered phone number extraction from images.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">Is WAssistant free? <span class="toggle-icon">+</span></div>
+          <div class="faq-answer">
+            Yes, WAssistant is completely free to use. The app is supported by non-intrusive ads.
+            There are no premium tiers, subscriptions, or hidden fees. All features are available to
+            every user.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            Is WAssistant affiliated with WhatsApp? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            No. WAssistant is an independent, third-party utility tool. It is not affiliated with,
+            endorsed by, or officially connected to WhatsApp Inc. or Meta Platforms, Inc. It uses
+            WhatsApp's public wa.me link format, which is a feature WhatsApp makes available to
+            everyone.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            Where can I use WAssistant? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            WAssistant is available in two ways: as an Android app on the Google Play Store, and as
+            a web app at <a href="https://wassistant.site">wassistant.site</a>. The web version
+            works on any device with a browser — including iPhones, iPads, Windows PCs, and Macs.
+            The core phone-to-chat feature works identically in both versions.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <h2>Privacy &amp; Security</h2>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            Is my phone number saved or shared? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            No. All phone numbers you enter are processed entirely on your device. WAssistant simply
+            constructs a wa.me link and opens it — nothing is sent to any server. We do not store,
+            log, or transmit any phone numbers or personal data.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            Does WAssistant access my contacts? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            No. WAssistant does not request or use contact permissions. The entire point of the app
+            is to avoid needing to save contacts. Your address book remains untouched.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            What data does WAssistant collect? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            WAssistant uses Firebase Analytics to understand which features are most popular
+            (anonymous usage metrics). This helps us improve the app. We do not collect any personal
+            information, messages, phone numbers, or contact data. You can read our full
+            <a href="/privacy_policy.html">Privacy Policy</a> for complete details.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            Is the camera permission safe? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Yes. The Android app requests camera access only for the OCR (text recognition) feature,
+            which extracts phone numbers from photos of business cards, screenshots, or signs. All
+            image processing happens locally on your device using Google ML Kit. No images are ever
+            uploaded or transmitted anywhere.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <h2>Features</h2>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            How does the phone-to-chat feature work? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            You enter a phone number (with country code, like +1 for the US or +966 for Saudi
+            Arabia), and WAssistant opens a WhatsApp chat with that number directly. Under the hood,
+            it creates a link using WhatsApp's official wa.me format and opens it in your browser,
+            which then redirects to WhatsApp. The other person doesn't need to have saved your
+            number either — WhatsApp allows incoming messages from anyone.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            What is the QR code generator for? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            The QR code generator creates a scannable QR code that, when scanned, opens a WhatsApp
+            chat with your specified number. This is useful for businesses — you can print the QR
+            code on receipts, business cards, table tents, or your storefront window. Customers can
+            scan it with their phone camera and start chatting with you immediately.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            What are chat links and how do I use them? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Chat links are wa.me URLs that open a WhatsApp conversation when clicked. You can
+            optionally include a pre-filled message. For example, a link might open WhatsApp with
+            the message "Hi, I'd like to book an appointment" already typed. You can add these links
+            to your Instagram bio, website, email signature, or share them on social media.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            How does OCR text recognition work? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            OCR (Optical Character Recognition) uses your device's camera or gallery to scan images
+            for phone numbers. Point your camera at a business card, a billboard, a receipt, or a
+            screenshot, and WAssistant will detect any phone numbers in the image. You can then tap
+            the detected number to start a WhatsApp chat. All processing uses Google ML Kit and runs
+            locally — no data leaves your device.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            What is vCard generation? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            vCard is a standard format for sharing contact information. WAssistant can generate a
+            vCard file (.vcf) from a phone number and optional details (name, email). You can then
+            share this file via WhatsApp, email, or any other app. The recipient can open it to save
+            the contact to their phone with one tap.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <h2>Troubleshooting</h2>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            The chat doesn't open in WhatsApp. What's wrong? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Make sure that: (1) WhatsApp is installed on your device, (2) you've entered the phone
+            number with the correct country code (e.g., +1 for US, +44 for UK, +966 for Saudi
+            Arabia), (3) the number is a valid WhatsApp-registered number. If you're using the web
+            version, your browser will try to open WhatsApp Web or the desktop app. If neither is
+            installed, you may see a WhatsApp download page.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            Do I need an internet connection? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            You need an internet connection to use WhatsApp itself, but the WAssistant link
+            generation works offline in the Android app. The web version at wassistant.site requires
+            an internet connection to load.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            Does the other person see my number? <span class="toggle-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Yes. When you start a WhatsApp conversation using WAssistant, it opens a normal WhatsApp
+            chat. The other person will see your phone number and profile, just like any other
+            WhatsApp message. WAssistant does not provide anonymity — it simply removes the need to
+            save contacts before chatting.
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          &copy; 2026 WAssistant. All rights reserved. |
+          <a href="/">Home</a> | <a href="/privacy_policy.html">Privacy Policy</a> |
+          <a href="/terms.html">Terms</a>
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelectorAll('.faq-question').forEach(function (q) {
+        q.addEventListener('click', function () {
+          this.parentElement.classList.toggle('active');
+        });
+      });
+    </script>
+  </body>
+</html>

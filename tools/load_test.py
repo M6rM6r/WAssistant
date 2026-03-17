@@ -15,15 +15,28 @@ from dataclasses import dataclass, field
 try:
     import httpx
     from rich.console import Console
-    from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
+    from rich.progress import (
+        BarColumn,
+        Progress,
+        SpinnerColumn,
+        TextColumn,
+    )
     from rich.table import Table
 except ImportError:
     import subprocess
     import sys
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "httpx", "rich", "-q"])
+
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "httpx", "rich", "-q"]
+    )
     import httpx
     from rich.console import Console
-    from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
+    from rich.progress import (
+        BarColumn,
+        Progress,
+        SpinnerColumn,
+        TextColumn,
+    )
     from rich.table import Table
 
 
@@ -115,7 +128,7 @@ async def run_load_test(
     """Run load test against URL."""
     result = LoadTestResult()
 
-    console.print(f"\n[bold blue]Load Test Configuration[/bold blue]")
+    console.print("\n[bold blue]Load Test Configuration[/bold blue]")
     console.print(f"  URL: {url}")
     console.print(f"  Requests: {total_requests}")
     console.print(f"  Concurrency: {concurrency}\n")
@@ -130,7 +143,9 @@ async def run_load_test(
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
             console=console,
         ) as progress:
-            task = progress.add_task("Running load test...", total=total_requests)
+            task = progress.add_task(
+                "Running load test...", total=total_requests
+            )
 
             # Create batches of concurrent requests
             pending = []
@@ -153,7 +168,8 @@ async def run_load_test(
 
 def print_results(result: LoadTestResult) -> None:
     """Print load test results."""
-    table = Table(title="Load Test Results", show_header=True, header_style="bold cyan")
+    title = "Load Test Results"
+    table = Table(title=title, show_header=True, header_style="bold cyan")
     table.add_column("Metric", style="cyan")
     table.add_column("Value", justify="right")
 
@@ -167,7 +183,10 @@ def print_results(result: LoadTestResult) -> None:
     console.print(table)
 
     # Response time table
-    time_table = Table(title="Response Times (ms)", show_header=True, header_style="bold cyan")
+    time_title = "Response Times (ms)"
+    time_table = Table(
+        title=time_title, show_header=True, header_style="bold cyan"
+    )
     time_table.add_column("Metric")
     time_table.add_column("Value", justify="right")
 

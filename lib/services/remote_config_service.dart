@@ -52,10 +52,9 @@ class RemoteConfigService {
         'rate_limit_per_hour': 100,
 
         // URLs
-        'support_url': 'https://wassistant-707.web.app/faq.html',
-        'privacy_policy_url':
-            'https://wassistant-707.web.app/privacy_policy.html',
-        'terms_url': 'https://wassistant-707.web.app/terms.html',
+        'support_url': 'https://wassistant.site/faq.html',
+        'privacy_policy_url': 'https://wassistant.site/privacy_policy.html',
+        'terms_url': 'https://wassistant.site/terms.html',
       });
 
       await _remoteConfig.fetchAndActivate();

@@ -39,12 +39,26 @@ whatsapp_router = APIRouter(prefix="/whatsapp", tags=["WhatsApp"])
 # ─────────────────────────────────────────────────────────────────────────────
 # QR CODE ROUTES
 # ─────────────────────────────────────────────────────────────────────────────
-@qr_router.post("")  # type: ignore[misc]
+@qr_router.post(
+    "",
+    summary="Generate a PNG QR code",
+    description="Generate a QR code as a PNG image with customizable error correction and colors.",
+    tags=["QR Code"],
+    response_class=StreamingResponse
+)
 async def generate_qr(
     req: QRCodeRequest,
     db: Session = Depends(get_db),
 ) -> StreamingResponse:
-    """Generate a PNG QR code."""
+    """
+    Generate a QR code as a PNG image.
+    - **data**: Data to encode
+    - **error_correction**: Error correction level (L, M, Q, H)
+    - **foreground_color**: Foreground color (hex)
+    - **background_color**: Background color (hex)
+    - **size**: Image size in pixels
+    Returns: PNG image as a streaming response.
+    """
     # Create QR code
     error_levels = {
         "L": qrcode.constants.ERROR_CORRECT_L,
@@ -103,12 +117,23 @@ async def generate_qr(
     )
 
 
-@qr_router.get("")  # type: ignore[misc]
+@qr_router.get(
+    "",
+    summary="Generate QR code via GET",
+    description="Generate a QR code via GET request for embedding or quick access.",
+    tags=["QR Code"],
+    response_class=StreamingResponse
+)
 async def generate_qr_simple(
     data: Annotated[str, Query(min_length=1, max_length=2048)],
     size: Annotated[int, Query(ge=100, le=1000)] = 300,
 ) -> StreamingResponse:
-    """Generate QR code via GET (for embedding)."""
+    """
+    Generate QR code via GET request for embedding or quick access.
+    - **data**: Data to encode
+    - **size**: Image size in pixels (default 300)
+    Returns: PNG image as a streaming response.
+    """
     qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
     qr.add_data(data)
     qr.make(fit=True)
@@ -129,12 +154,24 @@ async def generate_qr_simple(
 # ─────────────────────────────────────────────────────────────────────────────
 # WHATSAPP ROUTES
 # ─────────────────────────────────────────────────────────────────────────────
-@whatsapp_router.post("/link", response_model=WhatsAppLinkResponse)  # type: ignore[misc]
+@whatsapp_router.post(
+    "/link",
+    response_model=WhatsAppLinkResponse,
+    summary="Generate a WhatsApp chat link",
+    description="Generate a WhatsApp chat link with optional message and short link.",
+    tags=["WhatsApp"]
+)
 async def generate_link(
     req: WhatsAppLinkRequest,
     db: Session = Depends(get_db),
 ) -> WhatsAppLinkResponse:
-    """Generate a WhatsApp chat link."""
+    """
+    Generate a WhatsApp chat link.
+    - **phone**: Phone number
+    - **message**: Optional message
+    - **create_short_link**: Whether to create a short link
+    Returns: WhatsAppLinkResponse
+    """
     # Clean phone number
     clean_phone = "".join(filter(str.isdigit, req.phone))
     if len(clean_phone) < 7:
@@ -182,12 +219,23 @@ async def generate_link(
         )
 
 
-@whatsapp_router.get("/link", response_model=WhatsAppLinkResponse)  # type: ignore[misc]
+@whatsapp_router.get(
+    "/link",
+    response_model=WhatsAppLinkResponse,
+    summary="Generate WhatsApp link via GET",
+    description="Generate a WhatsApp link via GET request for quick sharing.",
+    tags=["WhatsApp"]
+)
 async def generate_link_simple(
     phone: Annotated[str, Query(min_length=7, max_length=20)],
     message: Annotated[str | None, Query(max_length=2048)] = None,
 ) -> WhatsAppLinkResponse:
-    """Generate WhatsApp link via GET."""
+    """
+    Generate WhatsApp link via GET request for quick sharing.
+    - **phone**: Phone number
+    - **message**: Optional message
+    Returns: WhatsAppLinkResponse
+    """
     clean_phone = "".join(filter(str.isdigit, phone))
     link = f"https://wa.me/{clean_phone}"
     if message:
@@ -196,12 +244,22 @@ async def generate_link_simple(
     return WhatsAppLinkResponse(link=link, phone=clean_phone, message=message)
 
 
-@whatsapp_router.post("/bulk", response_model=BulkLinkResponse)  # type: ignore[misc]
+@whatsapp_router.post(
+    "/bulk",
+    response_model=BulkLinkResponse,
+    summary="Generate multiple WhatsApp links",
+    description="Generate multiple WhatsApp links at once.",
+    tags=["WhatsApp"]
+)
 async def generate_bulk_links(
     req: BulkLinkRequest,
     db: Session = Depends(get_db),
 ) -> BulkLinkResponse:
-    """Generate multiple WhatsApp links at once."""
+    """
+    Generate multiple WhatsApp links at once.
+    - **links**: List of WhatsAppLinkRequest
+    Returns: BulkLinkResponse
+    """
     links: list[WhatsAppLinkResponse] = []
     errors: list[str] = []
 
@@ -246,12 +304,21 @@ async def generate_bulk_links(
     )
 
 
-@whatsapp_router.get("/{short_code}/redirect")  # type: ignore[misc]
+@whatsapp_router.get(
+    "/{short_code}/redirect",
+    summary="Redirect short WhatsApp link",
+    description="Redirect a short WhatsApp link and track the click count.",
+    tags=["WhatsApp"]
+)
 async def redirect_short_link(
     short_code: str,
     db: Session = Depends(get_db),
-) -> dict[str, str]:  # type: ignore[type-arg]
-    """Redirect short link and track click."""
+) -> dict[str, str]:
+    """
+    Redirect a short WhatsApp link and track the click count.
+    - **short_code**: Short link code
+    Returns: Redirect URL in a dict
+    """
     link_record = (
         db.query(WhatsAppLink)
         .filter(WhatsAppLink.short_code == short_code)

@@ -13,7 +13,7 @@ services:
       dockerfile: Dockerfile
     container_name: wassistant-api
     ports:
-      - "8000:8000"
+      - '8000:8000'
     environment:
       - ENV=development
       - DATABASE_URL=postgresql://wassistant:wassistant@db:5432/wassistant
@@ -25,7 +25,7 @@ services:
       - ./backend:/app/backend:ro
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -41,12 +41,12 @@ services:
       POSTGRES_PASSWORD: wassistant
       POSTGRES_DB: wassistant
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U wassistant"]
+      test: ['CMD-SHELL', 'pg_isready -U wassistant']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -58,12 +58,12 @@ services:
     image: redis:7-alpine
     container_name: wassistant-redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -75,7 +75,7 @@ services:
     image: adminer:latest
     container_name: wassistant-adminer
     ports:
-      - "8080:8080"
+      - '8080:8080'
     depends_on:
       - db
     restart: unless-stopped

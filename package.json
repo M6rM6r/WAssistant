@@ -8,6 +8,9 @@
     "node": ">=18.0.0"
   },
   "scripts": {
+    "landing:dev": "cd landing && npm run dev",
+    "landing:build": "cd landing && npm run build",
+    "landing:install": "cd landing && npm install",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:js": "eslint 'web/**/*.{js,ts}' --no-error-on-unmatched-pattern --max-warnings=0",
     "lint:css": "stylelint 'web/**/*.css' || true",
@@ -25,27 +28,27 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
     "@types/node": "^22.10.0",
-    "@vitest/coverage-v8": "^1.0.0",
-    "@vitest/ui": "^1.0.0",
-    "eslint": "^9.16.0",
+    "@vitest/coverage-v8": "^4.1.0",
+    "@vitest/ui": "^4.1.0",
+    "eslint": "^9.39.4",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.0",
     "globals": "^15.13.0",
-    "husky": "^9.1.0",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.4.0",
+    "husky": "^9.1.7",
+    "lighthouse": "^13.0.3",
+    "lint-staged": "^15.5.2",
+    "prettier": "^3.8.1",
+    "rollup": "^4.9.0",
+    "rollup-plugin-esbuild": "^6.1.0",
     "stylelint": "^16.11.0",
     "stylelint-config-standard": "^36.0.0",
     "typescript": "^5.7.0",
-    "vitest": "^1.0.0",
-    "lighthouse": "^11.0.0",
-    "webpack-bundle-analyzer": "^4.10.0",
+    "vitest": "^4.1.0",
     "web-vitals": "^3.5.0",
-    "rollup": "^4.9.0",
-    "rollup-plugin-esbuild": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^15.0.0",
-    "@rollup/plugin-commonjs": "^25.0.0"
+    "webpack-bundle-analyzer": "^4.10.0"
   },
   "lint-staged": {
     "*.{js,ts}": [
@@ -79,5 +82,8 @@
       "selector-class-pattern": null,
       "no-descending-specificity": null
     }
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
