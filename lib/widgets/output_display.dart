@@ -180,7 +180,6 @@ class _OutputDisplayState extends State<OutputDisplay> {
         );
       }
 
-      // Use QrExportService to capture and save
       await Future.delayed(const Duration(milliseconds: 500)); // Allow UI to render
 
       // TODO: Implement actual file saving when platform support is added
