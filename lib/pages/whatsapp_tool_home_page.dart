@@ -90,14 +90,12 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage>
   }
 
   void _initShareListener() {
-    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen(
-      (value) {
-        if (value.isNotEmpty) {
-          _processSharedText(value.first.path);
-        }
-      },
-      onError: (Object err) => LoggerService.e('getIntentDataStream error: $err'),
-    );
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen((value) {
+      if (value.isNotEmpty) {
+        _processSharedText(value.first.path);
+      }
+    },
+          onError: (Object err) => LoggerService.e('getIntentDataStream error: $err'));
 
     unawaited(
       ReceiveSharingIntent.instance.getInitialMedia().then((value) {
@@ -135,13 +133,8 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage>
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: AppConstants.darkBackground,
-        foregroundColor: AppConstants.textHighEmphasis,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppConstants.accentGreen,
-          labelColor: AppConstants.accentGreen,
-          unselectedLabelColor: AppConstants.textMediumEmphasis,
           tabs: [
             Tab(icon: const Icon(Icons.chat), text: l10n.directChat),
             Tab(icon: const Icon(Icons.contact_page), text: l10n.vCardGen),
@@ -161,20 +154,21 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage>
                 color: Colors.orange.shade700,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 alignment: Alignment.centerLeft,
-                child: offline
-                    ? const Row(
-                        children: [
-                          Icon(Icons.wifi_off, color: Colors.white),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'You are offline. Some actions may pause.',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                child:
+                    offline
+                        ? const Row(
+                          children: [
+                            Icon(Icons.wifi_off, color: Colors.white),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'You are offline. Some actions may pause.',
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                              ),
                             ),
-                          ),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
+                          ],
+                        )
+                        : const SizedBox.shrink(),
               );
             },
           ),
@@ -214,7 +208,7 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage>
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(height: layout.spacing(20)),
                     WhatsAppInputField(
@@ -270,6 +264,7 @@ class _WhatsAppToolHomePageState extends State<WhatsAppToolHomePage>
             child: ResponsiveContainer(
               padding: EdgeInsets.zero,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Semantics(
                     header: true,

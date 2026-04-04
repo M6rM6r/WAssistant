@@ -48,7 +48,6 @@ class FeatureButtons extends StatelessWidget {
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppConstants.accentGreen,
-                    foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: layout.spacing(12)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(layout.spacing(12)),
@@ -86,8 +85,8 @@ class FeatureButtons extends StatelessWidget {
                     padding: EdgeInsets.symmetric(vertical: layout.spacing(12)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(layout.spacing(12)),
-                      side: const BorderSide(color: Colors.white10),
                     ),
+                    side: const BorderSide(color: Colors.white10),
                   ),
                   icon: Icon(Icons.link, size: layout.iconSize(20)),
                   label: Text(l10n.getLink, style: TextStyle(fontSize: layout.fontSize(14))),
@@ -115,7 +114,6 @@ class FeatureButtons extends StatelessWidget {
             child: OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: layout.spacing(14)),
-                side: BorderSide(color: AppConstants.accentGreen.withValues(alpha: 0.5)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(layout.spacing(12)),
                 ),

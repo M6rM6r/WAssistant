@@ -69,8 +69,11 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 14)),
-          Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          Text(label, style: Theme.of(context).textTheme.bodyMedium),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
@@ -83,21 +86,37 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isAtRisk ? Colors.red.shade50 : Colors.green.shade50,
-            border: Border.all(color: isAtRisk ? Colors.red.shade200 : Colors.green.shade200),
+            color:
+                isAtRisk
+                    ? Theme.of(context).colorScheme.error.withValues(alpha: 0.1)
+                    : Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
+            border: Border.all(
+              color:
+                  isAtRisk
+                      ? Theme.of(context).colorScheme.error.withValues(alpha: 0.3)
+                      : Theme.of(context).colorScheme.secondary.withValues(alpha: 0.3),
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             children: [
               Icon(
                 isAtRisk ? Icons.warning : Icons.check_circle,
-                color: isAtRisk ? Colors.red : Colors.green,
+                color:
+                    isAtRisk
+                        ? Theme.of(context).colorScheme.error
+                        : Theme.of(context).colorScheme.secondary,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   isAtRisk ? 'Churn risk detected' : 'Engagement healthy',
-                  style: TextStyle(color: isAtRisk ? Colors.red.shade700 : Colors.green.shade700),
+                  style: TextStyle(
+                    color:
+                        isAtRisk
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
               ),
             ],
@@ -122,13 +141,16 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
               children: [
                 const Text('Recent Events', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                Text(event.reason, style: const TextStyle(fontSize: 12)),
+                Text(event.reason, style: Theme.of(context).textTheme.bodySmall),
                 const SizedBox(height: 4),
                 Text(
                   'Risk: ${event.riskLevel.name.toUpperCase()}',
                   style: TextStyle(
                     fontSize: 12,
-                    color: event.riskLevel == ChurnLevel.critical ? Colors.red : Colors.orange,
+                    color:
+                        event.riskLevel == ChurnLevel.critical
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context).colorScheme.tertiary,
                   ),
                 ),
               ],

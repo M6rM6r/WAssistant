@@ -13,7 +13,7 @@ import 'package:wassistant/providers/whatsapp_tool_provider.dart';
 import 'package:wassistant/repositories/history_repository.dart';
 import 'package:wassistant/repositories/template_repository.dart';
 import 'package:wassistant/services/network_service.dart';
-import 'package:wassistant/utils/app_theme.dart';
+import 'package:wassistant/theme/app_theme.dart';
 import 'package:wassistant/utils/constants.dart';
 
 Future<void> main() async {

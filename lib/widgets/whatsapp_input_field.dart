@@ -133,7 +133,6 @@ class _WhatsAppInputFieldState extends State<WhatsAppInputField> {
                 decoration: InputDecoration(
                   labelText: l10n.phoneLabel,
                   hintText: l10n.phoneNumberHint,
-                  border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon:
                         _isScanning
@@ -168,7 +167,6 @@ class _WhatsAppInputFieldState extends State<WhatsAppInputField> {
               style: TextStyle(fontSize: layout.fontSize(16)),
               decoration: InputDecoration(
                 labelText: l10n.messageLabel,
-                border: const OutlineInputBorder(),
                 alignLabelWithHint: true,
                 contentPadding: EdgeInsets.fromLTRB(
                   layout.horizontalPadding,

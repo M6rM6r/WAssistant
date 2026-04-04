@@ -57,11 +57,7 @@ class AppDrawer extends StatelessWidget {
             }
           }),
 
-          const Divider(
-            color: AppConstants.darkSurface,
-            indent: 16,
-            endIndent: 16,
-          ),
+          const Divider(),
 
           _buildDrawerItem(
             context,
@@ -80,7 +76,7 @@ class AppDrawer extends StatelessWidget {
             Navigator.pop(context);
           }),
 
-          const Divider(color: AppConstants.darkSurface),
+          const Divider(),
           const ListTile(
             title: Text(
               'Version 1.4.1',

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wassistant/l10n/app_localizations.dart';
 import 'package:wassistant/providers/template_provider.dart';
-import 'package:wassistant/utils/constants.dart';
 
 class TemplatesDialog extends StatelessWidget {
   const TemplatesDialog({required this.onSelect, super.key});
@@ -22,7 +21,7 @@ class TemplatesDialog extends StatelessWidget {
         children: [
           Text(l10n.templateTitle),
           IconButton(
-            icon: const Icon(Icons.add, color: AppConstants.accentGreen),
+            icon: Icon(Icons.add, color: Theme.of(context).colorScheme.secondary),
             onPressed: () {
               _showAddTemplateDialog(context, l10n);
             },
@@ -55,9 +54,9 @@ class TemplatesDialog extends StatelessWidget {
                         Navigator.pop(context);
                       },
                       trailing: IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.delete_outline,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                         onPressed: () {
                           // Confirm deletion

@@ -21,7 +21,7 @@ import 'package:wassistant/repositories/history_repository.dart';
 import 'package:wassistant/repositories/template_repository.dart';
 import 'package:wassistant/services/engagement_service.dart';
 import 'package:wassistant/services/network_service.dart';
-import 'package:wassistant/utils/app_theme.dart';
+import 'package:wassistant/theme/app_theme.dart';
 import 'package:wassistant/utils/constants.dart';
 import 'package:wassistant/utils/error_handler.dart';
 import 'package:wassistant/utils/logger_service.dart';
