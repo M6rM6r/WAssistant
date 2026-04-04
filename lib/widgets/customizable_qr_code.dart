@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:wassistant/utils/constants.dart';
+import 'package:wassistant/utils/logger_service.dart';
 import 'package:wassistant/utils/responsive_layout.dart';
 
 /// QR Code customization options
@@ -431,8 +432,20 @@ class QrExportService {
     }
   }
 
-  /// Share QR code
-  static Future<void> shareQrCode(String data, String filename) async {
-    await Share.share(data, subject: filename);
+  /// INTJ: Share QR code with error handling and result verification
+  static Future<bool> shareQrCode(String data, String filename) async {
+    try {
+      // INTJ: Strategic QR sharing with error handling
+      try {
+        await SharePlus.instance.share(ShareParams(text: data, subject: filename));
+      } catch (e) {
+        LoggerService.e('Failed to share QR', e);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      LoggerService.e('Failed to share QR code', e);
+      return false;
+    }
   }
 }
