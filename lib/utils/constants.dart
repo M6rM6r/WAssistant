@@ -29,6 +29,13 @@ class AppConstants {
   static const String errorInvalidNumber = 'Error: Invalid number provided.';
   static const String errorLaunchFailed = 'Error: Could not launch WhatsApp.';
 
+  // --- Backend API Configuration ---
+  static String get apiBaseUrl {
+    return dotenv.env['API_BASE_URL']?.trim().isNotEmpty ?? false
+        ? dotenv.env['API_BASE_URL']!.trim()
+        : 'https://api.wassistant.site';
+  }
+
   // --- AdMob Configuration (Production IDs Integrated) ---
   // Publisher: pub-7083858358486869
 

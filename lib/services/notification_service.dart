@@ -2,8 +2,12 @@
 // so the analyzer cannot trace a direct path from main().
 // ignore_for_file: unreachable_from_main
 
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:wassistant/utils/constants.dart';
 
 /// Background message handler (must be top-level function)
 @pragma('vm:entry-point')
@@ -43,8 +47,15 @@ class NotificationService {
       final token = await _messaging.getToken();
       if (token != null) {
         _logger.d('FCM Token: $token');
-        // TODO(backend): Send token to your backend for notifications
+        // INTJ: Register token with backend for systematic campaigns
+        await _registerTokenWithBackend(token);
       }
+
+      // Listen for token refresh
+      _messaging.onTokenRefresh.listen((newToken) {
+        _logger.d('FCM Token refreshed: $newToken');
+        _registerTokenWithBackend(newToken);
+      });
 
       // Setup message handlers
       FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
@@ -121,7 +132,31 @@ class NotificationService {
     }
   }
 
-  /// Subscribe to topic for targeted campaigns
+  /// INTJ: Register FCM token with backend for targeted campaigns
+  Future<void> _registerTokenWithBackend(String token) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConstants.apiBaseUrl}/notifications/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'fcm_token': token,
+          'platform': 'flutter',
+          'timestamp': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        _logger.d('FCM token registered with backend');
+      } else {
+        _logger.w('Failed to register token: ${response.statusCode}');
+        // Retry with exponential backoff (INTJ: systematic retry)
+        await Future.delayed(const Duration(seconds: 5));
+        await _registerTokenWithBackend(token);
+      }
+    } catch (e) {
+      _logger.e('Error registering FCM token: $e');
+    }
+  }
   Future<void> subscribeToTopic(String topic) async {
     try {
       await _messaging.subscribeToTopic(topic);
