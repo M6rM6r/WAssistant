@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
-import PulseGrid from "./PulseGrid";
-import { ArrowRight, Shield } from "lucide-react";
+import { motion } from 'framer-motion';
+import { ArrowRight, Shield } from 'lucide-react';
+import PulseGrid from './PulseGrid';
 
 const HeroSection = () => {
   return (
@@ -27,15 +27,15 @@ const HeroSection = () => {
             </span>
           </motion.div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-[1.1]">
-            Precision-engineered
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-wa-text mb-6 leading-[1.1]">
+            Chat on
             <br />
-            <span className="text-primary">WhatsApp automation</span>
+            <span className="text-wa-green">WhatsApp</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
-            Scale your outreach without compromising your account.
-            Built for teams who treat messaging as infrastructure.
+          <p className="text-lg md:text-xl text-wa-muted max-w-xl mx-auto mb-10 leading-relaxed">
+            Enter any phone number and start a WhatsApp conversation instantly. No contact saving
+            needed — free, private, and fast.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -64,15 +64,15 @@ const HeroSection = () => {
           className="mt-20 flex flex-wrap items-center justify-center gap-8 md:gap-16"
         >
           {[
-            { value: "10K+", label: "Messages / day" },
-            { value: "99.7%", label: "Delivery rate" },
-            { value: "<0.1%", label: "Ban risk" },
+            { value: '50K+', label: 'Active Users' },
+            { value: '1M+', label: 'Messages Sent' },
+            { value: '4.8★', label: 'App Rating' },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-2xl md:text-3xl font-bold font-mono text-foreground tabular-nums">
+              <div className="text-2xl md:text-3xl font-bold font-mono text-wa-text tabular-nums">
                 {stat.value}
               </div>
-              <div className="text-xs text-muted-foreground mt-1 uppercase tracking-wider">
+              <div className="text-xs text-wa-muted mt-1 uppercase tracking-wider">
                 {stat.label}
               </div>
             </div>

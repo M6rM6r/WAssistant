@@ -67,13 +67,13 @@ const FeaturesSection = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <span className="text-xs font-mono uppercase tracking-widest text-primary mb-4 block">
+          <span className="text-xs font-mono uppercase tracking-widest text-wa-green mb-4 block">
             Features
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+          <h2 className="text-3xl md:text-4xl font-bold text-wa-text">
             Powerful WhatsApp tools, all in one place
           </h2>
-          <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+          <p className="text-wa-muted mt-4 max-w-2xl mx-auto">
             WAssistant gives you everything you need to communicate on WhatsApp more efficiently —
             whether you're a business owner, freelancer, or everyday user.
           </p>
@@ -93,15 +93,15 @@ const FeaturesSection = () => {
               target="_blank"
               rel="noopener noreferrer"
               variants={item}
-              className="glass-surface rounded-xl p-8 group hover:border-primary/30 transition-colors cursor-pointer block"
+              className="glass-surface rounded-xl p-8 group hover:border-wa-green/30 transition-colors cursor-pointer block"
             >
               <div className="flex items-center gap-3 mb-5">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="h-5 w-5 text-primary" />
+                <div className="h-10 w-10 rounded-lg bg-wa-green/10 border border-wa-green/20 flex items-center justify-center group-hover:bg-wa-green/20 transition-colors">
+                  <feature.icon className="h-5 w-5 text-wa-green" />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+              <h3 className="text-lg font-semibold text-wa-text mb-2">{feature.title}</h3>
+              <p className="text-sm text-wa-muted leading-relaxed">{feature.description}</p>
             </motion.a>
           ))}
         </motion.div>

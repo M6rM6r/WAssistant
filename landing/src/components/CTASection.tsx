@@ -22,10 +22,10 @@ const CTASection = () => {
               </span>
             </div>
 
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-wa-text mb-4">
               Start chatting smarter today
             </h2>
-            <p className="text-lg text-muted-foreground max-w-lg mx-auto mb-10">
+            <p className="text-lg text-wa-muted max-w-lg mx-auto mb-10">
               Download WAssistant on Android or use the web version right here — no sign-up
               required. Just enter a number and chat.
             </p>
@@ -35,7 +35,7 @@ const CTASection = () => {
                 href="https://play.google.com/store/apps/details?id=com.itlab.wassistant"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-8 py-3.5 rounded-lg btn-press hover:brightness-110 signal-glow text-base"
+                className="inline-flex items-center gap-2 bg-wa-green text-black font-semibold px-8 py-3.5 rounded-xl btn-press hover:brightness-110 signal-glow text-base"
               >
                 <Smartphone className="h-5 w-5" />
                 Get on Google Play
@@ -45,9 +45,9 @@ const CTASection = () => {
                 href="https://wassistant-707.web.app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 glass-surface rounded-lg px-8 py-3.5 text-foreground font-medium btn-press hover:bg-secondary text-base"
+                className="inline-flex items-center gap-2 bg-wa-surface border border-white/10 rounded-xl px-8 py-3.5 text-wa-text font-medium btn-press hover:bg-wa-card text-base"
               >
-                <Globe className="h-5 w-5 text-primary" />
+                <Globe className="h-5 w-5 text-wa-green" />
                 Use Web Version
               </a>
             </div>
