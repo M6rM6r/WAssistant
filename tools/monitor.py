@@ -31,11 +31,7 @@ def run_tests() -> Dict[str, Any]:
         # INTJ Logic: Calculate coverage manually from LCOV for accuracy
         lines_found = len(re.findall(r"^DA:", content, re.MULTILINE))
         lines_hit = len(
-            [
-                m
-                for m in re.findall(r"^DA:\d+,(\d+)", content, re.MULTILINE)
-                if int(m) > 0
-            ]
+            [m for m in re.findall(r"^DA:\d+,(\d+)", content, re.MULTILINE) if int(m) > 0]
         )
 
         coverage = (lines_hit / lines_found) * 100 if lines_found > 0 else 0

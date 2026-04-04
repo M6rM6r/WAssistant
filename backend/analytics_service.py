@@ -21,4 +21,3 @@ def track_event_logic(event_type: str, user_id: int, metadata: dict | None, db) 
     return {"status": "recorded", "event_id": db_event.id}
 
 # Add additional analytics business logic as needed (e.g., cohort analysis, churn prediction)
-

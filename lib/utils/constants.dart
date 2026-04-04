@@ -32,7 +32,8 @@ class AppConstants {
   // --- AdMob Configuration (Production IDs Integrated) ---
   // Publisher: pub-7083858358486869
 
-  static const String androidBannerProdId = 'ca-app-pub-7083858358486869/5812941671';
+  static const String androidBannerProdId =
+      'ca-app-pub-7083858358486869/5812941671';
   static const String iosBannerProdId =
       'ca-app-pub-7083858358486869/5812941671'; // Using same ID as placeholder for iOS if not provided
 
@@ -43,7 +44,8 @@ class AppConstants {
 
   static String get androidBannerAdUnitId {
     try {
-      return dotenv.env['ADMOB_BANNER_AD_UNIT_ID_ANDROID']?.trim().isNotEmpty ?? false
+      return dotenv.env['ADMOB_BANNER_AD_UNIT_ID_ANDROID']?.trim().isNotEmpty ??
+              false
           ? dotenv.env['ADMOB_BANNER_AD_UNIT_ID_ANDROID']!.trim()
           : androidBannerProdId;
     } catch (_) {
@@ -53,7 +55,8 @@ class AppConstants {
 
   static String get iosBannerAdUnitId {
     try {
-      return dotenv.env['ADMOB_BANNER_AD_UNIT_ID_IOS']?.trim().isNotEmpty ?? false
+      return dotenv.env['ADMOB_BANNER_AD_UNIT_ID_IOS']?.trim().isNotEmpty ??
+              false
           ? dotenv.env['ADMOB_BANNER_AD_UNIT_ID_IOS']!.trim()
           : iosBannerProdId;
     } catch (_) {

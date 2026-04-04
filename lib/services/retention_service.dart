@@ -23,7 +23,10 @@ class RetentionService {
   Stream<ChurnEvent> get churnEvents => _churnStream.stream;
 
   /// Initialize retention tracking
-  Future<void> init(SharedPreferences prefs, FirebaseRemoteConfig remoteConfig) async {
+  Future<void> init(
+    SharedPreferences prefs,
+    FirebaseRemoteConfig remoteConfig,
+  ) async {
     _prefs = prefs;
     _remoteConfig = remoteConfig;
     _recordSession();
@@ -33,7 +36,10 @@ class RetentionService {
   }
 
   /// Record feature usage (QR, Link, vCard)
-  void recordFeatureUsage(String featureName, {Map<String, dynamic>? metadata}) {
+  void recordFeatureUsage(
+    String featureName, {
+    Map<String, dynamic>? metadata,
+  }) {
     final usage = _prefs.getStringList(_featureUsageKey) ?? [];
     usage.add('$featureName:${DateTime.now().millisecondsSinceEpoch}');
     _prefs.setStringList(_featureUsageKey, usage);
@@ -58,11 +64,15 @@ class RetentionService {
   /// Inactivity detection (trigger re-engagement)
   void _startInactivityTracking() {
     _inactivityTimer?.cancel();
-    final inactivityThresholdMs = _remoteConfig.getInt('inactivity_threshold_hours') * 3600 * 1000;
+    final inactivityThresholdMs =
+        _remoteConfig.getInt('inactivity_threshold_hours') * 3600 * 1000;
 
     _inactivityTimer = Timer.periodic(Duration(minutes: 5), (_) {
-      final lastActive = _prefs.getInt(_lastActiveKey) ?? DateTime.now().millisecondsSinceEpoch;
-      final inactiveDuration = DateTime.now().millisecondsSinceEpoch - lastActive;
+      final lastActive =
+          _prefs.getInt(_lastActiveKey) ??
+          DateTime.now().millisecondsSinceEpoch;
+      final inactiveDuration =
+          DateTime.now().millisecondsSinceEpoch - lastActive;
 
       if (inactiveDuration > inactivityThresholdMs) {
         _recordInactivity(inactiveDuration);
@@ -74,25 +84,37 @@ class RetentionService {
   Future<void> _evaluateChurnRisk() async {
     final sessionCount = _prefs.getInt(_sessionCountKey) ?? 0;
     final usage = _prefs.getStringList(_featureUsageKey) ?? [];
-    final lastActive = _prefs.getInt(_lastActiveKey) ?? DateTime.now().millisecondsSinceEpoch;
+    final lastActive =
+        _prefs.getInt(_lastActiveKey) ?? DateTime.now().millisecondsSinceEpoch;
     final daysSinceLastActive =
-        (DateTime.now().millisecondsSinceEpoch - lastActive) / (24 * 3600 * 1000);
+        (DateTime.now().millisecondsSinceEpoch - lastActive) /
+        (24 * 3600 * 1000);
 
     // INTJ: Precise churn prediction
-    final isAtRisk = sessionCount < 3 || daysSinceLastActive > 7 || usage.isEmpty;
+    final isAtRisk =
+        sessionCount < 3 || daysSinceLastActive > 7 || usage.isEmpty;
     _churnRiskNotifier.value = isAtRisk;
 
     if (isAtRisk) {
       _churnStream.add(
         ChurnEvent(
-          riskLevel: daysSinceLastActive > 14 ? ChurnLevel.critical : ChurnLevel.high,
-          reason: _calculateChurnReason(sessionCount, usage.length, daysSinceLastActive),
+          riskLevel:
+              daysSinceLastActive > 14 ? ChurnLevel.critical : ChurnLevel.high,
+          reason: _calculateChurnReason(
+            sessionCount,
+            usage.length,
+            daysSinceLastActive,
+          ),
         ),
       );
     }
   }
 
-  String _calculateChurnReason(int sessions, int usageCount, double daysSinceActive) {
+  String _calculateChurnReason(
+    int sessions,
+    int usageCount,
+    double daysSinceActive,
+  ) {
     if (daysSinceActive > 14) return 'User inactive for 14+ days';
     if (sessions < 3) return 'Low engagement (${sessions} sessions)';
     if (usageCount == 0) return 'No features used';
@@ -103,7 +125,8 @@ class RetentionService {
     _churnStream.add(
       ChurnEvent(
         riskLevel: ChurnLevel.warning,
-        reason: 'Inactivity detected: ${(durationMs / 3600000).toStringAsFixed(1)}h',
+        reason:
+            'Inactivity detected: ${(durationMs / 3600000).toStringAsFixed(1)}h',
       ),
     );
   }
@@ -112,13 +135,15 @@ class RetentionService {
   Future<EngagementMetrics> getMetrics() async {
     final sessionCount = _prefs.getInt(_sessionCountKey) ?? 0;
     final usage = _prefs.getStringList(_featureUsageKey) ?? [];
-    final lastActive = _prefs.getInt(_lastActiveKey) ?? DateTime.now().millisecondsSinceEpoch;
+    final lastActive =
+        _prefs.getInt(_lastActiveKey) ?? DateTime.now().millisecondsSinceEpoch;
 
     return EngagementMetrics(
       sessionCount: sessionCount,
       totalFeatureUsages: usage.length,
       daysSinceLastActive:
-          (DateTime.now().millisecondsSinceEpoch - lastActive) / (24 * 3600 * 1000),
+          (DateTime.now().millisecondsSinceEpoch - lastActive) /
+          (24 * 3600 * 1000),
       churnRisk: _churnRiskNotifier.value,
     );
   }
@@ -127,7 +152,10 @@ class RetentionService {
   void triggerReEngagement() {
     _recordSession(); // Boost engagement
     _churnStream.add(
-      ChurnEvent(riskLevel: ChurnLevel.mitigated, reason: 'Re-engagement intervention triggered'),
+      ChurnEvent(
+        riskLevel: ChurnLevel.mitigated,
+        reason: 'Re-engagement intervention triggered',
+      ),
     );
   }
 

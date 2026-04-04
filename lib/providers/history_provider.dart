@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:wassistant/models/history_item.dart';
 import 'package:wassistant/repositories/history_repository.dart';
@@ -16,9 +17,11 @@ class HistoryProvider with ChangeNotifier {
 
   List<HistoryItem> _history = [];
   bool _isSyncing = false;
+  bool _isLoading = true;
 
   List<HistoryItem> get history => List.unmodifiable(_history);
   bool get isSyncing => _isSyncing;
+  bool get isLoading => _isLoading;
 
   /// OCPD: Balanced Getter/Setter for repository management
   HistoryRepository? get cloudRepository => _cloudRepository;
@@ -38,9 +41,21 @@ class HistoryProvider with ChangeNotifier {
   Future<void> _loadLocalHistory() async {
     try {
       _history = await _localRepository.getHistory();
-      notifyListeners();
     } catch (e) {
       LoggerService.e('Local load failure', e);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Public refresh method for pull-to-refresh
+  Future<void> refresh() async {
+    _isLoading = true;
+    notifyListeners();
+    await _loadLocalHistory();
+    if (_cloudRepository != null) {
+      await _syncCloudToLocal();
     }
   }
 

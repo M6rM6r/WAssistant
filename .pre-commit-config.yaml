@@ -18,7 +18,7 @@ repos:
     hooks:
       - id: flutter-format
         name: Flutter Format
-        entry: flutter format .
+        entry: dart format
         language: system
         files: \.dart$
       - id: flutter-analyze

@@ -5,10 +5,3 @@ from backend.auth_service import verify_password, get_password_hash, create_acce
 SECRET_KEY = os.getenv("JWT_SECRET", "itlab_ocpd_security_gate")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
-
-
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)

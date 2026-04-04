@@ -35,98 +35,79 @@ class MockHistoryProvider extends _i1.Mock implements _i2.HistoryProvider {
   }
 
   @override
-  List<_i3.HistoryItem> get history => (super.noSuchMethod(
-        Invocation.getter(#history),
-        returnValue: <_i3.HistoryItem>[],
-      ) as List<_i3.HistoryItem>);
+  List<_i3.HistoryItem> get history =>
+      (super.noSuchMethod(
+            Invocation.getter(#history),
+            returnValue: <_i3.HistoryItem>[],
+          )
+          as List<_i3.HistoryItem>);
 
   @override
-  bool get isSyncing => (super.noSuchMethod(
-        Invocation.getter(#isSyncing),
-        returnValue: false,
-      ) as bool);
+  bool get isSyncing =>
+      (super.noSuchMethod(Invocation.getter(#isSyncing), returnValue: false)
+          as bool);
 
   @override
   set cloudRepository(_i4.HistoryRepository? repo) => super.noSuchMethod(
-        Invocation.setter(
-          #cloudRepository,
-          repo,
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.setter(#cloudRepository, repo),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  bool get hasListeners => (super.noSuchMethod(
-        Invocation.getter(#hasListeners),
-        returnValue: false,
-      ) as bool);
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
 
   @override
-  _i5.Future<void> addHistoryItem(_i3.HistoryItem? item) => (super.noSuchMethod(
-        Invocation.method(
-          #addHistoryItem,
-          [item],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+  _i5.Future<void> addHistoryItem(_i3.HistoryItem? item) =>
+      (super.noSuchMethod(
+            Invocation.method(#addHistoryItem, [item]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
 
   @override
   _i5.Future<void> removeHistoryItem(_i3.HistoryItem? item) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #removeHistoryItem,
-          [item],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+            Invocation.method(#removeHistoryItem, [item]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
 
   @override
-  _i5.Future<void> clearHistory() => (super.noSuchMethod(
-        Invocation.method(
-          #clearHistory,
-          [],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+  _i5.Future<void> clearHistory() =>
+      (super.noSuchMethod(
+            Invocation.method(#clearHistory, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
 
   @override
   void addListener(_i6.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #addListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void removeListener(_i6.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #removeListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#removeListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void dispose() => super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void notifyListeners() => super.noSuchMethod(
-        Invocation.method(
-          #notifyListeners,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
 }
 
 /// A class which mocks [AppLocalizations].
@@ -138,671 +119,799 @@ class MockAppLocalizations extends _i1.Mock implements _i7.AppLocalizations {
   }
 
   @override
-  String get localeName => (super.noSuchMethod(
-        Invocation.getter(#localeName),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#localeName),
-        ),
-      ) as String);
-
-  @override
-  String get appTitle => (super.noSuchMethod(
-        Invocation.getter(#appTitle),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#appTitle),
-        ),
-      ) as String);
-
-  @override
-  String get history => (super.noSuchMethod(
-        Invocation.getter(#history),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#history),
-        ),
-      ) as String);
-
-  @override
-  String get analytics => (super.noSuchMethod(
-        Invocation.getter(#analytics),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#analytics),
-        ),
-      ) as String);
-
-  @override
-  String get settings => (super.noSuchMethod(
-        Invocation.getter(#settings),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#settings),
-        ),
-      ) as String);
-
-  @override
-  String get biometrics => (super.noSuchMethod(
-        Invocation.getter(#biometrics),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#biometrics),
-        ),
-      ) as String);
-
-  @override
-  String get privacyPolicy => (super.noSuchMethod(
-        Invocation.getter(#privacyPolicy),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#privacyPolicy),
-        ),
-      ) as String);
-
-  @override
-  String get shareApp => (super.noSuchMethod(
-        Invocation.getter(#shareApp),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#shareApp),
-        ),
-      ) as String);
-
-  @override
-  String get directChat => (super.noSuchMethod(
-        Invocation.getter(#directChat),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#directChat),
-        ),
-      ) as String);
-
-  @override
-  String get vCardGen => (super.noSuchMethod(
-        Invocation.getter(#vCardGen),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#vCardGen),
-        ),
-      ) as String);
-
-  @override
-  String get generateLink => (super.noSuchMethod(
-        Invocation.getter(#generateLink),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#generateLink),
-        ),
-      ) as String);
-
-  @override
-  String get generateQr => (super.noSuchMethod(
-        Invocation.getter(#generateQr),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#generateQr),
-        ),
-      ) as String);
-
-  @override
-  String get openChat => (super.noSuchMethod(
-        Invocation.getter(#openChat),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#openChat),
-        ),
-      ) as String);
-
-  @override
-  String get phoneLabel => (super.noSuchMethod(
-        Invocation.getter(#phoneLabel),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#phoneLabel),
-        ),
-      ) as String);
-
-  @override
-  String get messageLabel => (super.noSuchMethod(
-        Invocation.getter(#messageLabel),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#messageLabel),
-        ),
-      ) as String);
-
-  @override
-  String get templateTitle => (super.noSuchMethod(
-        Invocation.getter(#templateTitle),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#templateTitle),
-        ),
-      ) as String);
-
-  @override
-  String get addTemplate => (super.noSuchMethod(
-        Invocation.getter(#addTemplate),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#addTemplate),
-        ),
-      ) as String);
-
-  @override
-  String get save => (super.noSuchMethod(
-        Invocation.getter(#save),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#save),
-        ),
-      ) as String);
-
-  @override
-  String get cancel => (super.noSuchMethod(
-        Invocation.getter(#cancel),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#cancel),
-        ),
-      ) as String);
-
-  @override
-  String get delete => (super.noSuchMethod(
-        Invocation.getter(#delete),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#delete),
-        ),
-      ) as String);
-
-  @override
-  String get copied => (super.noSuchMethod(
-        Invocation.getter(#copied),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#copied),
-        ),
-      ) as String);
-
-  @override
-  String get copyLink => (super.noSuchMethod(
-        Invocation.getter(#copyLink),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#copyLink),
-        ),
-      ) as String);
-
-  @override
-  String get shareLink => (super.noSuchMethod(
-        Invocation.getter(#shareLink),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#shareLink),
-        ),
-      ) as String);
-
-  @override
-  String get saveToGallery => (super.noSuchMethod(
-        Invocation.getter(#saveToGallery),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#saveToGallery),
-        ),
-      ) as String);
-
-  @override
-  String get securityTitle => (super.noSuchMethod(
-        Invocation.getter(#securityTitle),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#securityTitle),
-        ),
-      ) as String);
-
-  @override
-  String get biometricReason => (super.noSuchMethod(
-        Invocation.getter(#biometricReason),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#biometricReason),
-        ),
-      ) as String);
-
-  @override
-  String get jobTitleLabel => (super.noSuchMethod(
-        Invocation.getter(#jobTitleLabel),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#jobTitleLabel),
-        ),
-      ) as String);
-
-  @override
-  String get websiteLabel => (super.noSuchMethod(
-        Invocation.getter(#websiteLabel),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#websiteLabel),
-        ),
-      ) as String);
-
-  @override
-  String get errorEmptyNumber => (super.noSuchMethod(
-        Invocation.getter(#errorEmptyNumber),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#errorEmptyNumber),
-        ),
-      ) as String);
-
-  @override
-  String get errorNoDigits => (super.noSuchMethod(
-        Invocation.getter(#errorNoDigits),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#errorNoDigits),
-        ),
-      ) as String);
-
-  @override
-  String get errorInvalidFormat => (super.noSuchMethod(
-        Invocation.getter(#errorInvalidFormat),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#errorInvalidFormat),
-        ),
-      ) as String);
-
-  @override
-  String get errorInvalidLength => (super.noSuchMethod(
-        Invocation.getter(#errorInvalidLength),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#errorInvalidLength),
-        ),
-      ) as String);
-
-  @override
-  String get errorLaunchFailed => (super.noSuchMethod(
-        Invocation.getter(#errorLaunchFailed),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#errorLaunchFailed),
-        ),
-      ) as String);
-
-  @override
-  String get errorInvalidNumber => (super.noSuchMethod(
-        Invocation.getter(#errorInvalidNumber),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#errorInvalidNumber),
-        ),
-      ) as String);
-
-  @override
-  String get successChatOpened => (super.noSuchMethod(
-        Invocation.getter(#successChatOpened),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#successChatOpened),
-        ),
-      ) as String);
-
-  @override
-  String get generatedLinkPrefix => (super.noSuchMethod(
-        Invocation.getter(#generatedLinkPrefix),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#generatedLinkPrefix),
-        ),
-      ) as String);
-
-  @override
-  String get qrGeneratedPrefix => (super.noSuchMethod(
-        Invocation.getter(#qrGeneratedPrefix),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#qrGeneratedPrefix),
-        ),
-      ) as String);
-
-  @override
-  String get vCardMissingName => (super.noSuchMethod(
-        Invocation.getter(#vCardMissingName),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#vCardMissingName),
-        ),
-      ) as String);
-
-  @override
-  String get outputPlaceholder => (super.noSuchMethod(
-        Invocation.getter(#outputPlaceholder),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#outputPlaceholder),
-        ),
-      ) as String);
-
-  @override
-  String get getLink => (super.noSuchMethod(
-        Invocation.getter(#getLink),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#getLink),
-        ),
-      ) as String);
-
-  @override
-  String get templateTitleHint => (super.noSuchMethod(
-        Invocation.getter(#templateTitleHint),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#templateTitleHint),
-        ),
-      ) as String);
-
-  @override
-  String get templateContentHint => (super.noSuchMethod(
-        Invocation.getter(#templateContentHint),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#templateContentHint),
-        ),
-      ) as String);
-
-  @override
-  String get noTemplates => (super.noSuchMethod(
-        Invocation.getter(#noTemplates),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#noTemplates),
-        ),
-      ) as String);
-
-  @override
-  String get close => (super.noSuchMethod(
-        Invocation.getter(#close),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#close),
-        ),
-      ) as String);
-
-  @override
-  String get searchCountry => (super.noSuchMethod(
-        Invocation.getter(#searchCountry),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#searchCountry),
-        ),
-      ) as String);
-
-  @override
-  String get phoneNumberHint => (super.noSuchMethod(
-        Invocation.getter(#phoneNumberHint),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#phoneNumberHint),
-        ),
-      ) as String);
-
-  @override
-  String get firstNameLabel => (super.noSuchMethod(
-        Invocation.getter(#firstNameLabel),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#firstNameLabel),
-        ),
-      ) as String);
-
-  @override
-  String get lastNameLabel => (super.noSuchMethod(
-        Invocation.getter(#lastNameLabel),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#lastNameLabel),
-        ),
-      ) as String);
-
-  @override
-  String get companyLabel => (super.noSuchMethod(
-        Invocation.getter(#companyLabel),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#companyLabel),
-        ),
-      ) as String);
-
-  @override
-  String get emailLabel => (super.noSuchMethod(
-        Invocation.getter(#emailLabel),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#emailLabel),
-        ),
-      ) as String);
-
-  @override
-  String get createContactQr => (super.noSuchMethod(
-        Invocation.getter(#createContactQr),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#createContactQr),
-        ),
-      ) as String);
-
-  @override
-  String get scanToOpen => (super.noSuchMethod(
-        Invocation.getter(#scanToOpen),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#scanToOpen),
-        ),
-      ) as String);
-
-  @override
-  String get linkReady => (super.noSuchMethod(
-        Invocation.getter(#linkReady),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#linkReady),
-        ),
-      ) as String);
-
-  @override
-  String get targetNumber => (super.noSuchMethod(
-        Invocation.getter(#targetNumber),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#targetNumber),
-        ),
-      ) as String);
-
-  @override
-  String get savingToGallery => (super.noSuchMethod(
-        Invocation.getter(#savingToGallery),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#savingToGallery),
-        ),
-      ) as String);
-
-  @override
-  String get imageSaved => (super.noSuchMethod(
-        Invocation.getter(#imageSaved),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#imageSaved),
-        ),
-      ) as String);
-
-  @override
-  String get imageSaveFailed => (super.noSuchMethod(
-        Invocation.getter(#imageSaveFailed),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#imageSaveFailed),
-        ),
-      ) as String);
-
-  @override
-  String get imageSaveUnavailable => (super.noSuchMethod(
-        Invocation.getter(#imageSaveUnavailable),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#imageSaveUnavailable),
-        ),
-      ) as String);
-
-  @override
-  String get use => (super.noSuchMethod(
-        Invocation.getter(#use),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#use),
-        ),
-      ) as String);
-
-  @override
-  String get clearHistory => (super.noSuchMethod(
-        Invocation.getter(#clearHistory),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#clearHistory),
-        ),
-      ) as String);
-
-  @override
-  String get clearHistoryConfirmation => (super.noSuchMethod(
-        Invocation.getter(#clearHistoryConfirmation),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#clearHistoryConfirmation),
-        ),
-      ) as String);
-
-  @override
-  String get clear => (super.noSuchMethod(
-        Invocation.getter(#clear),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#clear),
-        ),
-      ) as String);
-
-  @override
-  String get noHistory => (super.noSuchMethod(
-        Invocation.getter(#noHistory),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#noHistory),
-        ),
-      ) as String);
-
-  @override
-  String get clearAll => (super.noSuchMethod(
-        Invocation.getter(#clearAll),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#clearAll),
-        ),
-      ) as String);
-
-  @override
-  String get analyticsTitle => (super.noSuchMethod(
-        Invocation.getter(#analyticsTitle),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#analyticsTitle),
-        ),
-      ) as String);
-
-  @override
-  String get noData => (super.noSuchMethod(
-        Invocation.getter(#noData),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#noData),
-        ),
-      ) as String);
-
-  @override
-  String get activityDistribution => (super.noSuchMethod(
-        Invocation.getter(#activityDistribution),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#activityDistribution),
-        ),
-      ) as String);
-
-  @override
-  String get totalActions => (super.noSuchMethod(
-        Invocation.getter(#totalActions),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#totalActions),
-        ),
-      ) as String);
-
-  @override
-  String get directLinks => (super.noSuchMethod(
-        Invocation.getter(#directLinks),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#directLinks),
-        ),
-      ) as String);
-
-  @override
-  String get qrCodes => (super.noSuchMethod(
-        Invocation.getter(#qrCodes),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#qrCodes),
-        ),
-      ) as String);
-
-  @override
-  String get vCards => (super.noSuchMethod(
-        Invocation.getter(#vCards),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#vCards),
-        ),
-      ) as String);
-
-  @override
-  String vCardGenerated(Object? name) => (super.noSuchMethod(
-        Invocation.method(
-          #vCardGenerated,
-          [name],
-        ),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.method(
-            #vCardGenerated,
-            [name],
-          ),
-        ),
-      ) as String);
-
-  @override
-  String foundNumberClipboard(Object? number) => (super.noSuchMethod(
-        Invocation.method(
-          #foundNumberClipboard,
-          [number],
-        ),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.method(
-            #foundNumberClipboard,
-            [number],
-          ),
-        ),
-      ) as String);
+  String get localeName =>
+      (super.noSuchMethod(
+            Invocation.getter(#localeName),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#localeName),
+            ),
+          )
+          as String);
+
+  @override
+  String get appTitle =>
+      (super.noSuchMethod(
+            Invocation.getter(#appTitle),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#appTitle),
+            ),
+          )
+          as String);
+
+  @override
+  String get history =>
+      (super.noSuchMethod(
+            Invocation.getter(#history),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#history),
+            ),
+          )
+          as String);
+
+  @override
+  String get analytics =>
+      (super.noSuchMethod(
+            Invocation.getter(#analytics),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#analytics),
+            ),
+          )
+          as String);
+
+  @override
+  String get settings =>
+      (super.noSuchMethod(
+            Invocation.getter(#settings),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#settings),
+            ),
+          )
+          as String);
+
+  @override
+  String get biometrics =>
+      (super.noSuchMethod(
+            Invocation.getter(#biometrics),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#biometrics),
+            ),
+          )
+          as String);
+
+  @override
+  String get privacyPolicy =>
+      (super.noSuchMethod(
+            Invocation.getter(#privacyPolicy),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#privacyPolicy),
+            ),
+          )
+          as String);
+
+  @override
+  String get shareApp =>
+      (super.noSuchMethod(
+            Invocation.getter(#shareApp),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#shareApp),
+            ),
+          )
+          as String);
+
+  @override
+  String get directChat =>
+      (super.noSuchMethod(
+            Invocation.getter(#directChat),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#directChat),
+            ),
+          )
+          as String);
+
+  @override
+  String get vCardGen =>
+      (super.noSuchMethod(
+            Invocation.getter(#vCardGen),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#vCardGen),
+            ),
+          )
+          as String);
+
+  @override
+  String get generateLink =>
+      (super.noSuchMethod(
+            Invocation.getter(#generateLink),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#generateLink),
+            ),
+          )
+          as String);
+
+  @override
+  String get generateQr =>
+      (super.noSuchMethod(
+            Invocation.getter(#generateQr),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#generateQr),
+            ),
+          )
+          as String);
+
+  @override
+  String get openChat =>
+      (super.noSuchMethod(
+            Invocation.getter(#openChat),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#openChat),
+            ),
+          )
+          as String);
+
+  @override
+  String get phoneLabel =>
+      (super.noSuchMethod(
+            Invocation.getter(#phoneLabel),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#phoneLabel),
+            ),
+          )
+          as String);
+
+  @override
+  String get messageLabel =>
+      (super.noSuchMethod(
+            Invocation.getter(#messageLabel),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#messageLabel),
+            ),
+          )
+          as String);
+
+  @override
+  String get templateTitle =>
+      (super.noSuchMethod(
+            Invocation.getter(#templateTitle),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#templateTitle),
+            ),
+          )
+          as String);
+
+  @override
+  String get addTemplate =>
+      (super.noSuchMethod(
+            Invocation.getter(#addTemplate),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#addTemplate),
+            ),
+          )
+          as String);
+
+  @override
+  String get save =>
+      (super.noSuchMethod(
+            Invocation.getter(#save),
+            returnValue: _i8.dummyValue<String>(this, Invocation.getter(#save)),
+          )
+          as String);
+
+  @override
+  String get cancel =>
+      (super.noSuchMethod(
+            Invocation.getter(#cancel),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#cancel),
+            ),
+          )
+          as String);
+
+  @override
+  String get delete =>
+      (super.noSuchMethod(
+            Invocation.getter(#delete),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#delete),
+            ),
+          )
+          as String);
+
+  @override
+  String get copied =>
+      (super.noSuchMethod(
+            Invocation.getter(#copied),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#copied),
+            ),
+          )
+          as String);
+
+  @override
+  String get copyLink =>
+      (super.noSuchMethod(
+            Invocation.getter(#copyLink),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#copyLink),
+            ),
+          )
+          as String);
+
+  @override
+  String get shareLink =>
+      (super.noSuchMethod(
+            Invocation.getter(#shareLink),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#shareLink),
+            ),
+          )
+          as String);
+
+  @override
+  String get saveToGallery =>
+      (super.noSuchMethod(
+            Invocation.getter(#saveToGallery),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#saveToGallery),
+            ),
+          )
+          as String);
+
+  @override
+  String get securityTitle =>
+      (super.noSuchMethod(
+            Invocation.getter(#securityTitle),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#securityTitle),
+            ),
+          )
+          as String);
+
+  @override
+  String get biometricReason =>
+      (super.noSuchMethod(
+            Invocation.getter(#biometricReason),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#biometricReason),
+            ),
+          )
+          as String);
+
+  @override
+  String get jobTitleLabel =>
+      (super.noSuchMethod(
+            Invocation.getter(#jobTitleLabel),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#jobTitleLabel),
+            ),
+          )
+          as String);
+
+  @override
+  String get websiteLabel =>
+      (super.noSuchMethod(
+            Invocation.getter(#websiteLabel),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#websiteLabel),
+            ),
+          )
+          as String);
+
+  @override
+  String get errorEmptyNumber =>
+      (super.noSuchMethod(
+            Invocation.getter(#errorEmptyNumber),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#errorEmptyNumber),
+            ),
+          )
+          as String);
+
+  @override
+  String get errorNoDigits =>
+      (super.noSuchMethod(
+            Invocation.getter(#errorNoDigits),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#errorNoDigits),
+            ),
+          )
+          as String);
+
+  @override
+  String get errorInvalidFormat =>
+      (super.noSuchMethod(
+            Invocation.getter(#errorInvalidFormat),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#errorInvalidFormat),
+            ),
+          )
+          as String);
+
+  @override
+  String get errorInvalidLength =>
+      (super.noSuchMethod(
+            Invocation.getter(#errorInvalidLength),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#errorInvalidLength),
+            ),
+          )
+          as String);
+
+  @override
+  String get errorLaunchFailed =>
+      (super.noSuchMethod(
+            Invocation.getter(#errorLaunchFailed),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#errorLaunchFailed),
+            ),
+          )
+          as String);
+
+  @override
+  String get errorInvalidNumber =>
+      (super.noSuchMethod(
+            Invocation.getter(#errorInvalidNumber),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#errorInvalidNumber),
+            ),
+          )
+          as String);
+
+  @override
+  String get successChatOpened =>
+      (super.noSuchMethod(
+            Invocation.getter(#successChatOpened),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#successChatOpened),
+            ),
+          )
+          as String);
+
+  @override
+  String get generatedLinkPrefix =>
+      (super.noSuchMethod(
+            Invocation.getter(#generatedLinkPrefix),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#generatedLinkPrefix),
+            ),
+          )
+          as String);
+
+  @override
+  String get qrGeneratedPrefix =>
+      (super.noSuchMethod(
+            Invocation.getter(#qrGeneratedPrefix),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#qrGeneratedPrefix),
+            ),
+          )
+          as String);
+
+  @override
+  String get vCardMissingName =>
+      (super.noSuchMethod(
+            Invocation.getter(#vCardMissingName),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#vCardMissingName),
+            ),
+          )
+          as String);
+
+  @override
+  String get outputPlaceholder =>
+      (super.noSuchMethod(
+            Invocation.getter(#outputPlaceholder),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#outputPlaceholder),
+            ),
+          )
+          as String);
+
+  @override
+  String get getLink =>
+      (super.noSuchMethod(
+            Invocation.getter(#getLink),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#getLink),
+            ),
+          )
+          as String);
+
+  @override
+  String get templateTitleHint =>
+      (super.noSuchMethod(
+            Invocation.getter(#templateTitleHint),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#templateTitleHint),
+            ),
+          )
+          as String);
+
+  @override
+  String get templateContentHint =>
+      (super.noSuchMethod(
+            Invocation.getter(#templateContentHint),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#templateContentHint),
+            ),
+          )
+          as String);
+
+  @override
+  String get noTemplates =>
+      (super.noSuchMethod(
+            Invocation.getter(#noTemplates),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#noTemplates),
+            ),
+          )
+          as String);
+
+  @override
+  String get close =>
+      (super.noSuchMethod(
+            Invocation.getter(#close),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#close),
+            ),
+          )
+          as String);
+
+  @override
+  String get searchCountry =>
+      (super.noSuchMethod(
+            Invocation.getter(#searchCountry),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#searchCountry),
+            ),
+          )
+          as String);
+
+  @override
+  String get phoneNumberHint =>
+      (super.noSuchMethod(
+            Invocation.getter(#phoneNumberHint),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#phoneNumberHint),
+            ),
+          )
+          as String);
+
+  @override
+  String get firstNameLabel =>
+      (super.noSuchMethod(
+            Invocation.getter(#firstNameLabel),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#firstNameLabel),
+            ),
+          )
+          as String);
+
+  @override
+  String get lastNameLabel =>
+      (super.noSuchMethod(
+            Invocation.getter(#lastNameLabel),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#lastNameLabel),
+            ),
+          )
+          as String);
+
+  @override
+  String get companyLabel =>
+      (super.noSuchMethod(
+            Invocation.getter(#companyLabel),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#companyLabel),
+            ),
+          )
+          as String);
+
+  @override
+  String get emailLabel =>
+      (super.noSuchMethod(
+            Invocation.getter(#emailLabel),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#emailLabel),
+            ),
+          )
+          as String);
+
+  @override
+  String get createContactQr =>
+      (super.noSuchMethod(
+            Invocation.getter(#createContactQr),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#createContactQr),
+            ),
+          )
+          as String);
+
+  @override
+  String get scanToOpen =>
+      (super.noSuchMethod(
+            Invocation.getter(#scanToOpen),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#scanToOpen),
+            ),
+          )
+          as String);
+
+  @override
+  String get linkReady =>
+      (super.noSuchMethod(
+            Invocation.getter(#linkReady),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#linkReady),
+            ),
+          )
+          as String);
+
+  @override
+  String get targetNumber =>
+      (super.noSuchMethod(
+            Invocation.getter(#targetNumber),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#targetNumber),
+            ),
+          )
+          as String);
+
+  @override
+  String get savingToGallery =>
+      (super.noSuchMethod(
+            Invocation.getter(#savingToGallery),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#savingToGallery),
+            ),
+          )
+          as String);
+
+  @override
+  String get imageSaved =>
+      (super.noSuchMethod(
+            Invocation.getter(#imageSaved),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#imageSaved),
+            ),
+          )
+          as String);
+
+  @override
+  String get imageSaveFailed =>
+      (super.noSuchMethod(
+            Invocation.getter(#imageSaveFailed),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#imageSaveFailed),
+            ),
+          )
+          as String);
+
+  @override
+  String get imageSaveUnavailable =>
+      (super.noSuchMethod(
+            Invocation.getter(#imageSaveUnavailable),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#imageSaveUnavailable),
+            ),
+          )
+          as String);
+
+  @override
+  String get use =>
+      (super.noSuchMethod(
+            Invocation.getter(#use),
+            returnValue: _i8.dummyValue<String>(this, Invocation.getter(#use)),
+          )
+          as String);
+
+  @override
+  String get clearHistory =>
+      (super.noSuchMethod(
+            Invocation.getter(#clearHistory),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#clearHistory),
+            ),
+          )
+          as String);
+
+  @override
+  String get clearHistoryConfirmation =>
+      (super.noSuchMethod(
+            Invocation.getter(#clearHistoryConfirmation),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#clearHistoryConfirmation),
+            ),
+          )
+          as String);
+
+  @override
+  String get clear =>
+      (super.noSuchMethod(
+            Invocation.getter(#clear),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#clear),
+            ),
+          )
+          as String);
+
+  @override
+  String get noHistory =>
+      (super.noSuchMethod(
+            Invocation.getter(#noHistory),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#noHistory),
+            ),
+          )
+          as String);
+
+  @override
+  String get clearAll =>
+      (super.noSuchMethod(
+            Invocation.getter(#clearAll),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#clearAll),
+            ),
+          )
+          as String);
+
+  @override
+  String get analyticsTitle =>
+      (super.noSuchMethod(
+            Invocation.getter(#analyticsTitle),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#analyticsTitle),
+            ),
+          )
+          as String);
+
+  @override
+  String get noData =>
+      (super.noSuchMethod(
+            Invocation.getter(#noData),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#noData),
+            ),
+          )
+          as String);
+
+  @override
+  String get activityDistribution =>
+      (super.noSuchMethod(
+            Invocation.getter(#activityDistribution),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#activityDistribution),
+            ),
+          )
+          as String);
+
+  @override
+  String get totalActions =>
+      (super.noSuchMethod(
+            Invocation.getter(#totalActions),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#totalActions),
+            ),
+          )
+          as String);
+
+  @override
+  String get directLinks =>
+      (super.noSuchMethod(
+            Invocation.getter(#directLinks),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#directLinks),
+            ),
+          )
+          as String);
+
+  @override
+  String get qrCodes =>
+      (super.noSuchMethod(
+            Invocation.getter(#qrCodes),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#qrCodes),
+            ),
+          )
+          as String);
+
+  @override
+  String get vCards =>
+      (super.noSuchMethod(
+            Invocation.getter(#vCards),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#vCards),
+            ),
+          )
+          as String);
+
+  @override
+  String vCardGenerated(Object? name) =>
+      (super.noSuchMethod(
+            Invocation.method(#vCardGenerated, [name]),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.method(#vCardGenerated, [name]),
+            ),
+          )
+          as String);
+
+  @override
+  String foundNumberClipboard(Object? number) =>
+      (super.noSuchMethod(
+            Invocation.method(#foundNumberClipboard, [number]),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.method(#foundNumberClipboard, [number]),
+            ),
+          )
+          as String);
 }

@@ -42,7 +42,9 @@ const CTASection = () => {
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
-                href="#top"
+                href="https://wassistant-707.web.app"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 glass-surface rounded-lg px-8 py-3.5 text-foreground font-medium btn-press hover:bg-secondary text-base"
               >
                 <Globe className="h-5 w-5 text-primary" />

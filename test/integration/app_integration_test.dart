@@ -13,13 +13,21 @@ void main() {
 
   setUpAll(() async {
     // OCPD: Mock MethodChannels using the static binding API
-    _setMockHandler('dev.fluttercommunity.plus/connectivity', (MethodCall call) async {
+    _setMockHandler('dev.fluttercommunity.plus/connectivity', (
+      MethodCall call,
+    ) async {
       if (call.method == 'check') return <String>['wifi'];
       return null;
     });
 
-    _setMockHandler('receive_sharing_intent/messages', (MethodCall call) async => null);
-    _setMockHandler('plugins.flutter.io/quick_actions', (MethodCall call) async => null);
+    _setMockHandler(
+      'receive_sharing_intent/messages',
+      (MethodCall call) async => null,
+    );
+    _setMockHandler(
+      'plugins.flutter.io/quick_actions',
+      (MethodCall call) async => null,
+    );
 
     // Mock EventChannels (Streams)
     _mockEventChannel('receive_sharing_intent/events-media');
@@ -32,7 +40,9 @@ void main() {
   });
 
   group('WhatsApp Link Generation Flow', () {
-    testWidgets('should generate basic WhatsApp link successfully', (tester) async {
+    testWidgets('should generate basic WhatsApp link successfully', (
+      tester,
+    ) async {
       await tester.pumpWidget(const app.WassistantApp());
 
       // INTJ Logic: Use pump with duration instead of pumpAndSettle
@@ -58,11 +68,12 @@ void main() {
 }
 
 /// OCPD: Standardized helper for setting mock call handlers
-void _setMockHandler(String channel, Future<dynamic>? Function(MethodCall call) handler) {
-  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-    MethodChannel(channel),
-    handler,
-  );
+void _setMockHandler(
+  String channel,
+  Future<dynamic>? Function(MethodCall call) handler,
+) {
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(MethodChannel(channel), handler);
 }
 
 /// Helper to mock EventChannel with an empty stream

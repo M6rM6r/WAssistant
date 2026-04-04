@@ -35,7 +35,9 @@ Future<void> setupLocator() async {
   locator
     ..registerSingleton<LocalStorageService>(localStorage)
     ..registerLazySingleton<OcrService>(OcrService.new)
-    ..registerLazySingleton<EngagementService>(() => EngagementService(localStorage))
+    ..registerLazySingleton<EngagementService>(
+      () => EngagementService(localStorage),
+    )
     ..registerLazySingleton<NetworkService>(NetworkService.new)
     ..registerLazySingleton<QuickActionsService>(QuickActionsService.new)
     ..registerLazySingleton<BiometricService>(BiometricService.new);
@@ -43,7 +45,9 @@ Future<void> setupLocator() async {
   // --- Repositories (Unified Persistence for Web & Stores) ---
   // We use LocalHistoryRepository (SharedPreferences) for all platforms
   // to ensure 100% stability and bypass Isar-Web precision issues.
-  locator.registerLazySingleton<HistoryRepository>(() => LocalHistoryRepository(localStorage));
+  locator.registerLazySingleton<HistoryRepository>(
+    () => LocalHistoryRepository(localStorage),
+  );
 
   // --- Firebase Ecosystem (Strategic Value) ---
   try {
@@ -52,11 +56,15 @@ Future<void> setupLocator() async {
       locator.registerSingleton<Logger>(logger);
 
       // Always provide a logger-backed AnalyticsService, even when Firebase isn't ready.
-      locator.registerLazySingleton<AnalyticsService>(() => AnalyticsService(logger: logger));
+      locator.registerLazySingleton<AnalyticsService>(
+        () => AnalyticsService(logger: logger),
+      );
 
       // Skip Firebase-dependent services if no app is initialized (e.g., in tests)
       if (Firebase.apps.isEmpty) {
-        LoggerService.w('Firebase not initialized; skipping Firebase-bound services.');
+        LoggerService.w(
+          'Firebase not initialized; skipping Firebase-bound services.',
+        );
         return;
       }
 
@@ -75,12 +83,18 @@ Future<void> setupLocator() async {
         );
 
       final remoteConfig = FirebaseRemoteConfig.instance;
-      final rcService = RemoteConfigService(remoteConfig: remoteConfig, logger: logger);
+      final rcService = RemoteConfigService(
+        remoteConfig: remoteConfig,
+        logger: logger,
+      );
       await rcService.initialize();
       locator.registerSingleton<RemoteConfigService>(rcService);
 
       final messaging = FirebaseMessaging.instance;
-      final navService = NotificationService(messaging: messaging, logger: logger);
+      final navService = NotificationService(
+        messaging: messaging,
+        logger: logger,
+      );
       await navService.initialize();
       locator.registerSingleton<NotificationService>(navService);
     }

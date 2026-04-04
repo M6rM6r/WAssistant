@@ -1,7 +1,7 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Background: Deep Cyberpunk Black -->
   <rect width="1024" height="1024" rx="200" fill="#050505"/>
-  
+
   <!-- Outer Glow Effect -->
   <circle cx="512" cy="512" r="400" fill="url(#paint0_radial)" fill-opacity="0.15"/>
 
@@ -12,11 +12,11 @@
   <!-- QR Corner square -->
   <rect x="400" y="380" width="80" height="80" rx="10" stroke="#00A884" stroke-width="15"/>
   <rect x="420" y="400" width="40" height="40" rx="4" fill="#00A884"/>
-  
+
   <!-- Link/Chain inspired abstract lines -->
   <path d="M540 380H620V460H540V380Z" stroke="#00E676" stroke-width="15" stroke-linejoin="round"/>
   <path d="M400 540H480V620H400V540Z" stroke="#00E676" stroke-width="15" stroke-linejoin="round"/>
-  
+
   <!-- Connection nodes -->
   <circle cx="580" cy="580" r="40" fill="#00A884"/>
   <path d="M480 420H540M580 460V540M440 540V480H512" stroke="#00E676" stroke-width="10" stroke-linecap="round"/>

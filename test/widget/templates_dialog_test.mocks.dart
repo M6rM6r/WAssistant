@@ -32,23 +32,21 @@ class MockTemplateRepository extends _i1.Mock
   }
 
   @override
-  _i3.Future<List<_i4.MessageTemplate>> getTemplates() => (super.noSuchMethod(
-        Invocation.method(
-          #getTemplates,
-          [],
-        ),
-        returnValue: _i3.Future<List<_i4.MessageTemplate>>.value(
-            <_i4.MessageTemplate>[]),
-      ) as _i3.Future<List<_i4.MessageTemplate>>);
+  _i3.Future<List<_i4.MessageTemplate>> getTemplates() =>
+      (super.noSuchMethod(
+            Invocation.method(#getTemplates, []),
+            returnValue: _i3.Future<List<_i4.MessageTemplate>>.value(
+              <_i4.MessageTemplate>[],
+            ),
+          )
+          as _i3.Future<List<_i4.MessageTemplate>>);
 
   @override
   _i3.Future<void> saveTemplates(List<_i4.MessageTemplate>? templates) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #saveTemplates,
-          [templates],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+            Invocation.method(#saveTemplates, [templates]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }

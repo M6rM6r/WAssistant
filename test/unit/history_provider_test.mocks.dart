@@ -31,43 +31,39 @@ class MockHistoryRepository extends _i1.Mock implements _i2.HistoryRepository {
   }
 
   @override
-  _i3.Future<List<_i4.HistoryItem>> getHistory() => (super.noSuchMethod(
-        Invocation.method(
-          #getHistory,
-          [],
-        ),
-        returnValue:
-            _i3.Future<List<_i4.HistoryItem>>.value(<_i4.HistoryItem>[]),
-      ) as _i3.Future<List<_i4.HistoryItem>>);
+  _i3.Future<List<_i4.HistoryItem>> getHistory() =>
+      (super.noSuchMethod(
+            Invocation.method(#getHistory, []),
+            returnValue: _i3.Future<List<_i4.HistoryItem>>.value(
+              <_i4.HistoryItem>[],
+            ),
+          )
+          as _i3.Future<List<_i4.HistoryItem>>);
 
   @override
-  _i3.Future<void> addHistoryItem(_i4.HistoryItem? item) => (super.noSuchMethod(
-        Invocation.method(
-          #addHistoryItem,
-          [item],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+  _i3.Future<void> addHistoryItem(_i4.HistoryItem? item) =>
+      (super.noSuchMethod(
+            Invocation.method(#addHistoryItem, [item]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
   _i3.Future<void> removeHistoryItem(_i4.HistoryItem? item) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #removeHistoryItem,
-          [item],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+            Invocation.method(#removeHistoryItem, [item]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> clearHistory() => (super.noSuchMethod(
-        Invocation.method(
-          #clearHistory,
-          [],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+  _i3.Future<void> clearHistory() =>
+      (super.noSuchMethod(
+            Invocation.method(#clearHistory, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }

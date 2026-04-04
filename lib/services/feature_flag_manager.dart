@@ -43,7 +43,9 @@ class FeatureFlagManager extends ChangeNotifier {
       'ai_suggestions': _remoteConfig.getBool('feature_ai_suggestions'),
       'templates': _remoteConfig.getBool('feature_templates'),
       'batch_export': _remoteConfig.getBool('feature_batch_export'),
-      'analytics_dashboard': _remoteConfig.getBool('feature_analytics_dashboard'),
+      'analytics_dashboard': _remoteConfig.getBool(
+        'feature_analytics_dashboard',
+      ),
       'offline_mode': _remoteConfig.getBool('feature_offline_mode'),
       'quick_share': _remoteConfig.getBool('feature_quick_share'),
       'new_ui': _remoteConfig.getBool('experiment_new_ui'),
@@ -67,7 +69,11 @@ class FeatureFlagManager extends ChangeNotifier {
   dynamic getVariant(String variantName) => _variants[variantName];
 
   /// A/B test user assignment (deterministic hash-based)
-  bool isInExperiment(String experimentName, {int bucketSize = 100, int userBucket = 50}) {
+  bool isInExperiment(
+    String experimentName, {
+    int bucketSize = 100,
+    int userBucket = 50,
+  }) {
     if (!isEnabled(experimentName)) return false;
     // Hash-based bucketing: ensure same user always gets same variant
     return userBucket < bucketSize;

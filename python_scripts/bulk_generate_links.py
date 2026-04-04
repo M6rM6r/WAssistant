@@ -6,6 +6,7 @@ import os
 # INTJ Strategy: Bulk processing for high efficiency
 # Purpose: Generate 100s of WhatsApp links from a contact list instantly.
 
+
 def generate_wa_link(phone, message=""):
     # Clean phone: only digits
     clean_phone = "".join(filter(str.isdigit, phone))
@@ -16,6 +17,7 @@ def generate_wa_link(phone, message=""):
         return f"{base_url}{clean_phone}?text={encoded_msg}"
 
     return f"{base_url}{clean_phone}"
+
 
 def main():
     parser = argparse.ArgumentParser(description="WAssistant Bulk Link Generator")
@@ -30,21 +32,22 @@ def main():
         return
 
     results = []
-    with open(args.input_file, mode='r', encoding='utf-8') as f:
+    with open(args.input_file, mode="r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            phone = row.get('phone', '')
-            message = row.get('message', '')
+            phone = row.get("phone", "")
+            message = row.get("message", "")
             if phone:
                 link = generate_wa_link(phone, message)
-                results.append({'phone': phone, 'link': link})
+                results.append({"phone": phone, "link": link})
 
-    with open(args.output_file, mode='w', encoding='utf-8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=['phone', 'link'])
+    with open(args.output_file, mode="w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["phone", "link"])
         writer.writeheader()
         writer.writerows(results)
 
     print(f"✅ Success: {len(results)} links generated in {args.output_file}")
+
 
 if __name__ == "__main__":
     main()

@@ -19,8 +19,8 @@ class TestableNetworkService {
   TestableNetworkService({
     required Future<List<MockConnectivityResult>> Function() checkConnectivity,
     required Stream<List<MockConnectivityResult>> connectivityStream,
-  })  : _checkConnectivity = checkConnectivity,
-        _connectivityStream = connectivityStream {
+  }) : _checkConnectivity = checkConnectivity,
+       _connectivityStream = connectivityStream {
     unawaited(_init());
   }
 
@@ -55,8 +55,9 @@ class TestableNetworkService {
   }
 
   void _setStatus(List<MockConnectivityResult> results) {
-    final nextOnline =
-        results.any((result) => result != MockConnectivityResult.none);
+    final nextOnline = results.any(
+      (result) => result != MockConnectivityResult.none,
+    );
 
     if (nextOnline == _isOnline) return;
 
@@ -125,17 +126,22 @@ void main() {
         expect(service.isOnline, isFalse);
       });
 
-      test('handles multiple connectivity results (online if any is connected)',
-          () async {
-        service = TestableNetworkService(
-          checkConnectivity: () async =>
-              [MockConnectivityResult.wifi, MockConnectivityResult.mobile],
-          connectivityStream: connectivityController.stream,
-        );
-        await Future<void>.delayed(const Duration(milliseconds: 100));
+      test(
+        'handles multiple connectivity results (online if any is connected)',
+        () async {
+          service = TestableNetworkService(
+            checkConnectivity:
+                () async => [
+                  MockConnectivityResult.wifi,
+                  MockConnectivityResult.mobile,
+                ],
+            connectivityStream: connectivityController.stream,
+          );
+          await Future<void>.delayed(const Duration(milliseconds: 100));
 
-        expect(service.isOnline, isTrue);
-      });
+          expect(service.isOnline, isTrue);
+        },
+      );
     });
 
     group('connectivity changes', () {

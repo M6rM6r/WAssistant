@@ -34,7 +34,7 @@ const HeroSection = () => {
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
-            Scale your outreach without compromising your account. 
+            Scale your outreach without compromising your account.
             Built for teams who treat messaging as infrastructure.
           </p>
 

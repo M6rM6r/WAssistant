@@ -32,4 +32,3 @@
 
 ---
 Each prompt must be executed with production-level rigor, full test coverage, and code review. All changes must be documented and validated against INTJ/OCPD standards: logic, automation, scalability, maintainability, and security.
-

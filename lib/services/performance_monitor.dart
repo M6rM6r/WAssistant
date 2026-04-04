@@ -19,7 +19,11 @@ class PerformanceMonitor {
   }
 
   void recordMetric(String name, dynamic value, {String? unit}) {
-    _metrics[name] = {'value': value, 'unit': unit, 'timestamp': DateTime.now()};
+    _metrics[name] = {
+      'value': value,
+      'unit': unit,
+      'timestamp': DateTime.now(),
+    };
     LoggerService.d('Metric: $name = $value ${unit ?? ''}');
   }
 

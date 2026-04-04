@@ -1,10 +1,6 @@
 /// OCPD: Logic-Pure History Item Model.
 /// INTJ Strategy: Zero dependency domain object for cross-platform stability.
-enum HistoryItemType {
-  link,
-  qr,
-  vcard,
-}
+enum HistoryItemType { link, qr, vcard }
 
 class HistoryItem {
   HistoryItem({
@@ -27,7 +23,9 @@ class HistoryItem {
       id: json['id'] as int?,
       type: HistoryItemType.values[json['type'] as int? ?? 0],
       data: json['data'] as String? ?? '',
-      timestamp: DateTime.parse(json['timestamp'] as String? ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.parse(
+        json['timestamp'] as String? ?? DateTime.now().toIso8601String(),
+      ),
       display: json['display'] as String? ?? 'Unknown',
     );
   }

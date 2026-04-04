@@ -7,6 +7,8 @@ import HowItWorks from '@/components/HowItWorks';
 import Navbar from '@/components/Navbar';
 import PhoneToChat from '@/components/PhoneToChat';
 import PulseGrid from '@/components/PulseGrid';
+import FAQSection from '@/components/FAQSection';
+import UseCasesSection from '@/components/UseCasesSection';
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
 
@@ -69,8 +71,19 @@ const Index = () => {
       {/* How It Works */}
       <HowItWorks />
 
+      {/* Use Cases - Rich text for AdSense */}
+      <UseCasesSection />
+
       {/* About */}
       <AboutSection />
+
+      {/* Ad Banner */}
+      <div className="container mx-auto px-6">
+        <AdBanner slot="7135284713" className="w-full max-w-3xl mx-auto my-8" />
+      </div>
+
+      {/* FAQ - Rich text for AdSense */}
+      <FAQSection />
 
       {/* CTA */}
       <CTASection />

@@ -12,9 +12,7 @@ def validate_whatsapp_link(url):
     # https://api.whatsapp.com/send?phone=12345
 
     pattern = (
-        r"^(https?:\/\/)?(www\.)?"
-        r"(wa\.me\/|api\.whatsapp\.com\/send\/?\?phone=)"
-        r"(\d+)(.*)$"
+        r"^(https?:\/\/)?(www\.)?" r"(wa\.me\/|api\.whatsapp\.com\/send\/?\?phone=)" r"(\d+)(.*)$"
     )
 
     match = re.match(pattern, url)

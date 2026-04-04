@@ -31,7 +31,10 @@ class WhatsAppToolProvider with ChangeNotifier {
     }
   }
 
-  Either<Failure, String> _validateAndClean(String number, AppLocalizations l10n) {
+  Either<Failure, String> _validateAndClean(
+    String number,
+    AppLocalizations l10n,
+  ) {
     final trimmed = number.trim();
     if (trimmed.isEmpty) return Left(ValidationFailure(l10n.errorEmptyNumber));
 
@@ -44,7 +47,11 @@ class WhatsAppToolProvider with ChangeNotifier {
     return Right(digitsOnly);
   }
 
-  void generateChatLink(String number, AppLocalizations l10n, {String? message}) {
+  void generateChatLink(
+    String number,
+    AppLocalizations l10n, {
+    String? message,
+  }) {
     _validateAndClean(number, l10n).fold(
       (failure) {
         _outputMessage = failure.message;
@@ -52,8 +59,14 @@ class WhatsAppToolProvider with ChangeNotifier {
         _barcodeData = null;
       },
       (cleanNumber) {
-        final queryParameters = {if (message != null && message.isNotEmpty) 'text': message};
-        final uri = Uri.https(AppConstants.whatsappMobileHost, cleanNumber, queryParameters);
+        final queryParameters = {
+          if (message != null && message.isNotEmpty) 'text': message,
+        };
+        final uri = Uri.https(
+          AppConstants.whatsappMobileHost,
+          cleanNumber,
+          queryParameters,
+        );
         _generatedLink = uri.toString();
         _outputMessage = '${l10n.generatedLinkPrefix}$_generatedLink';
         _barcodeData = null;
@@ -72,7 +85,11 @@ class WhatsAppToolProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void generateBarcodeForChat(String number, AppLocalizations l10n, {String? message}) {
+  void generateBarcodeForChat(
+    String number,
+    AppLocalizations l10n, {
+    String? message,
+  }) {
     _validateAndClean(number, l10n).fold(
       (failure) {
         _outputMessage = failure.message;
@@ -80,8 +97,14 @@ class WhatsAppToolProvider with ChangeNotifier {
         _generatedLink = '';
       },
       (cleanNumber) {
-        final queryParameters = {if (message != null && message.isNotEmpty) 'text': message};
-        final uri = Uri.https(AppConstants.whatsappMobileHost, cleanNumber, queryParameters);
+        final queryParameters = {
+          if (message != null && message.isNotEmpty) 'text': message,
+        };
+        final uri = Uri.https(
+          AppConstants.whatsappMobileHost,
+          cleanNumber,
+          queryParameters,
+        );
         _barcodeData = uri.toString();
         _outputMessage = '${l10n.qrGeneratedPrefix}$uri';
         _generatedLink = '';
@@ -157,10 +180,15 @@ class WhatsAppToolProvider with ChangeNotifier {
     String? message,
     bool isWeb = false,
   }) async {
-    return _validateAndClean(number, l10n).fold((failure) => failure.message, (cleanNumber) async {
-      final queryParameters = {if (message != null && message.isNotEmpty) 'text': message};
-      final authority = isWeb ? AppConstants.whatsappWebUrl : AppConstants.whatsappMobileHost;
-      final path = isWeb ? '/send' : '/$cleanNumber';
+    return _validateAndClean(number, l10n).fold((failure) => failure.message, (
+      cleanNumber,
+    ) async {
+      final queryParameters = {
+        if (message != null && message.isNotEmpty) 'text': message,
+      };
+      final authority =
+          isWeb ? AppConstants.whatsappWebUrl : AppConstants.whatsappMobileHost;
+      final path = isWeb ? 'send' : cleanNumber;
       if (isWeb) queryParameters['phone'] = cleanNumber;
       final url = Uri.https(authority, path, queryParameters);
       if (await canLaunchUrl(url)) {
@@ -172,7 +200,8 @@ class WhatsAppToolProvider with ChangeNotifier {
   }
 
   Future<void> shareContent() async {
-    final data = _generatedLink.isNotEmpty ? _generatedLink : (_barcodeData ?? '');
+    final data =
+        _generatedLink.isNotEmpty ? _generatedLink : (_barcodeData ?? '');
     if (data.isNotEmpty) {
       await SharePlus.instance.share(ShareParams(text: data));
     }

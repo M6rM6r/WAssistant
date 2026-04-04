@@ -15,7 +15,9 @@ class OcrService {
       if (image == null) return null;
 
       final inputImage = InputImage.fromFilePath(image.path);
-      final RecognizedText recognizedText = await _textRecognizer.processImage(inputImage);
+      final RecognizedText recognizedText = await _textRecognizer.processImage(
+        inputImage,
+      );
 
       // OCPD Logic: Strict regex for international phone numbers
       final RegExp phoneRegex = RegExp(r'\+?[1-9]\d{6,14}');

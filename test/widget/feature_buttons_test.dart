@@ -56,7 +56,9 @@ void main() {
   }
 
   group('FeatureButtons Precision Audit', () {
-    testWidgets('renders all core action buttons with semantic integrity', (tester) async {
+    testWidgets('renders all core action buttons with semantic integrity', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 

@@ -18,9 +18,7 @@ except ImportError:
     import subprocess
     import sys
 
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "rich", "-q"]
-    )
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "rich", "-q"])
     from rich.console import Console
     from rich.table import Table
 
@@ -87,9 +85,7 @@ def down(db: Any) -> None:
 
 def list_migrations() -> None:
     """List all migrations."""
-    table = Table(
-        title="Migrations", show_header=True, header_style="bold cyan"
-    )
+    table = Table(title="Migrations", show_header=True, header_style="bold cyan")
     table.add_column("Version")
     table.add_column("Description")
     table.add_column("Status")

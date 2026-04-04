@@ -18,9 +18,7 @@ try:
     from rich.table import Table
 except ImportError:
     print("Installing rich...")
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "rich", "-q"]
-    )
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "rich", "-q"])
     from rich.console import Console
     from rich.panel import Panel
     from rich.table import Table
@@ -93,9 +91,7 @@ def run_checks() -> list[CheckResult]:
         if check_command(cmd):
             results.append(CheckResult(name, "pass", "Installed"))
         else:
-            results.append(
-                CheckResult(name, "warn", "Not installed (optional)")
-            )
+            results.append(CheckResult(name, "warn", "Not installed (optional)"))
 
     # Required files
     required_files = [

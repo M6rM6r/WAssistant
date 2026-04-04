@@ -56,7 +56,8 @@ class BackupService {
 
       final File file = File(result.files.single.path!);
       final String jsonStr = await file.readAsString();
-      final Map<String, dynamic> data = jsonDecode(jsonStr) as Map<String, dynamic>;
+      final Map<String, dynamic> data =
+          jsonDecode(jsonStr) as Map<String, dynamic>;
 
       // Logic: Atomic merge strategy to prevent data corruption
       if (data['history'] != null) {

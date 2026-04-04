@@ -23,10 +23,7 @@ def resize_icons(source_image_path, output_dir="web/icons"):
         with Image.open(source_image_path) as img:
             # Ensure it's square
             if img.width != img.height:
-                print(
-                    "Warning: Source image is not square. "
-                    "It will be resized non-uniformly."
-                )
+                print("Warning: Source image is not square. " "It will be resized non-uniformly.")
 
             for size in sizes:
                 resized_img = img.resize(

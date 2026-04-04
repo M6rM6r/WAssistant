@@ -4,11 +4,9 @@ import 'package:logger/logger.dart';
 /// Centralized analytics service for tracking user behavior and engagement
 /// Follows INTJ principles: systematic tracking, measurable outcomes
 class AnalyticsService {
-  AnalyticsService({
-    required Logger logger,
-    FirebaseAnalytics? analytics,
-  })  : _analytics = analytics,
-        _logger = logger;
+  AnalyticsService({required Logger logger, FirebaseAnalytics? analytics})
+    : _analytics = analytics,
+      _logger = logger;
 
   final FirebaseAnalytics? _analytics;
   final Logger _logger;
@@ -51,7 +49,11 @@ class AnalyticsService {
       );
       _logger.d('Link generation tracked: $linkType');
     } catch (e, stackTrace) {
-      _logger.e('Failed to log link generation', error: e, stackTrace: stackTrace);
+      _logger.e(
+        'Failed to log link generation',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -73,7 +75,11 @@ class AnalyticsService {
       );
       _logger.d('QR code generation tracked: $source');
     } catch (e, stackTrace) {
-      _logger.e('Failed to log QR generation', error: e, stackTrace: stackTrace);
+      _logger.e(
+        'Failed to log QR generation',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -114,7 +120,11 @@ class AnalyticsService {
       );
       _logger.d('Ad impression tracked: $adUnit ($adFormat)');
     } catch (e, stackTrace) {
-      _logger.e('Failed to log ad impression', error: e, stackTrace: stackTrace);
+      _logger.e(
+        'Failed to log ad impression',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -136,7 +146,11 @@ class AnalyticsService {
       );
       _logger.d('Feature usage tracked: $featureName');
     } catch (e, stackTrace) {
-      _logger.e('Failed to log feature usage', error: e, stackTrace: stackTrace);
+      _logger.e(
+        'Failed to log feature usage',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -154,7 +168,11 @@ class AnalyticsService {
         parameters: <String, Object>{
           'error_type': errorType,
           'error_message': errorMessage,
-          if (stackTrace != null) 'stack_trace': stackTrace.substring(0, stackTrace.length > 100 ? 100 : stackTrace.length),
+          if (stackTrace != null)
+            'stack_trace': stackTrace.substring(
+              0,
+              stackTrace.length > 100 ? 100 : stackTrace.length,
+            ),
           'timestamp': DateTime.now().toIso8601String(),
         },
       );
@@ -175,7 +193,11 @@ class AnalyticsService {
       await analytics.setUserProperty(name: name, value: value);
       _logger.d('User property set: $name = $value');
     } catch (e, stackTrace) {
-      _logger.e('Failed to set user property', error: e, stackTrace: stackTrace);
+      _logger.e(
+        'Failed to set user property',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -199,7 +221,11 @@ class AnalyticsService {
       await analytics.logTutorialComplete();
       _logger.d('Tutorial completion tracked');
     } catch (e, stackTrace) {
-      _logger.e('Failed to log tutorial complete', error: e, stackTrace: stackTrace);
+      _logger.e(
+        'Failed to log tutorial complete',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 

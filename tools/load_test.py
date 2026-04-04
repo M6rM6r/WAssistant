@@ -26,9 +26,7 @@ except ImportError:
     import subprocess
     import sys
 
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "httpx", "rich", "-q"]
-    )
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "httpx", "rich", "-q"])
     import httpx
     from rich.console import Console
     from rich.progress import (
@@ -143,9 +141,7 @@ async def run_load_test(
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
             console=console,
         ) as progress:
-            task = progress.add_task(
-                "Running load test...", total=total_requests
-            )
+            task = progress.add_task("Running load test...", total=total_requests)
 
             # Create batches of concurrent requests
             pending = []
@@ -184,9 +180,7 @@ def print_results(result: LoadTestResult) -> None:
 
     # Response time table
     time_title = "Response Times (ms)"
-    time_table = Table(
-        title=time_title, show_header=True, header_style="bold cyan"
-    )
+    time_table = Table(title=time_title, show_header=True, header_style="bold cyan")
     time_table.add_column("Metric")
     time_table.add_column("Value", justify="right")
 

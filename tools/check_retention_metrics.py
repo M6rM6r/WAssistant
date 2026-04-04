@@ -64,11 +64,7 @@ def get_retention_metrics(db: firestore.Client) -> dict:
             cohorts[cohort_key] = {"total": 0, "active": 0}
         cohorts[cohort_key]["total"] += 1
 
-    days_since_active = (
-        (now - user["last_active"]).days
-        if pd.notna(user["last_active"])
-        else 999
-    )
+    days_since_active = (now - user["last_active"]).days if pd.notna(user["last_active"]) else 999
     if days_since_active < 30:
         cohorts[cohort_key]["active"] += 1
 
@@ -80,11 +76,7 @@ def get_retention_metrics(db: firestore.Client) -> dict:
             retention_rates[week] = rate
 
     # KPI thresholds
-    avg_retention = (
-        sum(retention_rates.values()) / len(retention_rates)
-        if retention_rates
-        else 0
-    )
+    avg_retention = sum(retention_rates.values()) / len(retention_rates) if retention_rates else 0
     dau_to_mau = (
         len(df[df["last_active"] > (now - timedelta(days=1))])
         / len(df[df["last_active"] > (now - timedelta(days=30))])
@@ -96,8 +88,7 @@ def get_retention_metrics(db: firestore.Client) -> dict:
         sum(
             1
             for _, user in df.iterrows()
-            if pd.notna(user["last_active"])
-            and (now - user["last_active"]).days > 14
+            if pd.notna(user["last_active"]) and (now - user["last_active"]).days > 14
         )
         / len(df)
         * 100
@@ -116,9 +107,7 @@ def get_retention_metrics(db: firestore.Client) -> dict:
     }
 
 
-def _generate_alerts(
-    retention: float, dau_mau: float, churn: float
-) -> list[str]:
+def _generate_alerts(retention: float, dau_mau: float, churn: float) -> list[str]:
     """Generate alerts for KPI deviations"""
     alerts = []
 

@@ -62,4 +62,3 @@ def is_valid_url(url: str) -> bool:
         re.IGNORECASE,
     )
     return bool(url_pattern.match(url))
-

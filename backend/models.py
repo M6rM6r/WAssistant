@@ -4,7 +4,7 @@ from sqlalchemy.sql import func
 
 from .database import Base
 
-__all__ = ["Base", "HistoryItem", "Template", "User"]
+__all__ = ["Base", "HistoryItem", "Template", "User", "AnalyticsEvent"]
 
 
 class User(Base):
@@ -41,3 +41,15 @@ class HistoryItem(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="history")
+
+
+class AnalyticsEvent(Base):
+    __tablename__ = "analytics_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    event_type = Column(String, nullable=False)
+    metadata = Column(String, nullable=False, default="{}")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    owner = relationship("User")

@@ -7,36 +7,42 @@ const features = [
     title: 'Chat Without Saving',
     description:
       'Start a WhatsApp conversation with any phone number instantly — no need to add them to your contacts first. Perfect for one-time chats with delivery drivers, businesses, or new acquaintances.',
+    link: 'https://wassistant-707.web.app',
   },
   {
     icon: QrCode,
     title: 'QR Code Generator',
     description:
       'Generate scannable QR codes linked to your WhatsApp number. Ideal for business cards, storefronts, flyers, and websites so customers can reach you with a single scan.',
+    link: 'https://wassistant-707.web.app',
   },
   {
     icon: Share2,
     title: 'Chat Link Creator',
     description:
       'Create shareable wa.me links with pre-filled messages. Add them to your social media bios, email signatures, or websites to let people message you directly on WhatsApp.',
+    link: 'https://wassistant-707.web.app',
   },
   {
     icon: ScanText,
     title: 'OCR Text Recognition',
     description:
       'Extract phone numbers from images, screenshots, or business cards using your camera. The built-in OCR engine processes everything locally on your device for complete privacy.',
+    link: 'https://wassistant-707.web.app',
   },
   {
     icon: Shield,
     title: 'Privacy First',
     description:
       'All processing happens on your device. No phone numbers, messages, or contacts are ever uploaded to external servers. Your data stays yours — always.',
+    link: 'https://wassistant-707.web.app',
   },
   {
     icon: Smartphone,
     title: 'Works Everywhere',
     description:
       'Available as an Android app on Google Play and as a web app at wassistant.site. Use it on your phone, tablet, or desktop browser — no installation required for the web version.',
+    link: 'https://wassistant-707.web.app',
   },
 ];
 
@@ -81,10 +87,13 @@ const FeaturesSection = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {features.map((feature) => (
-            <motion.div
+            <motion.a
               key={feature.title}
+              href={feature.link}
+              target="_blank"
+              rel="noopener noreferrer"
               variants={item}
-              className="glass-surface rounded-xl p-8 group hover:border-primary/30 transition-colors"
+              className="glass-surface rounded-xl p-8 group hover:border-primary/30 transition-colors cursor-pointer block"
             >
               <div className="flex items-center gap-3 mb-5">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -93,7 +102,7 @@ const FeaturesSection = () => {
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-            </motion.div>
+            </motion.a>
           ))}
         </motion.div>
       </div>
