@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import AnalyticsDashboard from './pages/Analytics.tsx';
 import Blog from './pages/Blog.tsx';
 import Features from './pages/Features.tsx';
 import Index from './pages/Index.tsx';
