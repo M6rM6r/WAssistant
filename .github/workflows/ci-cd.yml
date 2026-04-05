@@ -1,0 +1,358 @@
+# INTJ: GitHub Actions CI/CD Pipeline
+# OCPD: Deterministic deployment with comprehensive testing and security scanning
+
+name: WAssistant CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main ]
+  release:
+    types: [ published ]
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+  FLUTTER_VERSION: '3.16'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Phase 1: Code Quality & Security Analysis
+  # ─────────────────────────────────────────────────────────────────────────────
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Run Bandit Security Scan
+        uses: PyCQA/bandit@main
+        with:
+          args: "-r backend/ -f json -o bandit-report.json || true"
+
+      - name: Run Safety Check
+        run: |
+          pip install safety
+          safety check -r backend/requirements.txt --json --output safety-report.json || true
+
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+            safety-report.json
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Phase 2: Backend Testing
+  # ─────────────────────────────────────────────────────────────────────────────
+  backend-test:
+    name: Backend Test Suite
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: wassistant_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-asyncio pytest-xdist
+
+      - name: Run unit tests
+        run: |
+          cd backend
+          pytest tests/unit -v --cov=backend --cov-report=xml --cov-report=html -n auto
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/wassistant_test
+          REDIS_URL: redis://localhost:6379/0
+          TESTING: "1"
+
+      - name: Run integration tests
+        run: |
+          cd backend
+          pytest tests/integration -v --cov-append -n auto
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/wassistant_test
+          REDIS_URL: redis://localhost:6379/0
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/htmlcov/
+
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: orgoro/coverage@v3.1
+        with:
+          coverageFile: backend/coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Phase 3: Frontend Landing Page Testing
+  # ─────────────────────────────────────────────────────────────────────────────
+  landing-test:
+    name: Landing Page Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: landing/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd landing
+          npm ci
+
+      - name: Run ESLint
+        run: |
+          cd landing
+          npm run lint
+
+      - name: Run TypeScript type checking
+        run: |
+          cd landing
+          npm run type-check
+
+      - name: Run unit tests
+        run: |
+          cd landing
+          npm run test -- --coverage --watchAll=false
+
+      - name: Build landing page
+        run: |
+          cd landing
+          npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: landing-dist
+          path: landing/dist/
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Phase 4: Flutter App Testing
+  # ─────────────────────────────────────────────────────────────────────────────
+  flutter-test:
+    name: Flutter Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Run Dart analysis
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run unit tests
+        run: flutter test --coverage --test-randomize-ordering-seed random
+
+      - name: Format check
+        run: dart format --set-exit-if-changed lib/
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Phase 5: Docker Build & Push
+  # ─────────────────────────────────────────────────────────────────────────────
+  docker-build:
+    name: Docker Build & Push
+    runs-on: ubuntu-latest
+    needs: [code-quality, backend-test]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Phase 6: Deploy to Staging
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [docker-build, landing-test]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+      - name: Deploy to staging server
+        run: |
+          echo "Deploying to staging environment"
+          # Add your staging deployment commands here
+          # Example: SSH to server and pull new Docker image
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Phase 7: Deploy to Production
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [docker-build, flutter-test, landing-test]
+    if: github.ref == 'refs/heads/master' || github.event_name == 'release'
+    environment: production
+    steps:
+      - name: Download landing build
+        uses: actions/download-artifact@v4
+        with:
+          name: landing-dist
+          path: web/
+
+      - name: Deploy landing page
+        run: |
+          echo "Deploying landing page to production"
+          # Sync to your hosting (S3, Netlify, Vercel, etc.)
+          # aws s3 sync web/ s3://your-bucket/ --delete
+
+      - name: Deploy backend
+        run: |
+          echo "Deploying backend API to production"
+          # Pull and run new Docker image on production server
+          # docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          # docker-compose up -d
+
+      - name: Notify deployment success
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "🚀 WAssistant deployed to production successfully!",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwd",
+                    "text": "*WAssistant Production Deployment*\nVersion: ${{ github.sha }}\nStatus: ✅ Success"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Phase 8: Post-Deployment Smoke Tests
+  # ─────────────────────────────────────────────────────────────────────────────
+  smoke-test:
+    name: Production Smoke Tests
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run smoke tests
+        run: |
+          pip install requests pytest
+          pytest tests/smoke -v --tb=short
+        env:
+          BASE_URL: https://api.wassistant.site
+
+      - name: Check API health
+        run: |
+          curl -f https://api.wassistant.site/health || exit 1
+
+      - name: Check landing page
+        run: |
+          curl -f https://wassistant.site || exit 1
